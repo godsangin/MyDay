@@ -31,29 +31,18 @@ public class PlannerView extends ConstraintLayout {
     TextView yearText;
     TextView monthText;
     LinearLayout calendarSelectLayout;
-    ConstraintLayout calendarSelectView;
+    ConstraintLayout calendarSelectView;//년,달을 변경하는 view
     boolean isCalendarSelectClicked;
-
     ViewPager viewPager;
-
     Context context;
-
-    Button notificationButton;
-
     Button calendarSelectButton;
-
     boolean isExistToday;
     Button todayButton;
-
     Button previousButton;
     Button nextButton;
-
     LocalDate date;
-
     HashMap<String, ArrayList<Event>> hashMap;
     MyDialogListener dialogListener;
-
-
 
     public PlannerView(Context context) {
         super(context);
@@ -83,18 +72,6 @@ public class PlannerView extends ConstraintLayout {
         addView(view);
 
         hashMap = new HashMap<>();
-//        for(Map.Entry<String, Event> entry : SplashActivity.EVENT_LIST.entrySet()) {//local db필요
-//            Event event = entry.getValue();
-//
-//            DateTime date = new DateTime(event.getDate().getTime());
-//
-//            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-//            if(!hashMap.containsKey(format.format(date.toDate()))){
-//                hashMap.put(format.format((date).toDate()), new ArrayList<Event>());
-//            }
-//            hashMap.get(format.format(date.toDate())).add(event);
-//
-//        }
 
         todayButton = view.findViewById(R.id.calendar_today_bt);
         todayButton.setOnClickListener(new OnClickListener() {
@@ -147,9 +124,7 @@ public class PlannerView extends ConstraintLayout {
 
                 }
             });
-
-
-
+            calendarSelectButton = view.findViewById(R.id.calendar_select_bt);
             calendarSelectLayout = view.findViewById(R.id.calendar_select_layout);
             calendarSelectLayout.setOnClickListener(new OnClickListener() {
                 @Override
@@ -157,7 +132,7 @@ public class PlannerView extends ConstraintLayout {
                     final NumberPicker yearPicker = view.findViewById(R.id.year_picker);
                     final NumberPicker monthPicker = view.findViewById(R.id.month_picker);
 
-                    calendarSelectButton = view.findViewById(R.id.calendar_select_bt);
+
                     calendarSelectButton.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -170,7 +145,6 @@ public class PlannerView extends ConstraintLayout {
                     if(!isCalendarSelectClicked) {
                         isCalendarSelectClicked = true;
 
-                        notificationButton.setVisibility(View.GONE);
                         calendarSelectButton.setVisibility(View.VISIBLE);
 
                         calendarSelectView.setVisibility(View.VISIBLE);
@@ -191,7 +165,6 @@ public class PlannerView extends ConstraintLayout {
                         calendarSelectView.setVisibility(View.GONE);
                         isCalendarSelectClicked = false;
 
-                        notificationButton.setVisibility(View.VISIBLE);
                         calendarSelectButton.setVisibility(View.GONE);
                     }
                 }
