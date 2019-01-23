@@ -51,6 +51,7 @@ public class PlannerView extends ConstraintLayout {
     LocalDate date;
 
     HashMap<String, ArrayList<Event>> hashMap;
+    MyDialogListener dialogListener;
 
 
 
@@ -64,6 +65,10 @@ public class PlannerView extends ConstraintLayout {
         super(context, attrs);
         this.context = context;
         this.isCalendarSelectClicked = false;
+    }
+
+    public void setDialogListener(MyDialogListener dialogListener){
+        this.dialogListener = dialogListener;
     }
 
     public void initView(final LocalDate localDate) {
@@ -297,7 +302,7 @@ public class PlannerView extends ConstraintLayout {
             OnClickListener listener = new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    dialogListener.onCalendatItemClicked(viewHolder.getLocalDate());
                 }
             };
 

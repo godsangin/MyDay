@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
 
 public class SetCategoryActivity extends AppCompatActivity implements ColorPickerDialogListener {
@@ -107,6 +109,11 @@ public class SetCategoryActivity extends AppCompatActivity implements ColorPicke
 
             @Override
             public void onNegativeClicked() {
+
+            }
+
+            @Override
+            public void onCalendatItemClicked(LocalDate localDate) {
 
             }
         };
