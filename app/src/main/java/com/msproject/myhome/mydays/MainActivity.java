@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.media.Image;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -19,6 +20,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -30,6 +32,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -39,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     ConstraintLayout titleBar;
     CalendarDialog calendarDialog;
     Context context;
+    MyDialogListener myDialogListener;
+    TextView calendarDate;
+    int year; // 년도는 view에 존재하지 않기 때문에 변수로 담고 있어야함.
 
 
     ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
@@ -56,25 +63,13 @@ public class MainActivity extends AppCompatActivity {
         menuButton = findViewById(R.id.menu_bt);
         titleBar = findViewById(R.id.title_bar);
         context = this;
+        calendarDate = titleBar.findViewById(R.id.calendar_date);
+        ImageView lastdayButton = titleBar.findViewById(R.id.bt_lastday);
+        ImageView nextdayButton = titleBar.findViewById(R.id.bt_nextday);
+        year = 2018;//임시
+        setMoveDay(lastdayButton, nextdayButton);
+        setCalendarView();
 
-        LinearLayout calendarButton = titleBar.findViewById(R.id.calendar_bt);
-        calendarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calendarDialog = new CalendarDialog(context);
-                Display display = getWindowManager().getDefaultDisplay();
-                Point size = new Point();
-                display.getSize(size);
-//                calendarDialog.setDialogListener(myDialogListener);
-                calendarDialog.show();
-                calendarDialog.setCancelable(true);
-                Window window = calendarDialog.getWindow();
-                int x = (int)(size.x * 0.8f);
-                int y = (int)(size.y * 0.8f);
-
-                window.setLayout(x,y);
-            }
-        });
         if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
             //상단 바 색상 변경
@@ -291,6 +286,89 @@ public class MainActivity extends AppCompatActivity {
         }
 
         makeChart();
+    }
+
+    public void setCalendarView(){
+
+        calendarDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendarDialog = new CalendarDialog(context, parsingLocalDate(calendarDate.getText().toString()));
+                Display display = getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                setCalendarDialogLisetener();//캘린더의 콜백을 받기 위한 리스너
+                calendarDialog.show();
+                calendarDialog.setCancelable(true);
+                Window window = calendarDialog.getWindow();
+                int x = (int)(size.x * 0.8f);
+                int y = (int)(size.y * 0.8f);
+
+                window.setLayout(x,y);
+            }
+        });
+
+
+    }
+
+    public void setCalendarDialogLisetener(){
+        myDialogListener = new MyDialogListener() {
+            @Override
+            public void onPostClicked(Category category) {
+
+            }
+
+            @Override
+            public void onModifyClicked(Category category, int index) {
+
+            }
+
+            @Override
+            public void onNegativeClicked() {
+
+            }
+
+            @Override
+            public void onCalendatItemClicked(LocalDate localDate) {
+                calendarDate.setText(localDate.getMonthOfYear() + "월 " + localDate.getDayOfMonth() + "일");
+                year = localDate.getYear();
+                calendarDialog.dismiss();
+            }
+        };
+        calendarDialog.setDialogListener(myDialogListener);
+    }
+
+    public LocalDate parsingLocalDate(String str){
+        int month;
+        int day;
+        String[] parsingMonth = str.split("월 ");
+        month = Integer.parseInt(parsingMonth[0]);
+        String[] parsingDay = parsingMonth[1].split("일");
+        day = Integer.parseInt(parsingDay[0]);
+        LocalDate localDate = new LocalDate(year, month, day);
+        return localDate;
+    }
+
+    public void setMoveDay(ImageView lastdayButton, ImageView nextdayButton){
+        lastdayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
+                LocalDate lastDate = localDate.minusDays(1);
+                if(localDate.getYear() != lastDate.getYear()) year--;
+                calendarDate.setText(lastDate.getMonthOfYear() + "월 " + lastDate.getDayOfMonth() + "일");
+            }
+        });
+
+        nextdayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
+                LocalDate nextDate = localDate.plusDays(1);
+                if(localDate.getYear() != nextDate.getYear()) year++;
+                calendarDate.setText(nextDate.getMonthOfYear() + "월 " + nextDate.getDayOfMonth() + "일");
+            }
+        });
     }
 
 }

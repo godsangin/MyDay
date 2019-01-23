@@ -28,17 +28,20 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <ImageView
+            android:id="@+id/bt_lastday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_chevron_left_white_24dp"
             android:layout_gravity="center"/>
         <TextView
+            android:id="@+id/calendar_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="12월 31일"
             android:textSize="20sp"
             android:textColor="#ffffff"/>
         <ImageView
+            android:id="@+id/bt_nextday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_chevron_right_white_24dp"
