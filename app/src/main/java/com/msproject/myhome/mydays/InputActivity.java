@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class InputActivity extends AppCompatActivity {
     EditText start, end, category;
@@ -22,8 +23,11 @@ public class InputActivity extends AppCompatActivity {
         end = findViewById(R.id.end_hour);
         category = findViewById(R.id.category);
 
-        btnConfirm = findViewById(R.id.confirm);
 
+        btnConfirm = findViewById(R.id.confirm);
+        btnConfirm.setText(getIntent().getStringExtra("Hour"));
+
+        Toast.makeText(this.getApplicationContext(), getIntent().getStringExtra("Date"), Toast.LENGTH_SHORT).show();
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
