@@ -1,27 +1,26 @@
 package com.msproject.myhome.mydays;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.media.Image;
+import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -30,7 +29,6 @@ import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.joda.time.LocalDate;
 
@@ -52,8 +50,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Integer> colors = new ArrayList<>();
     String[] times = new String[24];
 
-    LinearLayout time_1, time_2, time_3, time_4;
-
+    @SuppressLint("ClickableViewAccessibility")
     @TargetApi(Build.VERSION_CODES.M)
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -85,36 +82,6 @@ public class MainActivity extends AppCompatActivity {
             //상단 바 색상 변경
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
-
-        time_1 = findViewById(R.id.time_1);
-        time_2 = findViewById(R.id.time_2);
-        time_3 = findViewById(R.id.time_3);
-        time_4 = findViewById(R.id.time_4);
-
-        time_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addTime(1);
-            }
-        });
-        time_2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addTime(2);
-            }
-        });
-        time_3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addTime(3);
-            }
-        });
-        time_4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addTime(4);
-            }
-        });
 
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +116,41 @@ public class MainActivity extends AppCompatActivity {
 
         pieChart = (PieChart)findViewById(R.id.piechart);
 
+        pieChart.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                RectF rectF = pieChart.getCircleBox();
+
+                float centerX = rectF.centerX();
+                float centerY =rectF.centerY();
+
+                float r = (rectF.right - rectF.left)/2;
+
+                float touchX = motionEvent.getX();
+                float touchY = motionEvent.getY();
+                if( Math.pow((touchX - centerX),2) + Math.pow((touchY - centerY), 2) <= Math.pow(r,2)){
+                    if(centerX > touchX && centerY > touchY){
+                        //왼쪽 위
+                        addTime(18);
+                    }
+                    else if(centerX > touchX && centerY < touchY){
+                        //왼쪽 아래
+                        addTime(12);
+                    }
+                    else if(centerX < touchX && centerY > touchY){
+                        //오른쪽 위
+                        addTime(0);
+                    }
+                    else{
+                        //오른쪽 아래
+                        addTime(6);
+                    }
+                }
+
+                return false;
+            }
+        });
+
         //pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);
         pieChart.setExtraOffsets(5,10,5,5);
@@ -168,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         ColorMakeHelper.setColor("default", Color.LTGRAY);
         colors.add(Color.LTGRAY);
 
-        updateChar(false, 0,0,null, 0);
+        updateChart(false, 0,0,null, 0);
     }
 
     @Override
@@ -177,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(resultCode == 0){
             if(data.getStringExtra("category") != null) {
-                updateChar(true, data.getIntExtra("start", 0), data.getIntExtra("end", 0), data.getStringExtra("category"), data.getIntExtra("color", 0));
+                updateChart(true, data.getIntExtra("start", 0), data.getIntExtra("end", 0), data.getStringExtra("category"), data.getIntExtra("color", 0));
             }
         }
         else{
@@ -190,7 +192,9 @@ public class MainActivity extends AppCompatActivity {
 //        b.putInt("hour",index);
 
         Intent intent = new Intent(MainActivity.this, InputActivity.class);
-        intent.putExtra("Hour", index);
+        intent.putExtra("Hour", index + "");
+        LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
+        intent.putExtra("Date", ld.toString().replace("-",""));
         startActivityForResult(intent, 0);
     }
 
@@ -218,6 +222,8 @@ public class MainActivity extends AppCompatActivity {
 
         pieChart.setData(data);
 
+
+
         Legend legend = pieChart.getLegend();
 //        legend.setCustom(Color.YELLOW, new String[]{"씨발"});
         ArrayList<LegendEntry> legendEntries = new ArrayList<>();
@@ -231,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
         }
         legend.setCustom(legendEntries);
     }
-    public void updateChar(Boolean add, int start, int end, String category, int color){
+    public void updateChart(Boolean add, int start, int end, String category, int color){
         if(add){
             int e_start = 0;
             int e_end = 0;
