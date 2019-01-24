@@ -11,6 +11,10 @@ public class Event {
         this.eventContent = eventContent;
     }
 
+    public  Event (int eventNo){
+        this.eventNo = eventNo;
+    }
+
 
     public int getEventNo() {
         return eventNo;
