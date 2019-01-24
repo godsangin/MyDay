@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -51,6 +52,16 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
             categories.add(new Category(cursor.getString(1),cursor.getString(2)));
         }
         return categories;
+    }
+
+    public String getColor(String categoryName){
+        SQLiteDatabase db = getReadableDatabase();
+        Log.d("color==", categoryName);
+        Cursor cursor = db.rawQuery("SELECT * FROM CATEGORY where categoryName= "+'"'+categoryName+'"',null);
+        cursor.moveToNext();
+
+        Log.d("color==", cursor.getString(2));
+        return cursor.getString(2);
     }
 
     public void clearDB(){

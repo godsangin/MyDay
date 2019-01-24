@@ -61,6 +61,17 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         return events;
     }
 
+    public ArrayList<Event> getEvents(String date,int startNo){
+        ArrayList<Event> events = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM MyDays where date="+date+" and eventNo Between "+startNo+" and "+(startNo+5),null);
+
+        while (cursor.moveToNext()){
+            events.add(new Event(cursor.getInt(1),cursor.getString(2),cursor.getString(3)));
+        }
+        return events;
+    }
+
     public void clearDB(){
         SQLiteDatabase db =getWritableDatabase();
         db.execSQL("DELETE FROM MyDays");
