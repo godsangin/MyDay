@@ -1,12 +1,23 @@
 package com.msproject.myhome.mydays;
 
 public class Event {
+    int eventNo;
     String categoryName;
-    String eventName;
+    String eventContent;
 
-    public Event(String categoryName, String eventName){
+    public Event(int eventNo, String categoryName, String eventContent) {
+        this.eventNo = eventNo;
         this.categoryName = categoryName;
-        this.eventName = eventName;
+        this.eventContent = eventContent;
+    }
+
+
+    public int getEventNo() {
+        return eventNo;
+    }
+
+    public void setEventNo(int eventNo) {
+        this.eventNo = eventNo;
     }
 
     public String getCategoryName() {
@@ -17,11 +28,11 @@ public class Event {
         this.categoryName = categoryName;
     }
 
-    public String getEventName() {
-        return eventName;
+    public String getEventContent() {
+        return eventContent;
     }
 
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
+    public void setEventContent(String eventContent) {
+        this.eventContent = eventContent;
     }
 }

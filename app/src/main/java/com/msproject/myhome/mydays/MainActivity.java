@@ -70,6 +70,16 @@ public class MainActivity extends AppCompatActivity {
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
 
+        TextView textView = titleBar.findViewById(R.id.today);
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EventActivity.class);
+                startActivity(intent);
+            }
+        });
+
         if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
             //상단 바 색상 변경
