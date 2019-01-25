@@ -69,6 +69,7 @@ public class SetCategoryActivity extends AppCompatActivity implements ColorPicke
 
     public void backButtonEnable(){
         ImageView backButton = titleBar.findViewById(R.id.back_bt);
+        ImageView menuButton = titleBar.findViewById(R.id.menu_bt);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +77,7 @@ public class SetCategoryActivity extends AppCompatActivity implements ColorPicke
                 finish();
             }
         });
+        menuButton.setVisibility(View.GONE);
     }
 
 

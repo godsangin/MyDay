@@ -49,6 +49,7 @@ public class SettingActivity extends AppCompatActivity {
 
     public void backButtonEnable(){
         ImageView backButton = titleBar.findViewById(R.id.back_bt);
+        ImageView menuButton = titleBar.findViewById(R.id.menu_bt);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,6 +57,7 @@ public class SettingActivity extends AppCompatActivity {
                 finish();
             }
         });
+        menuButton.setVisibility(View.GONE);
     }
 
     public ArrayList<SettingItem> setItems(){//설정에 필요한게 더 생길 경우 추가
