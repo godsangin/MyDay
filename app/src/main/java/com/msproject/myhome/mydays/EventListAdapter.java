@@ -46,8 +46,12 @@ public class EventListAdapter extends BaseAdapter {
         TextView timeTextView = view.findViewById(R.id.event_time);
         TextView categoryName = view.findViewById(R.id.category_name);
         TextView eventContent = view.findViewById(R.id.event_content);
-
-        timeTextView.setText("0"+events.get(position).getEventNo()+":00");
+        if(events.get(position).eventNo < 10){
+            timeTextView.setText("0"+events.get(position).getEventNo()+":00");
+        }
+        else{
+            timeTextView.setText(events.get(position).getEventNo() + ":00");
+        }
         categoryName.setText(events.get(position).getCategoryName());
         eventContent.setText(events.get(position).getEventContent());
         if(events.get(position).getCategoryName() != ""){
