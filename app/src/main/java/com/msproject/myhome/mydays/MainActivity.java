@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         ColorMakeHelper.setColor("default", Color.LTGRAY);
         colors.add(Color.LTGRAY);
 
-        updateChart(false, 0,0,null, 0);
+        updateChart(true, 0,6,"아무개", Color.BLUE);//여기에 이벤트 개수만큼 쓰기!
     }
 
     @Override
@@ -162,9 +162,9 @@ public class MainActivity extends AppCompatActivity {
 //        yValues.add(new PieEntry(1f,"기본"));
 //        yValues.add(new PieEntry(1f,"기본_2"));
 
-
         Description description = new Description();
-        description.setText("2019.01.17"); //라벨 : 오늘 날짜 적으면 좋을 듯
+        LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
+        description.setText(year + "." + localDate.getMonthOfYear() + "." + localDate.getDayOfMonth()); //라벨 : 오늘 날짜 적으면 좋을 듯
         description.setTextSize(15);
         pieChart.setDescription(description);
 
@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
         makeChart();
     }
 
-    public void setCalendarView(){
+    public void setCalendarView(){//현재 TextView에 존재하는 날짜를 기준으로한 달의 CalendarDialog를 호출
 
         calendarDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -276,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
                 setCalendarDialogLisetener();//캘린더의 콜백을 받기 위한 리스너
                 calendarDialog.show();
                 calendarDialog.setCancelable(true);
+                calendarDialog.setCanceledOnTouchOutside(true);
                 Window window = calendarDialog.getWindow();
                 int x = (int)(size.x * 0.8f);
                 int y = (int)(size.y * 0.8f);
@@ -287,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setCalendarDialogLisetener(){
+    public void setCalendarDialogLisetener(){//CalendarDialog를 호출하고 해당 날짜를 클릭했을때 콜백을 받아 날짜 TextView와 전역변수 year를 수정함.
         myDialogListener = new MyDialogListener() {
             @Override
             public void onPostClicked(Category category) {
@@ -314,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
         calendarDialog.setDialogListener(myDialogListener);
     }
 
-    public LocalDate parsingLocalDate(String str){
+    public LocalDate parsingLocalDate(String str){//Titlebar의 날짜 텍스트를 localdate로 변환 -> year는 전역변수로 불러옴(year가 변경되는 경우 수정 필요!)
         int month;
         int day;
         String[] parsingMonth = str.split("월 ");
@@ -325,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
         return localDate;
     }
 
-    public void setMoveDay(ImageView lastdayButton, ImageView nextdayButton){
+    public void setMoveDay(ImageView lastdayButton, ImageView nextdayButton){//day movement function
         lastdayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -347,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void setTitleContents(){
+    public void setTitleContents(){//Title(today, menu) Button function
         TextView textView = titleBar.findViewById(R.id.today);
 
         menuButton.setOnClickListener(new View.OnClickListener() {
@@ -384,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 LocalDate ld = new LocalDate();
-                calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.dayOfMonth() + "일");
+                calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth() + "일");
                 year = ld.getYear();
             }
         });
