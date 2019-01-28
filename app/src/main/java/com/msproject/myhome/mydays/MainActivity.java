@@ -66,53 +66,13 @@ public class MainActivity extends AppCompatActivity {
         year = 2018;//임시
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
-
-        TextView textView = titleBar.findViewById(R.id.today);
-
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, EventActivity.class);
-                startActivity(intent);
-            }
-        });
+        setTitleContents();
 
         if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
             //상단 바 색상 변경
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
-
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 버튼 클릭시 팝업 메뉴가 나오게 하기
-                // PopupMenu 는 API 11 레벨부터 제공한다
-                PopupMenu p = new PopupMenu(
-                        getApplicationContext(), // 현재 화면의 제어권자
-                        v); // anchor : 팝업을 띄울 기준될 위젯
-                getMenuInflater().inflate(R.menu.menu_main, p.getMenu());
-                // 이벤트 처리
-                p.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.statistic_graph) {//StatisicActivity로 intent
-                            Intent intent = new Intent(MainActivity.this, StatisticActivity.class);
-                            startActivity(intent);
-                        } else if (item.getItemId() == R.id.setting) {
-                            Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                            startActivity(intent);
-
-                        } else if (item.getItemId() == R.id.remove_ad) {//광고제거
-
-                        }
-                        return false;
-                    }
-                });
-                p.show(); // 메뉴를 띄우기
-            }
-        });
-
 
         pieChart = (PieChart)findViewById(R.id.piechart);
 
@@ -177,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == 0){
+        if(resultCode == 1){
             if(data.getStringExtra("category") != null) {
                 updateChart(true, data.getIntExtra("start", 0), data.getIntExtra("end", 0), data.getStringExtra("category"), data.getIntExtra("color", 0));
             }
@@ -191,10 +151,10 @@ public class MainActivity extends AppCompatActivity {
 //        Bundle b = new Bundle();
 //        b.putInt("hour",index);
 
-        Intent intent = new Intent(MainActivity.this, InputActivity.class);
+        Intent intent = new Intent(MainActivity.this, EventActivity.class);
         intent.putExtra("Hour", index + "");
         LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
-        intent.putExtra("Date", ld.toString().replace("-",""));
+        intent.putExtra("Date", ld.toString().replace("-","").split("0")[1]);
         startActivityForResult(intent, 0);
     }
 
@@ -385,6 +345,50 @@ public class MainActivity extends AppCompatActivity {
                 calendarDate.setText(nextDate.getMonthOfYear() + "월 " + nextDate.getDayOfMonth() + "일");
             }
         });
+    }
+
+    public void setTitleContents(){
+        TextView textView = titleBar.findViewById(R.id.today);
+
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 버튼 클릭시 팝업 메뉴가 나오게 하기
+                // PopupMenu 는 API 11 레벨부터 제공한다
+                PopupMenu p = new PopupMenu(
+                        getApplicationContext(), // 현재 화면의 제어권자
+                        v); // anchor : 팝업을 띄울 기준될 위젯
+                getMenuInflater().inflate(R.menu.menu_main, p.getMenu());
+                // 이벤트 처리
+                p.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getItemId() == R.id.statistic_graph) {//StatisicActivity로 intent
+                            Intent intent = new Intent(MainActivity.this, StatisticActivity.class);
+                            startActivity(intent);
+                        } else if (item.getItemId() == R.id.setting) {
+                            Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                            startActivity(intent);
+
+                        } else if (item.getItemId() == R.id.remove_ad) {//광고제거
+
+                        }
+                        return false;
+                    }
+                });
+                p.show(); // 메뉴를 띄우기
+            }
+        });
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LocalDate ld = new LocalDate();
+                calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.dayOfMonth() + "일");
+                year = ld.getYear();
+            }
+        });
+
     }
 
 }

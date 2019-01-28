@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -64,6 +65,7 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
     public ArrayList<Event> getEvents(String date,int startNo){
         ArrayList<Event> events = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
+        Log.d("time==", date + startNo);
         Cursor cursor = db.rawQuery("SELECT * FROM MyDays where date="+date+" and eventNo Between "+startNo+" and "+(startNo+5),null);
 
         while (cursor.moveToNext()){
