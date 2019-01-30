@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     MyDialogListener myDialogListener;
     TextView calendarDate;
     int year; // 년도는 view에 존재하지 않기 때문에 변수로 담고 있어야함.
+    MydaysDBHelper mydaysDBHelper;
+    CategoryDBHelper categoryDBHelper;
 
 
     ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         calendarDate = titleBar.findViewById(R.id.calendar_date);
         ImageView lastdayButton = titleBar.findViewById(R.id.bt_lastday);
         ImageView nextdayButton = titleBar.findViewById(R.id.bt_nextday);
+        mydaysDBHelper = new MydaysDBHelper(this,"MyDays.db",null,1);
+        categoryDBHelper = new CategoryDBHelper(this,"CATEGORY.db",null,1);
         year = 2018;//임시
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
@@ -129,8 +133,13 @@ public class MainActivity extends AppCompatActivity {
         yValues.add(new PieEntry(24,""));
         ColorMakeHelper.setColor("default", Color.LTGRAY);
         colors.add(Color.LTGRAY);
+        loadEventData();
 
-        updateChart(true, 0,6,"아무개", Color.BLUE);//여기에 이벤트 개수만큼 쓰기!
+
+//        updateChart(true, 0,6,"아무개", Color.BLUE);//여기에 이벤트 개수만큼 쓰기!
+//        updateChart(true, 12,15,"아무개2", Color.BLACK);//여기에 이벤트 개수만큼 쓰기!
+//        updateChart(true, 0, 0, "", 0);
+
     }
 
     @Override
@@ -138,9 +147,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == 1){
-            if(data.getStringExtra("category") != null) {
-                updateChart(true, data.getIntExtra("start", 0), data.getIntExtra("end", 0), data.getStringExtra("category"), data.getIntExtra("color", 0));
-            }
+            loadEventData();
         }
         else{
 
@@ -257,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
 //                }
 //                e = new_entry.get(i);
 //            }
+
             yValues = new_entry;
             colors = new_color;
         }
@@ -389,7 +397,80 @@ public class MainActivity extends AppCompatActivity {
                 year = ld.getYear();
             }
         });
+    }
 
+    public void loadEventData(){
+        //이벤트 추가
+        LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
+        String todayString = ld.toString().replace("-","").split("0")[1];
+        ArrayList<Event> events = mydaysDBHelper.getResult(todayString);
+        if(events.isEmpty()){
+            updateChart(true, 0, 0, "", 100);
+        }
+        ArrayList<UpdateListItem> updateListItems = new ArrayList<>();
+        Event temp = null;
+        for(int i = 0; i < events.size(); i++){
+            Event myEvent = events.get(i);
+            if(myEvent.equals(temp)){
+                updateListItems.get(updateListItems.size()-1).end++;
+            }
+            else{
+                String colorString = categoryDBHelper.getColor(myEvent.getCategoryName());
+                updateListItems.add(new UpdateListItem(myEvent.getEventNo(), myEvent.getEventNo()+1, myEvent.getCategoryName(), colorString));
+            }
+            temp = myEvent;
+        }
+
+        for(int i = 0; i < updateListItems.size(); i++){
+            UpdateListItem updateItem = updateListItems.get(i);
+            updateChart(true, updateItem.getStart(), updateItem.getEnd(), updateItem.getCategoryName(), Color.parseColor(updateItem.getCategoryColor()));
+        }
+    }
+
+    private class UpdateListItem{
+        int start;
+        int end;
+        String categoryName;
+        String categoryColor;
+
+        public UpdateListItem(int start, int end, String categoryName, String categoryColor) {
+            this.start = start;
+            this.end = end;
+            this.categoryName = categoryName;
+            this.categoryColor = categoryColor;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public void setStart(int start) {
+            this.start = start;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
+        public void setEnd(int end) {
+            this.end = end;
+        }
+
+        public String getCategoryName() {
+            return categoryName;
+        }
+
+        public void setCategoryName(String categoryName) {
+            this.categoryName = categoryName;
+        }
+
+        public String getCategoryColor() {
+            return categoryColor;
+        }
+
+        public void setCategoryColor(String categoryColor) {
+            this.categoryColor = categoryColor;
+        }
     }
 
 }

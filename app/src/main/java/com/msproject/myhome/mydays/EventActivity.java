@@ -58,7 +58,7 @@ public class EventActivity extends AppCompatActivity {
         }
 
         for(int j=0; j< DBEvents.size();j++){
-            events.set(DBEvents.get(j).getEventNo(),DBEvents.get(j));
+            events.set(DBEvents.get(j).getEventNo() - quarterNo,DBEvents.get(j));
         }
 
 
@@ -107,6 +107,7 @@ public class EventActivity extends AppCompatActivity {
                         }
                         eventListAdapter.setItem(eventNo-quarterNo, new Event(eventNo,category.getCategoryName(),content));
                         eventListAdapter.notifyDataSetChanged();
+                        setResult(RESPONSE_SAVE_CODE);
                     }
                 });
         builder.setNegativeButton("취소",
