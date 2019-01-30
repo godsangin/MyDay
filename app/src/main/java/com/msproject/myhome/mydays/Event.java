@@ -39,4 +39,14 @@ public class Event {
     public void setEventContent(String eventContent) {
         this.eventContent = eventContent;
     }
+
+    public boolean equals(Event event){
+        if(event == null){
+            return false;
+        }
+        if(event.getEventNo() == this.eventNo && event.getCategoryName().equals(this.categoryName) && event.getEventContent().equals(this.eventContent)){
+            return true;
+        }
+        return false;
+    }
 }
