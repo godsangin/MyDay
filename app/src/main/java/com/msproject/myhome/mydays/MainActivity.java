@@ -166,8 +166,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void makeChart(){
-//        yValues.add(new PieEntry(1f,"기본"));
-//        yValues.add(new PieEntry(1f,"기본_2"));
+//        pieEntries.add(new PieEntry(1f,"기본"));
+//        pieEntries.add(new PieEntry(1f,"기본_2"));
 
         Description description = new Description();
         LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
@@ -292,8 +292,6 @@ public class MainActivity extends AppCompatActivity {
                 window.setLayout(x,y);
             }
         });
-
-
     }
 
     public void setCalendarDialogLisetener(){//CalendarDialog를 호출하고 해당 날짜를 클릭했을때 콜백을 받아 날짜 TextView와 전역변수 year를 수정함.
@@ -427,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class UpdateListItem{
+    public class UpdateListItem{
         int start;
         int end;
         String categoryName;
