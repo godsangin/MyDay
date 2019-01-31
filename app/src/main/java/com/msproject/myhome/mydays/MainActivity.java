@@ -340,6 +340,7 @@ public class MainActivity extends AppCompatActivity {
                 LocalDate lastDate = localDate.minusDays(1);
                 if(localDate.getYear() != lastDate.getYear()) year--;
                 calendarDate.setText(lastDate.getMonthOfYear() + "월 " + lastDate.getDayOfMonth() + "일");
+                loadEventData();
             }
         });
 
@@ -350,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
                 LocalDate nextDate = localDate.plusDays(1);
                 if(localDate.getYear() != nextDate.getYear()) year++;
                 calendarDate.setText(nextDate.getMonthOfYear() + "월 " + nextDate.getDayOfMonth() + "일");
+                loadEventData();
             }
         });
     }

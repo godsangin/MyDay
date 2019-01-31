@@ -147,7 +147,7 @@ public class SetCategoryActivity extends AppCompatActivity implements ColorPicke
                                         window.setLayout(x,y);
                                         break;
                                     case 1://삭제
-                                        dbHelper.delete(((Category)(gridAdapter.getItem(position))).getCategoryName());
+                                        dbHelper.delete(((Category)(gridAdapter.getItem(position))).getCategoryName(), ((Category)(gridAdapter.getItem(position))).getColor());
                                         gridAdapter.delete(position);
                                         gridAdapter.notifyDataSetChanged();
                                         dialog.dismiss();
