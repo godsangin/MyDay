@@ -9,11 +9,16 @@
     <include
         android:id="@+id/title_bar"
         layout="@layout/back_bt_titlebar"></include>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1.5dp"
+        android:background="@android:drawable/divider_horizontal_textfield"></View>
     <ListView
         android:id="@+id/event_listview"
         android:layout_height="280dp"
         android:layout_width="match_parent"
+        android:dividerHeight="0dp"
+        android:divider="@android:drawable/divider_horizontal_textfield"
         >
 
     </ListView>

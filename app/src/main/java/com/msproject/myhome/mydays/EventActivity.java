@@ -2,6 +2,7 @@ package com.msproject.myhome.mydays;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
@@ -15,6 +16,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -25,7 +27,7 @@ public class EventActivity extends AppCompatActivity {
     GridView gridView;
     CategoryGridAdapter categoryGridAdapter;
     ConstraintLayout titleBar;
-    String time;
+    String date;
     String content= "";
     int quarterNo;
     MydaysDBHelper myDaysDB = new MydaysDBHelper(this,"MyDays.db",null,1);
@@ -39,18 +41,18 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
         Intent mainIntent = getIntent();
-        time = mainIntent.getStringExtra("Date");
+        date = mainIntent.getStringExtra("Date");
+        Log.d("date==",date);
         eventListView = findViewById(R.id.event_listview);
         gridView  = findViewById(R.id.category_gridview);
         titleBar = findViewById(R.id.title_bar);
         quarterNo = Integer.parseInt(mainIntent.getStringExtra("Hour"));
         setResult(RESPONSE_UNSAVE_CODE);
-
-        setTitleContents();
+        setTitleContents(date);
 
 
         ArrayList<Event> events = new ArrayList<>();
-        ArrayList<Event> DBEvents = myDaysDB.getEvents(time,quarterNo);
+        ArrayList<Event> DBEvents = myDaysDB.getEvents(date,quarterNo);
         ArrayList<Category> categories = categoryDB.getResult();
 
         for(int i = 0; i < 6; i++){
@@ -71,18 +73,23 @@ public class EventActivity extends AppCompatActivity {
         gridView.setAdapter(categoryGridAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Category category = (Category) categoryGridAdapter.getItem(position);
+                view.setBackgroundColor(Color.parseColor("#6EA2D5"));
+//                parent.setBackgroundColor(Color.parseColor("#AA000000"));
                 eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                          @Override
                          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                              Event clickedEvent = (Event) eventListAdapter.getItem(position);
                              int eventNo = clickedEvent.eventNo;
-                             dialog(time,eventNo,category);
+                             dialog(date,eventNo,category);
 
                          }
-                    }
+
+                }
+
                 );
             }
         });
@@ -102,9 +109,6 @@ public class EventActivity extends AppCompatActivity {
                         content = contentEdit.getText().toString();
                         myDaysDB.insert(date,eventNo,category.getCategoryName(),content);
                         ArrayList<Event> events = myDaysDB.getResult(date);
-                        for(int i=0; i < events.size();i++){
-                            Log.d("Event==",events.get(i).toString());
-                        }
                         eventListAdapter.setItem(eventNo-quarterNo, new Event(eventNo,category.getCategoryName(),content));
                         eventListAdapter.notifyDataSetChanged();
                         setResult(RESPONSE_SAVE_CODE);
@@ -118,11 +122,16 @@ public class EventActivity extends AppCompatActivity {
                     }
                 });
         builder.show();
+
     }
 
-    public void setTitleContents(){
+    public void setTitleContents(String date){
+
         ImageView backButton = titleBar.findViewById(R.id.back_bt);
+        TextView dateView = titleBar.findViewById(R.id.bt_title);
         ImageView menuButton = titleBar.findViewById(R.id.menu_bt);
+        date = date.substring(2,4)+"월 "+date.substring(4,6)+"일";
+        dateView.setText(date);
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
