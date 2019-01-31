@@ -13,6 +13,7 @@ import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -161,7 +162,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, EventActivity.class);
         intent.putExtra("Hour", index + "");
         LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
-        intent.putExtra("Date", ld.toString().replace("-","").split("0")[1]);
+        Log.d("date==",ld.toString());
+        intent.putExtra("Date", ld.toString().replace("-","").substring(2,8));
+        Log.d("date==",ld.toString().replace("-",""));
         startActivityForResult(intent, 0);
     }
 

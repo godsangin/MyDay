@@ -33,7 +33,7 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         values.put("categoryName",categoryName);
         values.put("eventContent",eventContent);
         db.insert("MyDays",null,values);
-
+        db.close();
 //        String insertSql = "INSERT INTO MyDays VALUES("
 //        db.execSQL();
     }
@@ -42,12 +42,14 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String updateSql = "Update MyDays set categoryName ="+'"'+categoryName+'"'+" eventContent = "+'"'+eventContent+'"'+"where date="+'"'+date+'"'+" and eventNo="+eventNo;
         db.execSQL(updateSql);
+        db.close();
     }
 
     public  void delete(String date,int eventNo){
         SQLiteDatabase db = getWritableDatabase();
         String deleteSql = "delete from MyDays where date ="+'"'+date+'"'+" and eventNo="+eventNo;
         db.execSQL(deleteSql);
+        db.close();
     }
 
     public ArrayList<Event> getResult(String date){
@@ -58,7 +60,7 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         while(cursor.moveToNext()){
             events.add(new Event(cursor.getInt(1),cursor.getString(2),cursor.getString(3)));
         }
-
+        db.close();
         return events;
     }
 
@@ -71,11 +73,13 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         while (cursor.moveToNext()){
             events.add(new Event(cursor.getInt(1),cursor.getString(2),cursor.getString(3)));
         }
+        db.close();
         return events;
     }
 
     public void clearDB(){
         SQLiteDatabase db =getWritableDatabase();
         db.execSQL("DELETE FROM MyDays");
+        db.close();
     }
 }
