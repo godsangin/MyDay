@@ -15,7 +15,7 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE CATEGORY (_id INTEGER PRIMARY KEY AUTOINCREMENT, categoryName TEXT, color TEXT);");
+        db.execSQL("CREATE TABLE CATEGORY (_id INTEGER PRIMARY KEY AUTOINCREMENT, categoryName TEXT, color TEXT, flag INTEGER);");
     }
 
     @Override
@@ -25,20 +25,29 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
 
     public void insert(String categoryName, String color){
         SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT count(*) FROM CATEGORY where categoryName="+'"'+categoryName+'"', null);
+        cursor.moveToNext();
+        int exist = cursor.getInt(0);
+        if(exist != 0){
+            Log.d("exist==", exist + "");
+            update(categoryName, color);
+            db.close();
+            return;
+        }
+        db.execSQL("insert into category values(null,"+'"'+categoryName+'"'+","+'"'+color+'"'+",1);");
 
-        db.execSQL("INSERT INTO CATEGORY VALUES(null, '"+ categoryName + "', '" + color + "');");
         db.close();
     }
 
     public void update(String categoryName, String color){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("UPDATE CATEGORY SET color='"+ color + "' WHERE categoryName='" + categoryName + "';");
+        db.execSQL("UPDATE CATEGORY SET color='"+ color + "', flag = 1 WHERE categoryName='" + categoryName + "';");
         db.close();
     }
 
-    public void delete(String categoryName){
+    public void delete(String categoryName, String color){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("DELETE FROM CATEGORY WHERE categoryName='" + categoryName + "';");
+        db.execSQL("UPDATE CATEGORY SET color='"+ color + "', flag = 0 WHERE categoryName='" + categoryName + "';");
         db.close();
     }
 
@@ -49,8 +58,13 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM CATEGORY", null);
 
         while(cursor.moveToNext()){
-            categories.add(new Category(cursor.getString(1),cursor.getString(2)));
+            Category category = new Category(cursor.getString(1),cursor.getString(2));
+            if(cursor.getInt(3) == 0){
+                continue;
+            }
+            categories.add(category);
         }
+        db.close();
         return categories;
     }
 
@@ -61,6 +75,7 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
         cursor.moveToNext();
 
         Log.d("color==", cursor.getString(2));
+        db.close();
         return cursor.getString(2);
     }
 
