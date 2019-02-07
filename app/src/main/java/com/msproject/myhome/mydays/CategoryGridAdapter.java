@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -37,7 +38,20 @@ public class CategoryGridAdapter extends BaseAdapter {
         return categories.size();
     }
 
+    private boolean exist(Category category){
+        for(int i = 0; i < categories.size(); i++){
+            if(categories.get(i).getCategoryName().equals(category.categoryName)){
+//                modify(category, i);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void add(Category category){
+        if(exist(category)){
+            return;
+        }
         categories.add(category);
     }
     public void modify(Category category, int index){

@@ -20,6 +20,7 @@ public class SettingActivity extends AppCompatActivity {
     ConstraintLayout titleBar;
     RecyclerView recyclerView;
     Context context;
+    private final int CATEGORY_RESULT_CODE = 4;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -35,6 +36,7 @@ public class SettingActivity extends AppCompatActivity {
         titleBar = findViewById(R.id.title_bar);
         recyclerView = findViewById(R.id.setting_recycler_view);
         context = this;
+        setResult(CATEGORY_RESULT_CODE);//수정확인위함
 
         backButtonEnable();
 

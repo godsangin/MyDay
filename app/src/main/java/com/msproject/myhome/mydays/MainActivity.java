@@ -405,10 +405,11 @@ public class MainActivity extends AppCompatActivity {
     public void loadEventData(){//
         //이벤트 추가
         LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
-        String todayString = ld.toString().replace("-","").split("0")[1];
+        String todayString = ld.toString().replace("-","").substring(2,8);
+        Log.d("today==",todayString);
         ArrayList<Event> events = mydaysDBHelper.getResult(todayString);
         if(events.isEmpty()){
-            updateChart(true, 0, 0, "", 100);
+            updateChart(false, 0, 23, "", 100);
         }
         ArrayList<UpdateListItem> updateListItems = new ArrayList<>();
         Event temp = null;

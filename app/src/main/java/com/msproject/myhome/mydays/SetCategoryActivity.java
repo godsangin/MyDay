@@ -39,6 +39,7 @@ public class SetCategoryActivity extends AppCompatActivity implements ColorPicke
     final CharSequence[] items = {"색상 변경", "삭제", "취소"};
     MyDialogListener myDialogListener;
 
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
