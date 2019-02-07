@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,9 +33,13 @@ public class EventActivity extends AppCompatActivity {
     int quarterNo;
     MydaysDBHelper myDaysDB = new MydaysDBHelper(this,"MyDays.db",null,1);
     CategoryDBHelper categoryDB = new CategoryDBHelper(this,"CATEGORY.db",null,1);
+    ArrayList<Category> categories;
 
     private final int RESPONSE_SAVE_CODE = 1;
     private final int RESPONSE_UNSAVE_CODE = 0;
+
+    private final int REQUEST_SETTING_CODE = 3;
+    private final int RESPONSE_SETTING_CODE = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +47,18 @@ public class EventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event);
         Intent mainIntent = getIntent();
         date = mainIntent.getStringExtra("Date");
-        Log.d("date==",date);
+        categories = new ArrayList<>();
         eventListView = findViewById(R.id.event_listview);
         gridView  = findViewById(R.id.category_gridview);
         titleBar = findViewById(R.id.title_bar);
         quarterNo = Integer.parseInt(mainIntent.getStringExtra("Hour"));
         setResult(RESPONSE_UNSAVE_CODE);
         setTitleContents(date);
-
+        setCategories();
 
         ArrayList<Event> events = new ArrayList<>();
         ArrayList<Event> DBEvents = myDaysDB.getEvents(date,quarterNo);
-        ArrayList<Category> categories = categoryDB.getResult();
+
 
         for(int i = 0; i < 6; i++){
             events.add(new Event(quarterNo+i,"",""));
@@ -69,8 +74,7 @@ public class EventActivity extends AppCompatActivity {
 
         eventListView.setAdapter(eventListAdapter);
 
-        categoryGridAdapter = new CategoryGridAdapter(categories,this);
-        gridView.setAdapter(categoryGridAdapter);
+
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -93,6 +97,17 @@ public class EventActivity extends AppCompatActivity {
                 );
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_SETTING_CODE){
+            if(resultCode == RESPONSE_SETTING_CODE){
+                setCategories();
+                categoryGridAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     public void dialog(final String date, final int eventNo, final Category category){
@@ -150,7 +165,7 @@ public class EventActivity extends AppCompatActivity {
                             startActivity(intent);
                         } else if (item.getItemId() == R.id.setting) {
                             Intent intent = new Intent(EventActivity.this, SettingActivity.class);
-                            startActivity(intent);
+                            startActivityForResult(intent, REQUEST_SETTING_CODE);
 
                         } else if (item.getItemId() == R.id.remove_ad) {//광고제거
 
@@ -165,8 +180,15 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                setResult(RESPONSE_SAVE_CODE);
             }
         });
+    }
+
+    public void setCategories(){
+        categories = categoryDB.getResult();
+        categoryGridAdapter = new CategoryGridAdapter(categories,this);
+        gridView.setAdapter(categoryGridAdapter);
     }
 
 
