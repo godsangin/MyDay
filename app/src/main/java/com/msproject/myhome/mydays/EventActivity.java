@@ -38,6 +38,8 @@ public class EventActivity extends AppCompatActivity {
     MydaysDBHelper myDaysDB = new MydaysDBHelper(this,"MyDays.db",null,1);
     CategoryDBHelper categoryDB = new CategoryDBHelper(this,"CATEGORY.db",null,1);
     ArrayList<Category> categories;
+    Category selectedCategory;
+    DragEventCallBackListener dragEventCallBackListener;
 
     private final int RESPONSE_SAVE_CODE = 1;
     private final int RESPONSE_UNSAVE_CODE = 0;
@@ -82,43 +84,35 @@ public class EventActivity extends AppCompatActivity {
         eventListAdapter = new EventListAdapter(events, this);
 
         eventListView.setAdapter(eventListAdapter);
+        dragEventCallBackListener = new DragEventCallBackListener() {
+            boolean canDrag;
+            @Override
+            public void setCanDrag(boolean canDrag){
+                this.canDrag = canDrag;
+            }
+            @Override
+            public void onDragFinished(ArrayList<Event> events) {
+                createDialog(date, events, selectedCategory);
+            }
+
+            @Override
+            public boolean dragable() {
+                return canDrag;
+            }
+        };
+        eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Category category = (Category) categoryGridAdapter.getItem(position);
+                selectedCategory = (Category) categoryGridAdapter.getItem(position);
                 view.setBackgroundColor(Color.parseColor("#6EA2D5"));
-//                parent.setBackgroundColor(Color.parseColor("#AA000000"));
-                eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                         @Override
-                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                             Event clickedEvent = (Event) eventListAdapter.getItem(position);
-                             int eventNo = clickedEvent.eventNo;
-                             dialog(date,eventNo,category);
-//                             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-//                             view.startDrag(null, shadowBuilder, position, 0);
-                         }
+//
+                //밖으로 빼야댐
 
-                });
-                DragEventCallBackListener dragEventCallBackListener = new DragEventCallBackListener() {
-                    boolean canDrag;
-                    @Override
-                    public void setCanDrag(boolean canDrag){
-                        this.canDrag = canDrag;
-                    }
-                    @Override
-                    public void onDragFinished(ArrayList<Event> events) {
-                        createDialog(date, events, category);
-                    }
+                eventListAdapter.setDragable(true);
 
-                    @Override
-                    public boolean Dragable() {
-                        return canDrag;
-                    }
-                };
-                dragEventCallBackListener.setCanDrag(true);
-                eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
             }
         });
 
