@@ -131,4 +131,6 @@ public class EventListAdapter extends BaseAdapter {
             return false;
         }
     }
+
+
 }
