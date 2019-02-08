@@ -4,6 +4,7 @@ public class Category {
     String categoryName;
     String color;
 
+
     public Category(String categoryName, String color) {
         this.categoryName = categoryName;
         this.color = color;
