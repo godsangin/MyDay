@@ -3,12 +3,17 @@ package com.msproject.myhome.mydays;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -32,28 +37,39 @@ public class EventActivity extends AppCompatActivity {
     int quarterNo;
     MydaysDBHelper myDaysDB = new MydaysDBHelper(this,"MyDays.db",null,1);
     CategoryDBHelper categoryDB = new CategoryDBHelper(this,"CATEGORY.db",null,1);
+    ArrayList<Category> categories;
 
     private final int RESPONSE_SAVE_CODE = 1;
     private final int RESPONSE_UNSAVE_CODE = 0;
 
+    private final int REQUEST_SETTING_CODE = 3;
+    private final int RESPONSE_SETTING_CODE = 4;
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
         Intent mainIntent = getIntent();
         date = mainIntent.getStringExtra("Date");
-        Log.d("date==",date);
+        categories = new ArrayList<>();
         eventListView = findViewById(R.id.event_listview);
         gridView  = findViewById(R.id.category_gridview);
         titleBar = findViewById(R.id.title_bar);
         quarterNo = Integer.parseInt(mainIntent.getStringExtra("Hour"));
         setResult(RESPONSE_UNSAVE_CODE);
         setTitleContents(date);
-
+        setCategories();
 
         ArrayList<Event> events = new ArrayList<>();
         ArrayList<Event> DBEvents = myDaysDB.getEvents(date,quarterNo);
-        ArrayList<Category> categories = categoryDB.getResult();
+
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            // 21 버전 이상일 때
+            //상단 바 색상 변경
+            getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
+        }
 
         for(int i = 0; i < 6; i++){
             events.add(new Event(quarterNo+i,"",""));
@@ -63,14 +79,9 @@ public class EventActivity extends AppCompatActivity {
             events.set(DBEvents.get(j).getEventNo() - quarterNo,DBEvents.get(j));
         }
 
-
-
         eventListAdapter = new EventListAdapter(events, this);
 
         eventListView.setAdapter(eventListAdapter);
-
-        categoryGridAdapter = new CategoryGridAdapter(categories,this);
-        gridView.setAdapter(categoryGridAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -85,14 +96,80 @@ public class EventActivity extends AppCompatActivity {
                              Event clickedEvent = (Event) eventListAdapter.getItem(position);
                              int eventNo = clickedEvent.eventNo;
                              dialog(date,eventNo,category);
-
+//                             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+//                             view.startDrag(null, shadowBuilder, position, 0);
                          }
 
-                }
+                });
+                DragEventCallBackListener dragEventCallBackListener = new DragEventCallBackListener() {
+                    boolean canDrag;
+                    @Override
+                    public void setCanDrag(boolean canDrag){
+                        this.canDrag = canDrag;
+                    }
+                    @Override
+                    public void onDragFinished(ArrayList<Event> events) {
+                        createDialog(date, events, category);
+                    }
 
-                );
+                    @Override
+                    public boolean Dragable() {
+                        return canDrag;
+                    }
+                };
+                dragEventCallBackListener.setCanDrag(true);
+                eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
             }
         });
+
+        eventListView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                return false;
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_SETTING_CODE){
+            if(resultCode == RESPONSE_SETTING_CODE){
+                setCategories();
+                categoryGridAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    public void createDialog(final String date, final ArrayList<Event> events, final Category category){
+        final EditText contentEdit = new EditText(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Event 내용 입력");
+        builder.setMessage("세부내용을 입력해주세요");
+        builder.setView(contentEdit);
+        builder.setPositiveButton("입력",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        content = contentEdit.getText().toString();
+                        for(int i = 0; i < events.size(); i++){
+                            myDaysDB.insert(date, events.get(i).getEventNo(), category.getCategoryName(), content);
+                            eventListAdapter.setItem(events.get(i).getEventNo() - quarterNo, new Event(events.get(i).getEventNo(), category.getCategoryName(), content));
+                        }
+                        ArrayList<Event> events = myDaysDB.getResult(date);
+                        eventListAdapter.notifyDataSetChanged();
+                        setResult(RESPONSE_SAVE_CODE);
+                    }
+                });
+        builder.setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
     }
 
     public void dialog(final String date, final int eventNo, final Category category){
@@ -150,7 +227,7 @@ public class EventActivity extends AppCompatActivity {
                             startActivity(intent);
                         } else if (item.getItemId() == R.id.setting) {
                             Intent intent = new Intent(EventActivity.this, SettingActivity.class);
-                            startActivity(intent);
+                            startActivityForResult(intent, REQUEST_SETTING_CODE);
 
                         } else if (item.getItemId() == R.id.remove_ad) {//광고제거
 
@@ -165,8 +242,15 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                setResult(RESPONSE_SAVE_CODE);
             }
         });
+    }
+
+    public void setCategories(){
+        categories = categoryDB.getResult();
+        categoryGridAdapter = new CategoryGridAdapter(categories,this);
+        gridView.setAdapter(categoryGridAdapter);
     }
 
 

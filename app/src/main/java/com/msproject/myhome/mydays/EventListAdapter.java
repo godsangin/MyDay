@@ -2,7 +2,10 @@ package com.msproject.myhome.mydays;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -14,6 +17,13 @@ public class EventListAdapter extends BaseAdapter {
     ArrayList<Event> events;
     Context context;
     CategoryDBHelper dbHelper;
+    DragEventCallBackListener dragEventCallBackListener;
+    int startPos;
+    int endPos;
+
+    public void setDragEventCallBackListener(DragEventCallBackListener dragEventCallBackListener){
+        this.dragEventCallBackListener = dragEventCallBackListener;
+    }
 
     public EventListAdapter(ArrayList<Event> events, Context context){
         this.events = events;
@@ -41,7 +51,7 @@ public class EventListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_item, parent, false);
         TextView timeTextView = view.findViewById(R.id.event_time);
         TextView categoryName = view.findViewById(R.id.category_name);
@@ -61,8 +71,57 @@ public class EventListAdapter extends BaseAdapter {
             categoryName.setTextColor(Color.parseColor("#FFFFFF"));
             eventContent.setTextColor(Color.parseColor("#FFFFFF"));
         }
-
+        MyListViewDragListener myListViewDragListener = new MyListViewDragListener();
+        view.setId(position);
+        view.setOnDragListener(myListViewDragListener);
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+                startPos = position;
+                v.startDrag(null, shadowBuilder, null, 0);
+                return false;
+            }
+        });
 
         return view;
+    }
+
+    private class MyListViewDragListener implements View.OnDragListener{
+        int index;
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+
+            final int action = event.getAction();
+            switch(action){
+                case DragEvent.ACTION_DRAG_LOCATION:
+
+                    return true;
+                case DragEvent.ACTION_DRAG_STARTED:
+
+                    return true;
+                case DragEvent.ACTION_DRAG_ENTERED:
+//                    if(index == v.getId())
+                    v.setBackgroundColor(Color.BLUE);
+                    v.invalidate();
+                    index = v.getId();
+                    return true;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    return true;
+                case DragEvent.ACTION_DRAG_EXITED://되면 여기서 이벤트 추가해서 eventActivity로 콜백 ㄱㄱ
+
+                    v.invalidate();
+                    return true;
+                case DragEvent.ACTION_DROP:
+                    endPos = v.getId();
+                    Log.d("Start==", startPos + "End==" + endPos);
+                    ArrayList<Event> selectedEvent = new ArrayList<>(events.subList(startPos, endPos + 1));
+                    dragEventCallBackListener.onDragFinished(selectedEvent);
+                    return true;
+                default:
+                    break;
+            }
+            return false;
+        }
     }
 }

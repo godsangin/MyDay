@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {//추가된 이벤트가 있으면 chart를 새로그림 !
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == 1){
@@ -402,13 +402,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void loadEventData(){
+    public void loadEventData(){//
         //이벤트 추가
         LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
-        String todayString = ld.toString().replace("-","").split("0")[1];
+        String todayString = ld.toString().replace("-","").substring(2,8);
+        Log.d("today==",todayString);
         ArrayList<Event> events = mydaysDBHelper.getResult(todayString);
         if(events.isEmpty()){
-            updateChart(true, 0, 0, "", 100);
+            updateChart(true, 0, 24, "Default", Color.BLACK);
         }
         ArrayList<UpdateListItem> updateListItems = new ArrayList<>();
         Event temp = null;
@@ -427,6 +428,14 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < updateListItems.size(); i++){
             UpdateListItem updateItem = updateListItems.get(i);
             updateChart(true, updateItem.getStart(), updateItem.getEnd(), updateItem.getCategoryName(), Color.parseColor(updateItem.getCategoryColor()));
+        }
+    }
+
+    public void initiateChart(){
+        yValues.clear();
+        yValues.add(new PieEntry(24, ""));
+        for(int i = 0; i < 24; i++){
+            times[i] = "default";
         }
     }
 
