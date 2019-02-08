@@ -25,4 +25,12 @@ public class Category {
     public void setColor(String color) {
         this.color = color;
     }
+
+    public boolean equals(Category category){
+        if(this.categoryName.equals(category.getCategoryName())  && this.color.equals(category.getColor())){
+            return true;
+        }
+        return false;
+    }
+
 }
