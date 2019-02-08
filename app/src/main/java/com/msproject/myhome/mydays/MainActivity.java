@@ -409,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("today==",todayString);
         ArrayList<Event> events = mydaysDBHelper.getResult(todayString);
         if(events.isEmpty()){
-            updateChart(false, 0, 23, "", 100);
+            updateChart(true, 0, 24, "Default", Color.BLACK);
         }
         ArrayList<UpdateListItem> updateListItems = new ArrayList<>();
         Event temp = null;
@@ -428,6 +428,14 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < updateListItems.size(); i++){
             UpdateListItem updateItem = updateListItems.get(i);
             updateChart(true, updateItem.getStart(), updateItem.getEnd(), updateItem.getCategoryName(), Color.parseColor(updateItem.getCategoryColor()));
+        }
+    }
+
+    public void initiateChart(){
+        yValues.clear();
+        yValues.add(new PieEntry(24, ""));
+        for(int i = 0; i < 24; i++){
+            times[i] = "default";
         }
     }
 
