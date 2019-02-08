@@ -25,6 +25,10 @@ public class EventListAdapter extends BaseAdapter {
         this.dragEventCallBackListener = dragEventCallBackListener;
     }
 
+    public void setDragable(boolean b){
+        this.dragEventCallBackListener.setCanDrag(b);
+    }
+
     public EventListAdapter(ArrayList<Event> events, Context context){
         this.events = events;
         this.context = context;
@@ -77,7 +81,7 @@ public class EventListAdapter extends BaseAdapter {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
                 startPos = position;
                 v.startDrag(null, shadowBuilder, null, 0);
                 return false;
@@ -91,7 +95,9 @@ public class EventListAdapter extends BaseAdapter {
         int index;
         @Override
         public boolean onDrag(View v, DragEvent event) {
-
+            if(!dragEventCallBackListener.dragable()){
+                return false;
+            }
             final int action = event.getAction();
             switch(action){
                 case DragEvent.ACTION_DRAG_LOCATION:
@@ -117,6 +123,7 @@ public class EventListAdapter extends BaseAdapter {
                     Log.d("Start==", startPos + "End==" + endPos);
                     ArrayList<Event> selectedEvent = new ArrayList<>(events.subList(startPos, endPos + 1));
                     dragEventCallBackListener.onDragFinished(selectedEvent);
+                    dragEventCallBackListener.setCanDrag(false);
                     return true;
                 default:
                     break;
