@@ -1,5 +1,6 @@
 package com.msproject.myhome.mydays;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -35,6 +36,7 @@ public class EventActivity extends AppCompatActivity {
     ConstraintLayout titleBar;
     String date;
     String content= "";
+    Context context;
     int quarterNo;
     MydaysDBHelper myDaysDB = new MydaysDBHelper(this,"MyDays.db",null,1);
     CategoryDBHelper categoryDB = new CategoryDBHelper(this,"CATEGORY.db",null,1);
@@ -53,6 +55,7 @@ public class EventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
+        context = this;
         Intent mainIntent = getIntent();
         date = mainIntent.getStringExtra("Date");
         categories = new ArrayList<>();
@@ -63,7 +66,7 @@ public class EventActivity extends AppCompatActivity {
         setResult(RESPONSE_UNSAVE_CODE);
         setTitleContents(date);
         setCategories();
-        setOnListViewLongClickListener();
+
 
         ArrayList<Event> events = new ArrayList<>();
         ArrayList<Event> DBEvents = myDaysDB.getEvents(date,quarterNo);
@@ -108,10 +111,13 @@ public class EventActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                categoryGridAdapter.notifyDataSetChanged();
                 selectedCategory = (Category) categoryGridAdapter.getItem(position);
                 view.setBackgroundColor(Color.parseColor("#6EA2D5"));
-
+                Log.d("selectPosition==",Integer.toString(position));
+//                categoryGridAdapter
                 eventListAdapter.setDragable(true);
+
 
             }
         });
@@ -122,7 +128,7 @@ public class EventActivity extends AppCompatActivity {
                 return false;
             }
         });
-
+        setOnListViewLongClickListener();
 
     }
 
@@ -130,7 +136,7 @@ public class EventActivity extends AppCompatActivity {
         eventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("수행할 작업을 선택하세요");
                 builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                     @Override
@@ -150,6 +156,8 @@ public class EventActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"수정되었습니다",Toast.LENGTH_LONG).show();
                     }
                 });
+                AlertDialog longClickDialog = builder.create();
+                longClickDialog.show();
                 return false;
             }
         });
