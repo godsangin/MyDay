@@ -27,12 +27,20 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
     public void insert(String date, int eventNo, String categoryName, String eventContent){
         SQLiteDatabase db = getWritableDatabase(); //DB 오픈
 
-        ContentValues values = new ContentValues();
-        values.put("date",date);
-        values.put("eventNo",eventNo);
-        values.put("categoryName",categoryName);
-        values.put("eventContent",eventContent);
-        db.insert("MyDays",null,values);
+        int exist = getCount(date, eventNo);
+
+        if(exist == 1){
+            update(date,eventNo,categoryName,eventContent);
+        }
+        else {
+
+            ContentValues values = new ContentValues();
+            values.put("date", date);
+            values.put("eventNo", eventNo);
+            values.put("categoryName", categoryName);
+            values.put("eventContent", eventContent);
+            db.insert("MyDays", null, values);
+        }
         db.close();
 //        String insertSql = "INSERT INTO MyDays VALUES("
 //        db.execSQL();
@@ -62,6 +70,17 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         }
         db.close();
         return events;
+    }
+
+    public int getCount(String date,int eventNo){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT count(*) FROM MyDays where date="+date+" and eventNo",null);
+
+        cursor.moveToNext();
+        int count = cursor.getInt(0);
+        db.close();
+
+        return count;
     }
 
     public ArrayList<Event> getEvents(String date,int startNo){

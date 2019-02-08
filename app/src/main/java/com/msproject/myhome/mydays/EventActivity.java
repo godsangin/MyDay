@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -62,6 +63,7 @@ public class EventActivity extends AppCompatActivity {
         setResult(RESPONSE_UNSAVE_CODE);
         setTitleContents(date);
         setCategories();
+        setOnListViewLongClickListener();
 
         ArrayList<Event> events = new ArrayList<>();
         ArrayList<Event> DBEvents = myDaysDB.getEvents(date,quarterNo);
@@ -75,11 +77,11 @@ public class EventActivity extends AppCompatActivity {
 
         for(int i = 0; i < 6; i++){
             events.add(new Event(quarterNo+i,"",""));
-        }
+        }//listView 생성
 
         for(int j=0; j< DBEvents.size();j++){
             events.set(DBEvents.get(j).getEventNo() - quarterNo,DBEvents.get(j));
-        }
+        }// DB내의 Event들 load
 
         eventListAdapter = new EventListAdapter(events, this);
 
@@ -108,8 +110,6 @@ public class EventActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedCategory = (Category) categoryGridAdapter.getItem(position);
                 view.setBackgroundColor(Color.parseColor("#6EA2D5"));
-//
-                //밖으로 빼야댐
 
                 eventListAdapter.setDragable(true);
 
@@ -122,8 +122,68 @@ public class EventActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
     }
 
+    public void setOnListViewLongClickListener(){
+        eventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setTitle("수행할 작업을 선택하세요");
+                builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        eventListAdapter.setItem(position,new Event(((Event)(eventListAdapter.getItem(position))).eventNo,"",""));
+                        eventListAdapter.notifyDataSetChanged();
+                        myDaysDB.delete(date,((Event)eventListAdapter.getItem(position)).eventNo);
+                        Toast.makeText(getApplicationContext(),"삭제되었습니다",Toast.LENGTH_LONG).show();
+                    }
+                });
+                builder.setNegativeButton("수정", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String categoryName = ((Event)eventListAdapter.getItem(position)).categoryName;
+                        int eventNo = ((Event)eventListAdapter.getItem(position)).eventNo;
+                        dialog(date,eventNo,categoryName);
+                        Toast.makeText(getApplicationContext(),"수정되었습니다",Toast.LENGTH_LONG).show();
+                    }
+                });
+                return false;
+            }
+        });
+    }
+
+    public void dialog(final String date, final int eventNo, final String categoryName){
+        final EditText contentEdit = new EditText(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Event 내용 입력");
+        builder.setMessage("세부내용을 입력해주세요");
+        builder.setView(contentEdit);
+        builder.setPositiveButton("입력",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        content = contentEdit.getText().toString();
+                        myDaysDB.insert(date,eventNo,categoryName,content);
+                        ArrayList<Event> events = myDaysDB.getResult(date);
+                        eventListAdapter.setItem(eventNo-quarterNo, new Event(eventNo,categoryName,content));
+                        eventListAdapter.notifyDataSetChanged();
+                        setResult(RESPONSE_SAVE_CODE);
+                    }
+                });
+        builder.setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
+
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -166,35 +226,7 @@ public class EventActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public void dialog(final String date, final int eventNo, final Category category){
-        final EditText contentEdit = new EditText(this);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("Event 내용 입력");
-        builder.setMessage("세부내용을 입력해주세요");
-        builder.setView(contentEdit);
-        builder.setPositiveButton("입력",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        content = contentEdit.getText().toString();
-                        myDaysDB.insert(date,eventNo,category.getCategoryName(),content);
-                        ArrayList<Event> events = myDaysDB.getResult(date);
-                        eventListAdapter.setItem(eventNo-quarterNo, new Event(eventNo,category.getCategoryName(),content));
-                        eventListAdapter.notifyDataSetChanged();
-                        setResult(RESPONSE_SAVE_CODE);
-                    }
-                });
-        builder.setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        builder.show();
-
-    }
 
     public void setTitleContents(String date){
 
