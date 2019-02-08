@@ -35,11 +35,11 @@ public class EventActivity extends AppCompatActivity {
     CategoryGridAdapter categoryGridAdapter;
     ConstraintLayout titleBar;
     String date;
-    String content= "";
+    String content = "";
     Context context;
     int quarterNo;
-    MydaysDBHelper myDaysDB = new MydaysDBHelper(this,"MyDays.db",null,1);
-    CategoryDBHelper categoryDB = new CategoryDBHelper(this,"CATEGORY.db",null,1);
+    MydaysDBHelper myDaysDB = new MydaysDBHelper(this, "MyDays.db", null, 1);
+    CategoryDBHelper categoryDB = new CategoryDBHelper(this, "CATEGORY.db", null, 1);
     ArrayList<Category> categories;
     Category selectedCategory;
     DragEventCallBackListener dragEventCallBackListener;
@@ -60,7 +60,7 @@ public class EventActivity extends AppCompatActivity {
         date = mainIntent.getStringExtra("Date");
         categories = new ArrayList<>();
         eventListView = findViewById(R.id.event_listview);
-        gridView  = findViewById(R.id.category_gridview);
+        gridView = findViewById(R.id.category_gridview);
         titleBar = findViewById(R.id.title_bar);
         quarterNo = Integer.parseInt(mainIntent.getStringExtra("Hour"));
         setResult(RESPONSE_UNSAVE_CODE);
@@ -69,7 +69,7 @@ public class EventActivity extends AppCompatActivity {
 
 
         ArrayList<Event> events = new ArrayList<>();
-        ArrayList<Event> DBEvents = myDaysDB.getEvents(date,quarterNo);
+        ArrayList<Event> DBEvents = myDaysDB.getEvents(date, quarterNo);
 
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -78,12 +78,12 @@ public class EventActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
 
-        for(int i = 0; i < 6; i++){
-            events.add(new Event(quarterNo+i,"",""));
+        for (int i = 0; i < 6; i++) {
+            events.add(new Event(quarterNo + i, "", ""));
         }//listView 생성
 
-        for(int j=0; j< DBEvents.size();j++){
-            events.set(DBEvents.get(j).getEventNo() - quarterNo,DBEvents.get(j));
+        for (int j = 0; j < DBEvents.size(); j++) {
+            events.set(DBEvents.get(j).getEventNo() - quarterNo, DBEvents.get(j));
         }// DB내의 Event들 load
 
         eventListAdapter = new EventListAdapter(events, this);
@@ -91,10 +91,12 @@ public class EventActivity extends AppCompatActivity {
         eventListView.setAdapter(eventListAdapter);
         dragEventCallBackListener = new DragEventCallBackListener() {
             boolean canDrag;
+
             @Override
-            public void setCanDrag(boolean canDrag){
+            public void setCanDrag(boolean canDrag) {
                 this.canDrag = canDrag;
             }
+
             @Override
             public void onDragFinished(ArrayList<Event> events) {
                 createDialog(date, events, selectedCategory);
@@ -111,12 +113,21 @@ public class EventActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                categoryGridAdapter.notifyDataSetChanged();
-                selectedCategory = (Category) categoryGridAdapter.getItem(position);
-                view.setBackgroundColor(Color.parseColor("#6EA2D5"));
-                Log.d("selectPosition==",Integer.toString(position));
+//                categoryGridAdapter.notifyDataSetChanged();
+                for (int i = 0; i < gridView.getCount(); i++) {
+                    gridView.getChildAt(i).setBackgroundColor(gridView.getSolidColor());
+                }
+                Log.d("what==",categoryGridAdapter.getItem(position).toString());
+                if (selectedCategory != null && ((Category)(categoryGridAdapter.getItem(position))).equals(selectedCategory)) {
+                    selectedCategory = null;
+
+                }else{
+                    selectedCategory = (Category) categoryGridAdapter.getItem(position);
+                    view.setBackgroundColor(Color.parseColor("#6EA2D5"));
+                    eventListAdapter.setDragable(true);
+                }
+
 //                categoryGridAdapter
-                eventListAdapter.setDragable(true);
 
 
             }
@@ -132,38 +143,39 @@ public class EventActivity extends AppCompatActivity {
 
     }
 
-    public void setOnListViewLongClickListener(){
+    public void setOnListViewLongClickListener() {
         eventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                Log.d("long==", Integer.toString(position));
                 builder.setTitle("수행할 작업을 선택하세요");
                 builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        eventListAdapter.setItem(position,new Event(((Event)(eventListAdapter.getItem(position))).eventNo,"",""));
+                        eventListAdapter.setItem(position, new Event(((Event) (eventListAdapter.getItem(position))).eventNo, "", ""));
                         eventListAdapter.notifyDataSetChanged();
-                        myDaysDB.delete(date,((Event)eventListAdapter.getItem(position)).eventNo);
-                        Toast.makeText(getApplicationContext(),"삭제되었습니다",Toast.LENGTH_LONG).show();
+                        myDaysDB.delete(date, ((Event) eventListAdapter.getItem(position)).eventNo);
+                        Toast.makeText(getApplicationContext(), "삭제되었습니다", Toast.LENGTH_LONG).show();
                     }
                 });
                 builder.setNegativeButton("수정", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String categoryName = ((Event)eventListAdapter.getItem(position)).categoryName;
-                        int eventNo = ((Event)eventListAdapter.getItem(position)).eventNo;
-                        dialog(date,eventNo,categoryName);
-                        Toast.makeText(getApplicationContext(),"수정되었습니다",Toast.LENGTH_LONG).show();
+                        String categoryName = ((Event) eventListAdapter.getItem(position)).categoryName;
+                        int eventNo = ((Event) eventListAdapter.getItem(position)).eventNo;
+                        dialog(date, eventNo, categoryName);
+                        Toast.makeText(getApplicationContext(), "수정되었습니다", Toast.LENGTH_LONG).show();
                     }
                 });
                 AlertDialog longClickDialog = builder.create();
                 longClickDialog.show();
-                return false;
+                return true;
             }
         });
     }
 
-    public void dialog(final String date, final int eventNo, final String categoryName){
+    public void dialog(final String date, final int eventNo, final String categoryName) {
         final EditText contentEdit = new EditText(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -175,9 +187,9 @@ public class EventActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         content = contentEdit.getText().toString();
-                        myDaysDB.insert(date,eventNo,categoryName,content);
+                        myDaysDB.insert(date, eventNo, categoryName, content);
                         ArrayList<Event> events = myDaysDB.getResult(date);
-                        eventListAdapter.setItem(eventNo-quarterNo, new Event(eventNo,categoryName,content));
+                        eventListAdapter.setItem(eventNo - quarterNo, new Event(eventNo, categoryName, content));
                         eventListAdapter.notifyDataSetChanged();
                         setResult(RESPONSE_SAVE_CODE);
                     }
@@ -192,18 +204,19 @@ public class EventActivity extends AppCompatActivity {
         builder.show();
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_SETTING_CODE){
-            if(resultCode == RESPONSE_SETTING_CODE){
+        if (requestCode == REQUEST_SETTING_CODE) {
+            if (resultCode == RESPONSE_SETTING_CODE) {
                 setCategories();
                 categoryGridAdapter.notifyDataSetChanged();
             }
         }
     }
 
-    public void createDialog(final String date, final ArrayList<Event> events, final Category category){
+    public void createDialog(final String date, final ArrayList<Event> events, final Category category) {
         final EditText contentEdit = new EditText(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -215,7 +228,7 @@ public class EventActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         content = contentEdit.getText().toString();
-                        for(int i = 0; i < events.size(); i++){
+                        for (int i = 0; i < events.size(); i++) {
                             myDaysDB.insert(date, events.get(i).getEventNo(), category.getCategoryName(), content);
                             eventListAdapter.setItem(events.get(i).getEventNo() - quarterNo, new Event(events.get(i).getEventNo(), category.getCategoryName(), content));
                         }
@@ -235,13 +248,12 @@ public class EventActivity extends AppCompatActivity {
     }
 
 
-
-    public void setTitleContents(String date){
+    public void setTitleContents(String date) {
 
         ImageView backButton = titleBar.findViewById(R.id.back_bt);
         TextView dateView = titleBar.findViewById(R.id.bt_title);
         ImageView menuButton = titleBar.findViewById(R.id.menu_bt);
-        date = date.substring(2,4)+"월 "+date.substring(4,6)+"일";
+        date = date.substring(2, 4) + "월 " + date.substring(4, 6) + "일";
         dateView.setText(date);
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,9 +293,9 @@ public class EventActivity extends AppCompatActivity {
         });
     }
 
-    public void setCategories(){
+    public void setCategories() {
         categories = categoryDB.getResult();
-        categoryGridAdapter = new CategoryGridAdapter(categories,this);
+        categoryGridAdapter = new CategoryGridAdapter(categories, this);
         gridView.setAdapter(categoryGridAdapter);
     }
 
