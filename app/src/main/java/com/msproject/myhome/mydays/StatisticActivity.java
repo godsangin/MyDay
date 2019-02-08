@@ -87,18 +87,24 @@ public class StatisticActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateChart(0);
+//                pieChart.notifyDataSetChanged();
+//                pieChart.invalidate();
             }
         });
         btn_weekly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateChart(1);
+                pieChart.notifyDataSetChanged();
+                pieChart.invalidate();
             }
         });
         btn_monthly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateChart(2);
+                pieChart.notifyDataSetChanged();
+                pieChart.invalidate();
             }
         });
 
@@ -213,7 +219,12 @@ public class StatisticActivity extends AppCompatActivity {
             colors.add(ColorMakeHelper.getColor(category.get(i)));
         }
 
+        Log.d("@@@@@@@@@@@@@@@@@", "updateChart: " + colors + category.get(0));
+        Log.d("@@@@@@@@@@@@@@@@@", "updateChart: " + pieEntries);
         makeChart();
+
+        pieChart.notifyDataSetChanged();
+        pieChart.invalidate();
     }
 
     public ArrayList<String> getOneMonthDays(String date){

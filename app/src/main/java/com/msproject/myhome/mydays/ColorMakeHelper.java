@@ -8,6 +8,9 @@ public class ColorMakeHelper {
     private static HashMap<String, Integer> colors = new HashMap();
 
     public static Integer getColor(String category){
+        if(category == null || category.length() == 0){
+            return Color.argb(50,0xFF,0x40,0x81);
+        }
         return colors.get(category);
     }
 

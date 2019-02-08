@@ -22,6 +22,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -48,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
     MydaysDBHelper mydaysDBHelper;
     CategoryDBHelper categoryDBHelper;
 
+    String Default = "";
+    String DefaultLabel = "쉬는 시간";
+
+    int i = 0;
 
     ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
     ArrayList<Integer> colors = new ArrayList<>();
@@ -102,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         //왼쪽 아래
                         addTime(12);
                     }
-                    else if(centerX < touchX && centerY > touchY){
+                    else if(centerX < touchX && centerY > touchY) {
                         //오른쪽 위
                         addTime(0);
                     }
@@ -116,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);
         pieChart.setExtraOffsets(5,10,5,5);
 
@@ -125,22 +129,9 @@ public class MainActivity extends AppCompatActivity {
         pieChart.setDrawHoleEnabled(false);
         pieChart.setTouchEnabled(false);
         pieChart.setHoleColor(Color.WHITE);
-//        pieChart.setTransparentCircleRadius(61f);
 
-
-        for(int i = 0; i < 24; i++){
-            times[i] = "default";
-        }
-        yValues.add(new PieEntry(24,""));
-        ColorMakeHelper.setColor("default", Color.LTGRAY);
-        colors.add(Color.LTGRAY);
+        updateChart(false, 0, 0, "", ColorMakeHelper.getColor(null));
         loadEventData();
-
-
-//        updateChart(true, 0,6,"아무개", Color.BLUE);//여기에 이벤트 개수만큼 쓰기!
-//        updateChart(true, 12,15,"아무개2", Color.BLACK);//여기에 이벤트 개수만큼 쓰기!
-//        updateChart(true, 0, 0, "", 0);
-
     }
 
     @Override
@@ -156,9 +147,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addTime(int index){
-//        Bundle b = new Bundle();
-//        b.putInt("hour",index);
-
         Intent intent = new Intent(MainActivity.this, EventActivity.class);
         intent.putExtra("Hour", index + "");
         LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
@@ -169,19 +157,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void makeChart(){
-//        pieEntries.add(new PieEntry(1f,"기본"));
-//        pieEntries.add(new PieEntry(1f,"기본_2"));
-
-        Description description = new Description();
-        LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
-        description.setText(year + "." + localDate.getMonthOfYear() + "." + localDate.getDayOfMonth()); //라벨 : 오늘 날짜 적으면 좋을 듯
-        description.setTextSize(15);
-        pieChart.setDescription(description);
-
+//        Description description = new Description();
+//        LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
+//        description.setText(year + "." + localDate.getMonthOfYear() + "." + localDate.getDayOfMonth()); //라벨 : 오늘 날짜 적으면 좋을 듯
+//        description.setTextSize(15);
+//        pieChart.setDescription(description);
 
         PieDataSet dataSet = new PieDataSet(yValues,"");
 
-//        dataSet.setSliceSpace(3f);
         dataSet.setSliceSpace(0);
         dataSet.setSelectionShift(5f);
         dataSet.setColors(colors);
@@ -192,27 +175,25 @@ public class MainActivity extends AppCompatActivity {
 
         pieChart.setData(data);
 
-
-
         Legend legend = pieChart.getLegend();
-//        legend.setCustom(Color.YELLOW, new String[]{"씨발"});
         ArrayList<LegendEntry> legendEntries = new ArrayList<>();
         HashSet<String> s = new HashSet<>();
 
         for(int i = 0; i < 24; i++){
             if(!s.contains(times[i])){
                 s.add(times[i]);
-                legendEntries.add(new LegendEntry(times[i],legend.getForm(),legend.getFormSize(),legend.getFormLineWidth(),legend.getFormLineDashEffect(),ColorMakeHelper.getColor(times[i])));
+                if(times[i].length() == 0){
+                    legendEntries.add(new LegendEntry(DefaultLabel,legend.getForm(),legend.getFormSize(),legend.getFormLineWidth(),legend.getFormLineDashEffect(),ColorMakeHelper.getColor(times[i])));
+                }
+                else{
+                    legendEntries.add(new LegendEntry(times[i],legend.getForm(),legend.getFormSize(),legend.getFormLineWidth(),legend.getFormLineDashEffect(),ColorMakeHelper.getColor(times[i])));
+                }
             }
         }
         legend.setCustom(legendEntries);
     }
     public void updateChart(Boolean add, int start, int end, String category, int color){
         if(add){
-            int e_start = 0;
-            int e_end = 0;
-            int a_start = start;
-            int a_end = end;
             ArrayList<PieEntry> new_entry = new ArrayList<>();
             ArrayList<Integer> new_color = new ArrayList<>();
 
@@ -255,21 +236,18 @@ public class MainActivity extends AppCompatActivity {
                 new_color.add(ColorMakeHelper.getColor(e.getLabel()));
             }
 
-//            PieEntry e = new_entry.get(0);
-//            PieEntry temp;
-//            for(int i = 1; i < new_entry.size(); i++){
-//                temp = new_entry.get(i);
-//                if(e.getLabel().equals(temp.getLabel())){
-//                    new_entry.remove(i);
-//                    colors.remove(i);
-//                    e.setY(e.getValue() + temp.getValue());
-//                    i--;
-//                }
-//                e = new_entry.get(i);
-//            }
-
             yValues = new_entry;
             colors = new_color;
+        }
+
+        else{
+            yValues = new ArrayList<>();
+            yValues.add(new PieEntry(24,""));
+            for(int i = 0; i < 24; i++){
+                times[i] = "";
+            }
+            colors = new ArrayList<>();
+            colors.add(color);
         }
 
         makeChart();
@@ -343,7 +321,14 @@ public class MainActivity extends AppCompatActivity {
                 LocalDate lastDate = localDate.minusDays(1);
                 if(localDate.getYear() != lastDate.getYear()) year--;
                 calendarDate.setText(lastDate.getMonthOfYear() + "월 " + lastDate.getDayOfMonth() + "일");
+
+                updateChart(false, 0, 24, "", ColorMakeHelper.getColor(null));
                 loadEventData();
+
+                pieChart.notifyDataSetChanged();
+                pieChart.invalidate();
+
+                Toast.makeText(getApplicationContext(), "왼쪽", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -354,7 +339,14 @@ public class MainActivity extends AppCompatActivity {
                 LocalDate nextDate = localDate.plusDays(1);
                 if(localDate.getYear() != nextDate.getYear()) year++;
                 calendarDate.setText(nextDate.getMonthOfYear() + "월 " + nextDate.getDayOfMonth() + "일");
+
+                updateChart(false, 0, 24, "", ColorMakeHelper.getColor(null));
                 loadEventData();
+
+                pieChart.notifyDataSetChanged();
+                pieChart.invalidate();
+
+                Toast.makeText(getApplicationContext(), "오른쪽", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -409,7 +401,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d("today==",todayString);
         ArrayList<Event> events = mydaysDBHelper.getResult(todayString);
         if(events.isEmpty()){
-            updateChart(true, 0, 24, "Default", Color.BLACK);
+            updateChart(true, 0, 24, Default, ColorMakeHelper.getColor(Default));
+            return;
         }
         ArrayList<UpdateListItem> updateListItems = new ArrayList<>();
         Event temp = null;
@@ -428,14 +421,6 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < updateListItems.size(); i++){
             UpdateListItem updateItem = updateListItems.get(i);
             updateChart(true, updateItem.getStart(), updateItem.getEnd(), updateItem.getCategoryName(), Color.parseColor(updateItem.getCategoryColor()));
-        }
-    }
-
-    public void initiateChart(){
-        yValues.clear();
-        yValues.add(new PieEntry(24, ""));
-        for(int i = 0; i < 24; i++){
-            times[i] = "default";
         }
     }
 
