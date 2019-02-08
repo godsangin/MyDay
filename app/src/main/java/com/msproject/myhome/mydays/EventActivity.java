@@ -11,7 +11,9 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -77,13 +79,9 @@ public class EventActivity extends AppCompatActivity {
             events.set(DBEvents.get(j).getEventNo() - quarterNo,DBEvents.get(j));
         }
 
-
-
         eventListAdapter = new EventListAdapter(events, this);
 
         eventListView.setAdapter(eventListAdapter);
-
-
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -98,12 +96,36 @@ public class EventActivity extends AppCompatActivity {
                              Event clickedEvent = (Event) eventListAdapter.getItem(position);
                              int eventNo = clickedEvent.eventNo;
                              dialog(date,eventNo,category);
-
+//                             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+//                             view.startDrag(null, shadowBuilder, position, 0);
                          }
 
-                }
+                });
+                DragEventCallBackListener dragEventCallBackListener = new DragEventCallBackListener() {
+                    boolean canDrag;
+                    @Override
+                    public void setCanDrag(boolean canDrag){
+                        this.canDrag = canDrag;
+                    }
+                    @Override
+                    public void onDragFinished(ArrayList<Event> events) {
+                        createDialog(date, events, category);
+                    }
 
-                );
+                    @Override
+                    public boolean Dragable() {
+                        return canDrag;
+                    }
+                };
+                dragEventCallBackListener.setCanDrag(true);
+                eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
+            }
+        });
+
+        eventListView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                return false;
             }
         });
     }
@@ -117,6 +139,37 @@ public class EventActivity extends AppCompatActivity {
                 categoryGridAdapter.notifyDataSetChanged();
             }
         }
+    }
+
+    public void createDialog(final String date, final ArrayList<Event> events, final Category category){
+        final EditText contentEdit = new EditText(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Event 내용 입력");
+        builder.setMessage("세부내용을 입력해주세요");
+        builder.setView(contentEdit);
+        builder.setPositiveButton("입력",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        content = contentEdit.getText().toString();
+                        for(int i = 0; i < events.size(); i++){
+                            myDaysDB.insert(date, events.get(i).getEventNo(), category.getCategoryName(), content);
+                            eventListAdapter.setItem(events.get(i).getEventNo() - quarterNo, new Event(events.get(i).getEventNo(), category.getCategoryName(), content));
+                        }
+                        ArrayList<Event> events = myDaysDB.getResult(date);
+                        eventListAdapter.notifyDataSetChanged();
+                        setResult(RESPONSE_SAVE_CODE);
+                    }
+                });
+        builder.setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
     }
 
     public void dialog(final String date, final int eventNo, final Category category){
