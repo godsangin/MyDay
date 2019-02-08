@@ -3,8 +3,10 @@ package com.msproject.myhome.mydays;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +43,7 @@ public class EventActivity extends AppCompatActivity {
     private final int REQUEST_SETTING_CODE = 3;
     private final int RESPONSE_SETTING_CODE = 4;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +62,12 @@ public class EventActivity extends AppCompatActivity {
         ArrayList<Event> events = new ArrayList<>();
         ArrayList<Event> DBEvents = myDaysDB.getEvents(date,quarterNo);
 
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            // 21 버전 이상일 때
+            //상단 바 색상 변경
+            getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
+        }
 
         for(int i = 0; i < 6; i++){
             events.add(new Event(quarterNo+i,"",""));
