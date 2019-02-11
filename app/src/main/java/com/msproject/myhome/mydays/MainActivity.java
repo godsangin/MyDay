@@ -390,6 +390,8 @@ public class MainActivity extends AppCompatActivity {
                 LocalDate ld = new LocalDate();
                 calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth() + "일");
                 year = ld.getYear();
+                Intent intent = new Intent(MainActivity.this, IntroMainActivity.class);
+                startActivity(intent);
             }
         });
     }

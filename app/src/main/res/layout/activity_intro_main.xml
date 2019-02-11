@@ -6,15 +6,81 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".IntroMainActivity"
-    android:background="#99000000"
+    android:background="#ffffff"
     >
+    <include
+        layout="@layout/title_bar"
+        android:id="@+id/tb"
+        />
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#77000000">
+
+    </android.support.constraint.ConstraintLayout>
+
     <ImageView
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/mouse_img"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/one_finger_mouse"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/mouse_img"
-        android:background="@drawable/one_finger_mouse"
+        app:layout_constraintTop_toTopOf="@+id/tb" />
+    <TextView
+        android:id="@+id/intro_text"
+        android:background="@drawable/border"
+        app:layout_constraintTop_toBottomOf="@+id/mouse_img"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:padding="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="오늘의 날짜를 확인하고 \n클릭 시 캘린더가 생성됩니다."
+        android:textColor="#777777"/>
+    <ImageView
+        android:id="@+id/mouse_img2"
         android:layout_width="48dp"
-        android:layout_height="48dp" />
+        android:layout_height="48dp"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/one_finger_mouse"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tb"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/intro_text2"
+        android:background="@drawable/border"
+        app:layout_constraintTop_toBottomOf="@+id/mouse_img2"
+        app:layout_constraintRight_toRightOf="parent"
+        android:padding="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="오늘의 날짜를 확인하고 \n클릭 시 캘린더가 생성됩니다."
+        android:textColor="#777777"
+        android:visibility="gone"/>
+    <ImageView
+        android:id="@+id/mouse_img3"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/one_finger_mouse"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/intro_text3"
+        android:background="@drawable/border"
+        app:layout_constraintTop_toBottomOf="@+id/mouse_img3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:padding="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="하루를 4분할하여 등록 및 관리할 수 있습니다."
+        android:textColor="#777777"
+        android:visibility="gone"/>
 </android.support.constraint.ConstraintLayout>
