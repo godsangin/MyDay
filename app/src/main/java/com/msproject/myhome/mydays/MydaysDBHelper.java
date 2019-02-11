@@ -28,7 +28,7 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase(); //DB 오픈
 
         int exist = getCount(date, eventNo);
-
+        Log.d("exist==", exist + "");
         if(exist == 1){
             update(date,eventNo,categoryName,eventContent);
         }
@@ -74,7 +74,7 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
 
     public int getCount(String date,int eventNo){
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT count(*) FROM MyDays where date="+date+" and eventNo",null);
+        Cursor cursor = db.rawQuery("SELECT * FROM MyDays where date="+date+" and eventNo",null);
 
         cursor.moveToNext();
         int count = cursor.getInt(0);
