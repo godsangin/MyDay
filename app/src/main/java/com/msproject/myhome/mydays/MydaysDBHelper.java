@@ -31,7 +31,6 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         cursor.moveToNext();
         int exist = cursor.getInt(0);
 
-
         if(exist == 1){
             update(date,eventNo,categoryName,eventContent);
 
@@ -74,7 +73,6 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         db.close();
         return events;
     }
-
 
     public ArrayList<Event> getEvents(String date,int startNo){
         ArrayList<Event> events = new ArrayList<>();
