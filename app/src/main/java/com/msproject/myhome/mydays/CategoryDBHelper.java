@@ -81,7 +81,7 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM CATEGORY where categoryName= "+'"'+categoryName+'"',null);
         cursor.moveToNext();
 
-        Log.d("color==", cursor.getString(2));
+//        Log.d("color==", cursor.getString(2));
         db.close();
         return cursor.getString(2);
     }

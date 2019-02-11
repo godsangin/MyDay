@@ -86,6 +86,7 @@ public class EventListAdapter extends BaseAdapter {
                 v.startDrag(null, shadowBuilder, null, 0);
                 return false;
             }
+
         });
 
         return view;
@@ -95,6 +96,7 @@ public class EventListAdapter extends BaseAdapter {
         int index;
         @Override
         public boolean onDrag(View v, DragEvent event) {
+
             if(!dragEventCallBackListener.dragable()){
                 return false;
             }
@@ -131,4 +133,6 @@ public class EventListAdapter extends BaseAdapter {
             return false;
         }
     }
+
+
 }

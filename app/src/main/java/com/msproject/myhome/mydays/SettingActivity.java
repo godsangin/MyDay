@@ -1,16 +1,27 @@
 package com.msproject.myhome.mydays;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DialogTitle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -46,7 +57,21 @@ public class SettingActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(settingRecyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.mouseup_event_item);
+//        recyclerView.startAnimation(animation);
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        IntroDialog iDialog = new IntroDialog(this);
+        iDialog.show();
+        iDialog.setCancelable(true);
+        iDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
+        Window window = iDialog.getWindow();
+        int x = (int)(size.x * 1.0f);
+        int y = (int)(size.y * 1.0f);
+
+        window.setLayout(x,y);
     }
 
     public void backButtonEnable(){
@@ -69,5 +94,24 @@ public class SettingActivity extends AppCompatActivity {
         mItems.add(new SettingItem("카테고리 설정", "카테고리를 추가 또는 삭제하거나, 카테고리의 색상을 변경할 수 있습니다."));
 
         return mItems;
+    }
+
+    private class IntroDialog extends Dialog{
+        private static final int LAYOUT = R.layout.activity_intro_main;
+        public IntroDialog(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(LAYOUT);
+
+            ImageView imageView = findViewById(R.id.mouse_img);
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.mouseup_event_item);
+            animation.setRepeatCount(3);
+            imageView.startAnimation(animation);
+            getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
     }
 }
