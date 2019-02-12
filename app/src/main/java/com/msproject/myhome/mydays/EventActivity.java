@@ -1,21 +1,26 @@
 package com.msproject.myhome.mydays;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.DragEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -25,10 +30,14 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
+
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
 
 
-public class EventActivity extends AppCompatActivity {
+public class EventActivity extends AppCompatActivity implements ColorPickerDialogListener {
     ListView eventListView;
     EventListAdapter eventListAdapter;
     GridView gridView;
@@ -43,6 +52,11 @@ public class EventActivity extends AppCompatActivity {
     ArrayList<Category> categories;
     Category selectedCategory;
     DragEventCallBackListener dragEventCallBackListener;
+    FloatingActionButton fab;
+    MyDialogListener myDialogListener;
+    final CharSequence[] items = {"색상 변경", "삭제", "취소"};
+    UpdateCategoryDialog Udialog;
+    private final int DIALOG_ID = 0;
 
     private final int RESPONSE_SAVE_CODE = 1;
     private final int RESPONSE_UNSAVE_CODE = 0;
@@ -62,6 +76,7 @@ public class EventActivity extends AppCompatActivity {
         eventListView = findViewById(R.id.event_listview);
         gridView = findViewById(R.id.category_gridview);
         titleBar = findViewById(R.id.title_bar);
+        fab = findViewById(R.id.fab);
         quarterNo = Integer.parseInt(mainIntent.getStringExtra("Hour"));
         setResult(RESPONSE_UNSAVE_CODE);
         setTitleContents(date);
@@ -140,6 +155,9 @@ public class EventActivity extends AppCompatActivity {
             }
         });
         setOnListViewLongClickListener();
+        setMyDialogListener();
+        setGridViewLongClickListener();
+        setFabOnClickListener();
 
     }
 
@@ -199,6 +217,7 @@ public class EventActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+
                     }
                 });
         builder.show();
@@ -241,6 +260,13 @@ public class EventActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        for(int i = 0; i < events.size(); i++){
+                            eventListAdapter.getView(events.get(i).getEventNo() - quarterNo).setBackgroundColor(eventListView.getSolidColor());
+                        }
+                        selectedCategory = null;
+                        for (int i = 0; i < gridView.getCount(); i++) {
+                            gridView.getChildAt(i).setBackgroundColor(gridView.getSolidColor());
+                        }
                         dialog.dismiss();
                     }
                 });
@@ -299,5 +325,116 @@ public class EventActivity extends AppCompatActivity {
         gridView.setAdapter(categoryGridAdapter);
     }
 
+    public void setMyDialogListener(){//카테고리를 설정하는 dialog에서 콜백을 받기 위한 Listener(customListener)
+        myDialogListener = new MyDialogListener() {
+            @Override
+            public void onPostClicked(Category category) {
+                categoryDB.insert(category.getCategoryName(), category.getColor());
+                categoryGridAdapter.add(category);
+                categoryGridAdapter.notifyDataSetChanged();
+            }
 
+            @Override
+            public void onModifyClicked(Category category, int index) {
+                categoryDB.update(category.getCategoryName(), category.getColor());
+                categoryGridAdapter.modify(category, index);
+                categoryGridAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNegativeClicked() {
+
+            }
+
+            @Override
+            public void onCalendatItemClicked(LocalDate localDate) {
+
+            }
+        };
+    }
+
+    public void setGridViewLongClickListener(){//GridView의 onItemLongLickListenr.
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+
+                builder.setTitle("수행할 작업을 선택하세요")
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case 0://수정
+                                        Udialog = new UpdateCategoryDialog(context, (Category) categoryGridAdapter.getItem(position), position);
+                                        Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+                                        Point size = new Point();
+                                        display.getSize(size);
+                                        Udialog.setDialogListener(myDialogListener);
+                                        dialog.dismiss();
+                                        Udialog.show();
+                                        Udialog.setCancelable(true);
+                                        Window window = Udialog.getWindow();
+                                        int x = (int)(size.x * 0.8f);
+                                        int y = (int)(size.y * 0.8f);
+                                        window.setLayout(x,y);
+                                        break;
+                                    case 1://삭제
+                                        categoryDB.delete(((Category)(categoryGridAdapter.getItem(position))).getCategoryName(), ((Category)(categoryGridAdapter.getItem(position))).getColor());
+                                        categoryGridAdapter.delete(position);
+                                        categoryGridAdapter.notifyDataSetChanged();
+                                        dialog.dismiss();
+                                        Toast.makeText(context, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 2:
+                                        dialog.dismiss();
+                                }
+                            }
+                        });
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                return false;
+            }
+        });
+    }
+
+    public void setFabOnClickListener(){
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Udialog = new UpdateCategoryDialog(context);
+                Display display = getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                Udialog.setDialogListener(myDialogListener);
+                Udialog.show();
+                Udialog.setCancelable(true);
+                Window window = Udialog.getWindow();
+                int x = (int)(size.x * 0.8f);
+                int y = (int)(size.y * 0.8f);
+
+                window.setLayout(x,y);
+            }
+        });
+    }
+
+    @Override
+    public void onColorSelected(int dialogId, int color) {
+        switch (dialogId){
+            case DIALOG_ID:
+                final int invertColor = ~color;
+                final String hexColor = String.format("%X", color);
+                final String hexInvertColor = String.format("%X", invertColor);
+                if (BuildConfig.DEBUG) {
+                    Log.d("color==", "id " + dialogId + " c: " + hexColor + " i:" + hexInvertColor);
+                }
+                Udialog.setPickedColor("#" + hexColor);
+                break;
+        }
+
+    }
+
+    @Override
+    public void onDialogDismissed(int dialogId) {
+
+    }
 }
