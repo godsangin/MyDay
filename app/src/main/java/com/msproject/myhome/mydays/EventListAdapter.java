@@ -1,5 +1,6 @@
 package com.msproject.myhome.mydays;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
@@ -15,11 +16,13 @@ import java.util.ArrayList;
 
 public class EventListAdapter extends BaseAdapter {
     ArrayList<Event> events;
+    ArrayList<View> views;
     Context context;
     CategoryDBHelper dbHelper;
     DragEventCallBackListener dragEventCallBackListener;
     int startPos;
     int endPos;
+    float deltaY;
 
     public void setDragEventCallBackListener(DragEventCallBackListener dragEventCallBackListener){
         this.dragEventCallBackListener = dragEventCallBackListener;
@@ -33,6 +36,7 @@ public class EventListAdapter extends BaseAdapter {
         this.events = events;
         this.context = context;
         dbHelper = new CategoryDBHelper(context, "CATEGORY.db", null, 1);
+        views = new ArrayList<>();
     }
 
     @Override
@@ -52,6 +56,10 @@ public class EventListAdapter extends BaseAdapter {
 
     public void setItem(int position, Event event){
         this.events.set(position, event);
+    }
+
+    public View getView(int position){
+        return views.get(position);
     }
 
     @Override
@@ -75,12 +83,14 @@ public class EventListAdapter extends BaseAdapter {
             categoryName.setTextColor(Color.parseColor("#FFFFFF"));
             eventContent.setTextColor(Color.parseColor("#FFFFFF"));
         }
-        MyListViewDragListener myListViewDragListener = new MyListViewDragListener();
+
         view.setId(position);
+        final MyListViewDragListener myListViewDragListener = new MyListViewDragListener();
         view.setOnDragListener(myListViewDragListener);
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+//                deltaY = event.getY();
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
                 startPos = position;
                 v.startDrag(null, shadowBuilder, null, 0);
@@ -88,12 +98,17 @@ public class EventListAdapter extends BaseAdapter {
             }
 
         });
-
+        views.add(view);
         return view;
     }
 
     private class MyListViewDragListener implements View.OnDragListener{
         int index;
+        boolean up;
+        boolean white;
+
+
+        @SuppressLint("ResourceType")
         @Override
         public boolean onDrag(View v, DragEvent event) {
 
@@ -103,27 +118,60 @@ public class EventListAdapter extends BaseAdapter {
             final int action = event.getAction();
             switch(action){
                 case DragEvent.ACTION_DRAG_LOCATION:
-
+                    if(startPos > v.getId()){//위로 드래그일 경우
+                        up = true;
+                    }
+                    else{//밑으로
+                        up = false;
+                    }
+                    if(deltaY > event.getY()){
+                        if(up || startPos == v.getId()){//위로 드래그 && 정상
+                            white = false;
+                        }
+                        else{//위로 드래그인 상황 && 드래그 취소로 밑으로 내려오는경우
+                            white = true;
+                        }
+                    }
+                    else{
+                        if(!up || startPos == v.getId()){//밑으로 드래그 && 정상
+                            white = false;
+                        }
+                        else{//밑으로 드래그 && 드래그 취소로 위로 올라가는 경우
+                            white = true;
+                        }
+                    }
+                    deltaY = event.getY();
                     return true;
                 case DragEvent.ACTION_DRAG_STARTED:
 
                     return true;
                 case DragEvent.ACTION_DRAG_ENTERED:
-//                    if(index == v.getId())
                     v.setBackgroundColor(Color.BLUE);
+
+
                     v.invalidate();
                     index = v.getId();
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
                     return true;
                 case DragEvent.ACTION_DRAG_EXITED://되면 여기서 이벤트 추가해서 eventActivity로 콜백 ㄱㄱ
-
+                    Log.d("exitdeltaY==", event.getY() + "");
+                    if(white){
+                        v.setBackgroundColor(Color.WHITE);
+                    }
                     v.invalidate();
                     return true;
                 case DragEvent.ACTION_DROP:
+
                     endPos = v.getId();
                     Log.d("Start==", startPos + "End==" + endPos);
-                    ArrayList<Event> selectedEvent = new ArrayList<>(events.subList(startPos, endPos + 1));
+                    ArrayList<Event> selectedEvent;
+                    if(startPos > endPos){
+                        selectedEvent = new ArrayList<>((events.subList(endPos, startPos + 1)));
+                    }
+                    else{
+                         selectedEvent = new ArrayList<>(events.subList(startPos, endPos + 1));
+                    }
                     dragEventCallBackListener.onDragFinished(selectedEvent);
                     dragEventCallBackListener.setCanDrag(false);
                     return true;
