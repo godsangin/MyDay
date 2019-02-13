@@ -2,15 +2,27 @@ package com.msproject.myhome.mydays;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.os.Build;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -57,6 +69,22 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
     ArrayList<Integer> colors = new ArrayList<>();
     String[] times = new String[24];
+    //서비스 객체
+    private IMySleepCountService binder;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            //binder전달받음. getCount메소드
+            binder = IMySleepCountService.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+    private Intent serviceIntent;
+    private boolean running = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @TargetApi(Build.VERSION_CODES.M)
@@ -77,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
         setTitleContents();
+
+        if(!running){
+            startSleepCount();
+        }
 
         if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
@@ -426,6 +458,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void startSleepCount(){
+        serviceIntent = new Intent(MainActivity.this, MyService.class);
+        bindService(serviceIntent, connection, BIND_AUTO_CREATE);
+        running = true;
+        new Thread(new GetCountThread()).start();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void notificationOn(int startTime, int count){
+        Log.d("notification==", "0n");
+        running = false;
+        unbindService(connection);
+        //https://developer.android.com/guide/topics/ui/notifiers/notifications?hl=ko
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent mPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        Bitmap mLargeIconForNoti = BitmapFactory.decodeResource(getResources(), R.drawable.clock_background);
+        //notification
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainActivity.this)
+                .setSmallIcon(R.drawable.clock_background)
+                .setContentTitle("수면시간을 등록해보세요.")
+                .setContentText(startTime + "시부터 " + (startTime + count) + "시까지 잠을 잤나요?")
+                .setDefaults(Notification.DEFAULT_SOUND)
+                .setLargeIcon(mLargeIconForNoti)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .setContentIntent(mPendingIntent);
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager.notify(0, mBuilder.build());
+    }
+
     public class UpdateListItem{
         int start;
         int end;
@@ -469,6 +534,41 @@ public class MainActivity extends AppCompatActivity {
 
         public void setCategoryColor(String categoryColor) {
             this.categoryColor = categoryColor;
+        }
+    }
+
+    private class GetCountThread implements Runnable{
+        private Handler handler = new Handler();
+
+        @Override
+        public void run() {
+            while(running){
+                if(binder == null){
+                    continue;
+                }
+                Log.d("binder==", binder + "");
+
+                handler.post(new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+                    @Override
+                    public void run() {
+                        try{
+                            if(binder.getCallback() && binder.getCount() > 3){
+                                notificationOn(binder.getStart(), binder.getCount());
+                                Log.d("count==", binder.getCount()+"");
+                                Log.d("startTime==" ,binder.getStart() + "");
+                            }
+                        }catch (RemoteException e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                try{
+                    Thread.sleep(10000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

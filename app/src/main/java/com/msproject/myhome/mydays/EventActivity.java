@@ -251,7 +251,6 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                             myDaysDB.insert(date, events.get(i).getEventNo(), category.getCategoryName(), content);
                             eventListAdapter.setItem(events.get(i).getEventNo() - quarterNo, new Event(events.get(i).getEventNo(), category.getCategoryName(), content));
                         }
-                        ArrayList<Event> events = myDaysDB.getResult(date);
                         eventListAdapter.notifyDataSetChanged();
                         setResult(RESPONSE_SAVE_CODE);
                     }

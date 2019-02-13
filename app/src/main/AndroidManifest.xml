@@ -24,7 +24,12 @@
         <activity android:name=".SettingActivity" />
         <activity android:name=".SetCategoryActivity" />
         <activity android:name=".InputActivity" />
-        <activity android:name=".IntroMainActivity"></activity>
+        <activity android:name=".IntroMainActivity" />
+
+        <service
+            android:name=".MyService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
