@@ -90,7 +90,8 @@ public class EventListAdapter extends BaseAdapter {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-//                deltaY = event.getY();
+
+                deltaY = event.getY();
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
                 startPos = position;
                 v.startDrag(null, shadowBuilder, null, 0);
@@ -155,13 +156,13 @@ public class EventListAdapter extends BaseAdapter {
                 case DragEvent.ACTION_DRAG_ENDED:
                     return true;
                 case DragEvent.ACTION_DRAG_EXITED://되면 여기서 이벤트 추가해서 eventActivity로 콜백 ㄱㄱ
-                    Log.d("exitdeltaY==", event.getY() + "");
                     if(white){
                         v.setBackgroundColor(Color.WHITE);
                     }
                     v.invalidate();
                     return true;
                 case DragEvent.ACTION_DROP:
+                    Log.d("exitdeltaY==", event.getY() + "");
 
                     endPos = v.getId();
                     Log.d("Start==", startPos + "End==" + endPos);
@@ -174,6 +175,7 @@ public class EventListAdapter extends BaseAdapter {
                     }
                     dragEventCallBackListener.onDragFinished(selectedEvent);
                     dragEventCallBackListener.setCanDrag(false);
+                    Log.d("endPos==",Integer.toString(endPos));
                     return true;
                 default:
                     break;
