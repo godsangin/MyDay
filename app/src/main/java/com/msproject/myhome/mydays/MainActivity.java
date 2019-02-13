@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         pieChart.setHoleColor(Color.WHITE);
 
         updateChart(false, 0, 0, "", ColorMakeHelper.getColor(null));
+        updateColorHelper();
         loadEventData();
     }
 
@@ -430,6 +431,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void updateColorHelper(){
+        ArrayList<Category> categories = categoryDBHelper.getResult();
+
+        for(Category c : categories){
+            Log.d("COLOR CHECK", "updateColorHelper: " + c.getCategoryName());
+            ColorMakeHelper.setColor(c.getCategoryName(), Color.parseColor(c.getColor()));
+        }
     }
 
     public void loadEventData(){//
