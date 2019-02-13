@@ -123,7 +123,6 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
             }
         };
         eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
-
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -135,6 +134,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                 Log.d("what==",categoryGridAdapter.getItem(position).toString());
                 if (selectedCategory != null && ((Category)(categoryGridAdapter.getItem(position))).equals(selectedCategory)) {
                     selectedCategory = null;
+                    eventListAdapter.setDragable(false);
 
                 }else{
                     selectedCategory = (Category) categoryGridAdapter.getItem(position);
@@ -252,6 +252,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                             eventListAdapter.setItem(events.get(i).getEventNo() - quarterNo, new Event(events.get(i).getEventNo(), category.getCategoryName(), content));
                         }
                         eventListAdapter.notifyDataSetChanged();
+                        categoryGridAdapter.notifyDataSetChanged();
                         setResult(RESPONSE_SAVE_CODE);
                     }
                 });
@@ -266,9 +267,18 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                         for (int i = 0; i < gridView.getCount(); i++) {
                             gridView.getChildAt(i).setBackgroundColor(gridView.getSolidColor());
                         }
+                        eventListAdapter.notifyDataSetChanged();
                         dialog.dismiss();
                     }
                 });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                eventListAdapter.notifyDataSetChanged();
+                categoryGridAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
         builder.show();
     }
 
