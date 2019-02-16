@@ -17,26 +17,28 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:orientation="vertical">
-        <Button
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="right"
-            android:text="X"
-            android:id="@+id/exit"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/sorryNoItem"
+            android:text="저장된 기록이 없어요 ㅠ_ㅠ"
+            android:textAlignment="center"
+            android:gravity="center_vertical"
+            android:textSize="30dp"
+            android:textColor="#AAAAAA"
+            />
 
         <com.github.mikephil.charting.charts.PieChart
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/piechart">
         </com.github.mikephil.charting.charts.PieChart>
+
+
 
     </LinearLayout>
 
