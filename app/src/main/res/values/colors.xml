@@ -3,6 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorTitleBar">#567789</color>
-
+    <color name="colorTitleBar">#A9E2F3</color>
+    <color name="background">#FFF</color>
+    <color name="textColor">#c6e6f5</color>
 </resources>

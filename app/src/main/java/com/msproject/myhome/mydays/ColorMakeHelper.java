@@ -9,7 +9,9 @@ public class ColorMakeHelper {
 
     public static Integer getColor(String category){
         if(category == null || category.length() == 0){
-            return Color.argb(50,0xFF,0x40,0x81);
+//            return Color.argb(50,0xBC,0xA9,0xF5);
+//            return Color.argb(50,0x58,0xAC,0xFA);
+            return Color.argb(50,0x58,0xD3, 0xF7);
         }
         return colors.get(category);
     }
