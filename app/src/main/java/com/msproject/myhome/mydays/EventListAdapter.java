@@ -1,15 +1,23 @@
 package com.msproject.myhome.mydays;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,6 +31,7 @@ public class EventListAdapter extends BaseAdapter {
     int startPos;
     int endPos;
     float deltaY;
+    Point touch;
 
     public void setDragEventCallBackListener(DragEventCallBackListener dragEventCallBackListener){
         this.dragEventCallBackListener = dragEventCallBackListener;
@@ -37,6 +46,8 @@ public class EventListAdapter extends BaseAdapter {
         this.context = context;
         dbHelper = new CategoryDBHelper(context, "CATEGORY.db", null, 1);
         views = new ArrayList<>();
+        touch = new Point();
+//        setTouchBoundaryListener();
     }
 
     @Override
@@ -88,12 +99,14 @@ public class EventListAdapter extends BaseAdapter {
         final MyListViewDragListener myListViewDragListener = new MyListViewDragListener();
         view.setOnDragListener(myListViewDragListener);
         view.setOnTouchListener(new View.OnTouchListener() {
+            @TargetApi(Build.VERSION_CODES.O)
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 //                deltaY = event.getY();
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
                 startPos = position;
-                v.startDrag(null, shadowBuilder, null, 0);
+                v.startDragAndDrop(null, shadowBuilder, null, 0);
+
                 return false;
             }
 
@@ -101,6 +114,7 @@ public class EventListAdapter extends BaseAdapter {
         views.add(view);
         return view;
     }
+    
 
     private class MyListViewDragListener implements View.OnDragListener{
         int index;
@@ -118,6 +132,7 @@ public class EventListAdapter extends BaseAdapter {
             final int action = event.getAction();
             switch(action){
                 case DragEvent.ACTION_DRAG_LOCATION:
+
                     if(startPos > v.getId()){//위로 드래그일 경우
                         up = true;
                     }
