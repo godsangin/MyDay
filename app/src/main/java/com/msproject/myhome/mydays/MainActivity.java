@@ -391,7 +391,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void setTitleContents(){//Title(today, menu) Button function
         TextView textView = titleBar.findViewById(R.id.today);
-
+        LocalDate ld = new LocalDate();
+        textView.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth());
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
