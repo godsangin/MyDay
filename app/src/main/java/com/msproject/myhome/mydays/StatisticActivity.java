@@ -3,7 +3,9 @@ package com.msproject.myhome.mydays;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -35,13 +37,13 @@ public class StatisticActivity extends AppCompatActivity {
 
     PieChart pieChart;
 
-    Button btn_daily, btn_weekly, btn_monthly, btn_exit;
+    Button btn_daily, btn_weekly, btn_monthly;
 
     ConstraintLayout titleBar;
     CalendarDialog calendarDialog;
     Context context;
     MyDialogListener myDialogListener;
-    TextView calendarDate, dateType;
+    TextView calendarDate, dateType, hasNoItem;
     int year; // 년도는 view에 존재하지 않기 때문에 변수로 담고 있어야함.
     MydaysDBHelper mydaysDBHelper;
     CategoryDBHelper categoryDBHelper;
@@ -49,16 +51,26 @@ public class StatisticActivity extends AppCompatActivity {
     ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
     ArrayList<Integer> colors = new ArrayList<>();
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic);
 
+
         titleBar = findViewById(R.id.statics_title_bar);
         context = this;
 
+        if (Build.VERSION.SDK_INT >= 21) {
+            // 21 버전 이상일 때
+            //상단 바 색상 변경
+            getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
+        }
+
         calendarDate = titleBar.findViewById(R.id.calendarDate);
         dateType = titleBar.findViewById(R.id.dateType);
+
+        hasNoItem = findViewById(R.id.sorryNoItem);
 
         ImageView lastdayButton = titleBar.findViewById(R.id.btPrev);
         ImageView nextdayButton = titleBar.findViewById(R.id.btNext);
@@ -72,14 +84,6 @@ public class StatisticActivity extends AppCompatActivity {
         btn_weekly = (Button) findViewById(R.id.btn_weekly);
         btn_monthly = (Button) findViewById(R.id.btn_monthly);
 
-        btn_exit = findViewById(R.id.exit);
-        btn_exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
         pieChart = (PieChart)findViewById(R.id.piechart);
 
 
@@ -87,24 +91,18 @@ public class StatisticActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateChart(0);
-//                pieChart.notifyDataSetChanged();
-//                pieChart.invalidate();
             }
         });
         btn_weekly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateChart(1);
-                pieChart.notifyDataSetChanged();
-                pieChart.invalidate();
             }
         });
         btn_monthly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateChart(2);
-                pieChart.notifyDataSetChanged();
-                pieChart.invalidate();
             }
         });
 
@@ -214,22 +212,28 @@ public class StatisticActivity extends AppCompatActivity {
             this.dateType.setText("월간");
         }
 
-        for(int i = 0; i < category.size(); i++){
-            pieEntries.add(new PieEntry(times.get(i), category.get(i)));
-            colors.add(ColorMakeHelper.getColor(category.get(i)));
+        if(category.size() > 0){
+            hasNoItem.setVisibility(View.GONE);
+            pieChart.setVisibility(View.VISIBLE);
+
+            Log.d("TEXT VIEW CHECK", "updateChart: " + hasNoItem.getText().toString());
+            for(int i = 0; i < category.size(); i++){
+                pieEntries.add(new PieEntry(times.get(i), category.get(i)));
+                colors.add(ColorMakeHelper.getColor(category.get(i)));
+            }
+            makeChart();
+
+            pieChart.notifyDataSetChanged();
+            pieChart.invalidate();
         }
-
-        Log.d("@@@@@@@@@@@@@@@@@", "updateChart: " + colors + category.get(0));
-        Log.d("@@@@@@@@@@@@@@@@@", "updateChart: " + pieEntries);
-        makeChart();
-
-        pieChart.notifyDataSetChanged();
-        pieChart.invalidate();
+        else{
+            hasNoItem.setVisibility(View.VISIBLE);
+            pieChart.setVisibility(View.GONE);
+        }
     }
 
     public ArrayList<String> getOneMonthDays(String date){
         ArrayList<String> monthDays = new ArrayList<>();
-
         Calendar c1 = Calendar.getInstance();
 
         c1.set(Integer.parseInt("20" + date.substring(0,2)),Integer.parseInt(date.substring(2,4)) - 1,Integer.parseInt(date.substring(4,6)));
@@ -237,7 +241,7 @@ public class StatisticActivity extends AppCompatActivity {
         int year1 = c1.get(Calendar.YEAR);
         int month1 = c1.get(Calendar.MONTH)+1;
 
-        for(int d = 1; d < c1.getActualMaximum(Calendar.DAY_OF_MONTH); d++){
+        for(int d = 1; d <= c1.getActualMaximum(Calendar.DAY_OF_MONTH); d++){
             monthDays.add(makeDate(year1,month1, d));
         }
 

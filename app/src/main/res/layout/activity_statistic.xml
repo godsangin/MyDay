@@ -17,26 +17,28 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:orientation="vertical">
-        <Button
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="right"
-            android:text="X"
-            android:id="@+id/exit"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/sorryNoItem"
+            android:text="저장된 기록이\n없어요 ㅠ_ㅠ"
+            android:textAlignment="center"
+            android:gravity="center_vertical"
+            android:textSize="24dp"
+            android:textColor="#AAAAAA"
+            />
 
         <com.github.mikephil.charting.charts.PieChart
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/piechart">
         </com.github.mikephil.charting.charts.PieChart>
+
+
 
     </LinearLayout>
 
@@ -52,10 +54,13 @@
             android:layout_weight="1"
             android:orientation="horizontal">
             <Button
+                android:textColor="@color/textColor"
+
                 android:id="@+id/btn_daily"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="일간"/>
+                android:text="일간"
+                android:background="@drawable/border2"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dip"
@@ -63,10 +68,13 @@
             android:layout_weight="1"
             android:orientation="horizontal">
             <Button
+                android:textColor="@color/textColor"
+
                 android:id="@+id/btn_weekly"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="주간"/>
+                android:text="주간"
+                android:background="@drawable/border2"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dip"
@@ -74,25 +82,27 @@
             android:layout_weight="1"
             android:orientation="horizontal">
             <Button
+                android:textColor="@color/textColor"
                 android:id="@+id/btn_monthly"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="월간"/>
+                android:text="월간"
+                android:background="@drawable/border2"/>
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dip"
-        android:orientation="horizontal"
-        android:background="#000"
-        android:gravity="center">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="광고"
-            android:textSize="30dip"
-            android:textColor="#FFF"
-            android:textAlignment="center" />
-    </LinearLayout>
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="60dip"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:background="#000"-->
+        <!--android:gravity="center">-->
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="광고"-->
+            <!--android:textSize="30dip"-->
+            <!--android:textColor="#FFF"-->
+            <!--android:textAlignment="center" />-->
+    <!--</LinearLayout>-->
 </LinearLayout>

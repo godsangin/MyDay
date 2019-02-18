@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -50,6 +51,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
+
+    EditText memo;
+    TextView dayofweek;
     ImageView menuButton;
     PieChart pieChart;
     ConstraintLayout titleBar;
@@ -163,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         pieChart.setHoleColor(Color.WHITE);
 
         updateChart(false, 0, 0, "", ColorMakeHelper.getColor(null));
+        updateColorHelper();
         loadEventData();
     }
 
@@ -223,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         legend.setCustom(legendEntries);
+        legend.setTextColor(R.color.textColor);
     }
     public void updateChart(Boolean add, int start, int end, String category, int color){
         if(add){
@@ -385,7 +391,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void setTitleContents(){//Title(today, menu) Button function
         TextView textView = titleBar.findViewById(R.id.today);
-
+        LocalDate ld = new LocalDate();
+        textView.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth());
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -426,6 +433,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void updateColorHelper(){
+        ArrayList<Category> categories = categoryDBHelper.getResult();
+
+        for(Category c : categories){
+            Log.d("COLOR CHECK", "updateColorHelper: " + c.getCategoryName());
+            ColorMakeHelper.setColor(c.getCategoryName(), Color.parseColor(c.getColor()));
+        }
     }
 
     public void loadEventData(){//
