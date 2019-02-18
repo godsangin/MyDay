@@ -1,7 +1,11 @@
 package com.msproject.myhome.mydays;
 
 import android.annotation.SuppressLint;
+
+import android.content.ClipDescription;
+
 import android.annotation.TargetApi;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -28,10 +32,16 @@ public class EventListAdapter extends BaseAdapter {
     Context context;
     CategoryDBHelper dbHelper;
     DragEventCallBackListener dragEventCallBackListener;
+    int preAction;
+    int lastIndex;
     int startPos;
     int endPos;
     float deltaY;
+
+    boolean isDraging;
+
     Point touch;
+
 
     public void setDragEventCallBackListener(DragEventCallBackListener dragEventCallBackListener){
         this.dragEventCallBackListener = dragEventCallBackListener;
@@ -105,7 +115,16 @@ public class EventListAdapter extends BaseAdapter {
                 deltaY = event.getY();
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
                 startPos = position;
+
+                if(isDraging){
+                    return false;
+                }
+                v.startDrag(null, shadowBuilder, null, 0);
+                isDraging = true;
+                dragEventCallBackListener.setStartPos(startPos);
+
                 v.startDragAndDrop(null, shadowBuilder, null, 0);
+
 
                 return false;
             }
@@ -117,10 +136,8 @@ public class EventListAdapter extends BaseAdapter {
     
 
     private class MyListViewDragListener implements View.OnDragListener{
-        int index;
         boolean up;
         boolean white;
-
 
         @SuppressLint("ResourceType")
         @Override
@@ -130,6 +147,7 @@ public class EventListAdapter extends BaseAdapter {
                 return false;
             }
             final int action = event.getAction();
+            Log.d("action2==",Integer.toString(action));
             switch(action){
                 case DragEvent.ACTION_DRAG_LOCATION:
 
@@ -158,29 +176,42 @@ public class EventListAdapter extends BaseAdapter {
                     deltaY = event.getY();
                     return true;
                 case DragEvent.ACTION_DRAG_STARTED:
-
                     return true;
                 case DragEvent.ACTION_DRAG_ENTERED:
                     v.setBackgroundColor(Color.BLUE);
-
-
-                    v.invalidate();
-                    index = v.getId();
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
+
+                    if(preAction == DragEvent.ACTION_DRAG_EXITED) {
+                        if (lastIndex == 5) {
+                            endPos = 5;
+
+                        } else {
+                            endPos = 0;
+                        }
+                        ArrayList<Event> selectedEvent;
+                        if (startPos > endPos) {
+                            selectedEvent = new ArrayList<>((events.subList(endPos, startPos + 1)));
+                        } else {
+                            selectedEvent = new ArrayList<>(events.subList(startPos, endPos + 1));
+                        }
+                        dragEventCallBackListener.onDragFinished(selectedEvent);
+                        dragEventCallBackListener.setCanDrag(false);
+                        isDraging = false;
+                    }
+
                     Log.d("index==", index + "");
+
                     return true;
                 case DragEvent.ACTION_DRAG_EXITED://되면 여기서 이벤트 추가해서 eventActivity로 콜백 ㄱㄱ
+                    preAction = event.getAction();
+                    lastIndex = v.getId();
                     if(white){
                         v.setBackgroundColor(Color.WHITE);
                     }
-                    v.invalidate();
-                    return true;
+                  return true;
                 case DragEvent.ACTION_DROP:
-                    Log.d("exitdeltaY==", event.getY() + "");
-
                     endPos = v.getId();
-                    Log.d("Start==", startPos + "End==" + endPos);
                     ArrayList<Event> selectedEvent;
                     if(startPos > endPos){
                         selectedEvent = new ArrayList<>((events.subList(endPos, startPos + 1)));
@@ -191,6 +222,7 @@ public class EventListAdapter extends BaseAdapter {
                     dragEventCallBackListener.onDragFinished(selectedEvent);
                     dragEventCallBackListener.setCanDrag(false);
                     Log.d("endPos==",Integer.toString(endPos));
+                    isDraging = false;
                     return true;
                 default:
                     break;

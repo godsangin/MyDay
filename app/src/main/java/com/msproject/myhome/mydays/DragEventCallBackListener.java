@@ -6,4 +6,5 @@ public interface DragEventCallBackListener {
     public void onDragFinished(ArrayList<Event> events);
     public void setCanDrag(boolean canDrag);
     public boolean dragable();
+    public void setStartPos(int startPos);
 }
