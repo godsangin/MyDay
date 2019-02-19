@@ -395,7 +395,7 @@ public class MainActivity extends AppCompatActivity {
     public void setTitleContents(){//Title(today, menu) Button function
         TextView textView = titleBar.findViewById(R.id.today);
         LocalDate ld = new LocalDate();
-        textView.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth());
+        calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth() + "일");
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -481,8 +481,8 @@ public class MainActivity extends AppCompatActivity {
         serviceIntent = new Intent(MainActivity.this, MyService.class);
         bindService(serviceIntent, connection, BIND_AUTO_CREATE);
         running = true;
-        countThread = new Thread(new GetCountThread());
-        countThread.start();
+//        countThread = new Thread(new GetCountThread());
+//        countThread.start();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -514,12 +514,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void setIntro(){
         SharedPreferences pref = getSharedPreferences("intro", MODE_PRIVATE);
-        String isEnded = pref.getString("isEnded", "");
+        String isEnded = pref.getString("isEndedMain", "");
         if(isEnded.equals("")){
             Intent intent = new Intent(MainActivity.this, IntroMainActivity.class);
             startActivity(intent);
             SharedPreferences.Editor editor = pref.edit();
-            editor.putString("isEnded", "true");
+            editor.putString("isEndedMain", "true");
             editor.commit();
         }
     }
@@ -581,17 +581,19 @@ public class MainActivity extends AppCompatActivity {
                 }
                 Log.d("binder==", binder + "");
 
-                handler.post(new Runnable() {
+                boolean post = handler.post(new Runnable() {
                     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void run() {
-                        try{
-                            if(binder.getCallback() && binder.getCount() > 3){
+                        try {
+                            if (binder.getCallback() && binder.getCount() > 3) {
                                 notificationOn(binder.getStart(), binder.getCount());
-                                Log.d("count==", binder.getCount()+"");
-                                Log.d("startTime==" ,binder.getStart() + "");
+
+                                Log.d("count==", binder.getCount() + "");
+                                Log.d("startTime==", binder.getStart() + "");
+                                return;
                             }
-                        }catch (RemoteException e){
+                        } catch (RemoteException e) {
                             e.printStackTrace();
                         }
                     }
