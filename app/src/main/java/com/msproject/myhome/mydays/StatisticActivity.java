@@ -3,7 +3,9 @@ package com.msproject.myhome.mydays;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -49,13 +51,21 @@ public class StatisticActivity extends AppCompatActivity {
     ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
     ArrayList<Integer> colors = new ArrayList<>();
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic);
 
+
         titleBar = findViewById(R.id.statics_title_bar);
         context = this;
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            // 21 버전 이상일 때
+            //상단 바 색상 변경
+            getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
+        }
 
         calendarDate = titleBar.findViewById(R.id.calendarDate);
         dateType = titleBar.findViewById(R.id.dateType);

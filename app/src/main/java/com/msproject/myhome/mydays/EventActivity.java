@@ -1,5 +1,6 @@
 package com.msproject.myhome.mydays;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,8 +51,11 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
     MydaysDBHelper myDaysDB = new MydaysDBHelper(this, "MyDays.db", null, 1);
     CategoryDBHelper categoryDB = new CategoryDBHelper(this, "CATEGORY.db", null, 1);
     ArrayList<Category> categories;
+    ArrayList<Event> events = new ArrayList<>();
     Category selectedCategory;
     DragEventCallBackListener dragEventCallBackListener;
+    int endPos;
+    int startPos;
     FloatingActionButton fab;
     MyDialogListener myDialogListener;
     final CharSequence[] items = {"색상 변경", "삭제", "취소"};
@@ -81,9 +85,9 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
         setResult(RESPONSE_UNSAVE_CODE);
         setTitleContents(date);
         setCategories();
+        startPos = -1;
 
 
-        ArrayList<Event> events = new ArrayList<>();
         ArrayList<Event> DBEvents = myDaysDB.getEvents(date, quarterNo);
 
 
@@ -121,6 +125,11 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
             public boolean dragable() {
                 return canDrag;
             }
+
+            @Override
+            public void setStartPos(int pos) {
+                startPos = pos;
+            }
         };
         eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -131,18 +140,16 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                 for (int i = 0; i < gridView.getCount(); i++) {
                     gridView.getChildAt(i).setBackgroundColor(gridView.getSolidColor());
                 }
-                Log.d("what==",categoryGridAdapter.getItem(position).toString());
-                if (selectedCategory != null && ((Category)(categoryGridAdapter.getItem(position))).equals(selectedCategory)) {
+                Log.d("what==", categoryGridAdapter.getItem(position).toString());
+                if (selectedCategory != null && ((Category) (categoryGridAdapter.getItem(position))).equals(selectedCategory)) {
                     selectedCategory = null;
                     eventListAdapter.setDragable(false);
 
-                }else{
+                } else {
                     selectedCategory = (Category) categoryGridAdapter.getItem(position);
                     view.setBackgroundColor(Color.parseColor("#6EA2D5"));
                     eventListAdapter.setDragable(true);
                 }
-
-//                categoryGridAdapter
 
 
             }
@@ -154,12 +161,14 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                 return false;
             }
         });
+
         setOnListViewLongClickListener();
         setMyDialogListener();
         setGridViewLongClickListener();
         setFabOnClickListener();
 
     }
+
 
     public void setOnListViewLongClickListener() {
         eventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -260,7 +269,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        for(int i = 0; i < events.size(); i++){
+                        for (int i = 0; i < events.size(); i++) {
                             eventListAdapter.getView(events.get(i).getEventNo() - quarterNo).setBackgroundColor(eventListView.getSolidColor());
                         }
                         selectedCategory = null;
@@ -334,7 +343,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
         gridView.setAdapter(categoryGridAdapter);
     }
 
-    public void setMyDialogListener(){//카테고리를 설정하는 dialog에서 콜백을 받기 위한 Listener(customListener)
+    public void setMyDialogListener() {//카테고리를 설정하는 dialog에서 콜백을 받기 위한 Listener(customListener)
         myDialogListener = new MyDialogListener() {
             @Override
             public void onPostClicked(Category category) {
@@ -362,7 +371,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
         };
     }
 
-    public void setGridViewLongClickListener(){//GridView의 onItemLongLickListenr.
+    public void setGridViewLongClickListener() {//GridView의 onItemLongLickListenr.
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -372,10 +381,10 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                         .setItems(items, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                switch (which){
+                                switch (which) {
                                     case 0://수정
                                         Udialog = new UpdateCategoryDialog(context, (Category) categoryGridAdapter.getItem(position), position);
-                                        Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+                                        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
                                         Point size = new Point();
                                         display.getSize(size);
                                         Udialog.setDialogListener(myDialogListener);
@@ -383,12 +392,12 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                                         Udialog.show();
                                         Udialog.setCancelable(true);
                                         Window window = Udialog.getWindow();
-                                        int x = (int)(size.x * 0.8f);
-                                        int y = (int)(size.y * 0.8f);
-                                        window.setLayout(x,y);
+                                        int x = (int) (size.x * 0.8f);
+                                        int y = (int) (size.y * 0.8f);
+                                        window.setLayout(x, y);
                                         break;
                                     case 1://삭제
-                                        categoryDB.delete(((Category)(categoryGridAdapter.getItem(position))).getCategoryName(), ((Category)(categoryGridAdapter.getItem(position))).getColor());
+                                        categoryDB.delete(((Category) (categoryGridAdapter.getItem(position))).getCategoryName(), ((Category) (categoryGridAdapter.getItem(position))).getColor());
                                         categoryGridAdapter.delete(position);
                                         categoryGridAdapter.notifyDataSetChanged();
                                         dialog.dismiss();
@@ -406,7 +415,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
         });
     }
 
-    public void setFabOnClickListener(){
+    public void setFabOnClickListener() {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -418,17 +427,17 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                 Udialog.show();
                 Udialog.setCancelable(true);
                 Window window = Udialog.getWindow();
-                int x = (int)(size.x * 0.8f);
-                int y = (int)(size.y * 0.8f);
+                int x = (int) (size.x * 0.8f);
+                int y = (int) (size.y * 0.8f);
 
-                window.setLayout(x,y);
+                window.setLayout(x, y);
             }
         });
     }
 
     @Override
     public void onColorSelected(int dialogId, int color) {
-        switch (dialogId){
+        switch (dialogId) {
             case DIALOG_ID:
                 final int invertColor = ~color;
                 final String hexColor = String.format("%X", color);
