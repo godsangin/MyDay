@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     int year; // 년도는 view에 존재하지 않기 때문에 변수로 담고 있어야함.
     MydaysDBHelper mydaysDBHelper;
     CategoryDBHelper categoryDBHelper;
+    Thread countThread;
 
     String Default = "";
     String DefaultLabel = "쉬는 시간";
@@ -109,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
         setTitleContents();
+        setIntro();
 
         if(!running){
             startSleepCount();
@@ -476,13 +479,17 @@ public class MainActivity extends AppCompatActivity {
         serviceIntent = new Intent(MainActivity.this, MyService.class);
         bindService(serviceIntent, connection, BIND_AUTO_CREATE);
         running = true;
-        new Thread(new GetCountThread()).start();
+        countThread = new Thread(new GetCountThread());
+        countThread.start();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void notificationOn(int startTime, int count){
         Log.d("notification==", "0n");
         running = false;
+        countThread.interrupt();
+        Thread t;
+
         unbindService(connection);
         //https://developer.android.com/guide/topics/ui/notifiers/notifications?hl=ko
         Intent resultIntent = new Intent(this, MainActivity.class);
@@ -496,13 +503,23 @@ public class MainActivity extends AppCompatActivity {
                 .setSmallIcon(R.drawable.clock_background)
                 .setContentTitle("수면시간을 등록해보세요.")
                 .setContentText(startTime + "시부터 " + (startTime + count) + "시까지 잠을 잤나요?")
-                .setDefaults(Notification.DEFAULT_SOUND)
                 .setLargeIcon(mLargeIconForNoti)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
                 .setContentIntent(mPendingIntent);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.notify(0, mBuilder.build());
+    }
+
+    public void setIntro(){
+        SharedPreferences pref = getSharedPreferences("intro", MODE_PRIVATE);
+        String isEnded = pref.getString("isEnded", "");
+        if(isEnded.equals("")){
+            Intent intent = new Intent(MainActivity.this, IntroMainActivity.class);
+            startActivity(intent);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("isEnded", "true");
+            editor.commit();
+        }
     }
 
     public class UpdateListItem{

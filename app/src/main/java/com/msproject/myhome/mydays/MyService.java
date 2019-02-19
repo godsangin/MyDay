@@ -23,6 +23,7 @@ public class MyService extends Service {
     int count;
     int startTime;
     public boolean callback;
+    Thread counter;
 
     IMySleepCountService.Stub binder = new IMySleepCountService.Stub() {
         @Override
@@ -56,6 +57,7 @@ public class MyService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         isStop = true;
+        counter.interrupt();
         return super.onUnbind(intent);
     }
 
@@ -64,7 +66,7 @@ public class MyService extends Service {
         super.onCreate();
         Log.d("service==", "create");
 
-        Thread counter = new Thread(new Counter());
+        counter = new Thread(new Counter());
         counter.start();
     }
 
