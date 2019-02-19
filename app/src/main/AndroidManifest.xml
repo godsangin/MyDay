@@ -30,6 +30,8 @@
             android:name=".MyService"
             android:enabled="true"
             android:exported="true" />
+
+        <activity android:name=".IntroEventActivity"></activity>
     </application>
 
 </manifest>

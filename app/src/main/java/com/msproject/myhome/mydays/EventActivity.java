@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
@@ -166,6 +167,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
         setMyDialogListener();
         setGridViewLongClickListener();
         setFabOnClickListener();
+        setIntro();
 
     }
 
@@ -434,6 +436,17 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
             }
         });
     }
+    public void setIntro(){
+        SharedPreferences pref = getSharedPreferences("intro", MODE_PRIVATE);
+        String isEnded = pref.getString("isEndedEvent", "");
+        if(isEnded.equals("")){
+            Intent intent = new Intent(EventActivity.this, IntroEventActivity.class);
+            startActivity(intent);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("isEndedEvent", "true");
+            editor.commit();
+        }
+    }
 
     @Override
     public void onColorSelected(int dialogId, int color) {
@@ -455,4 +468,5 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
     public void onDialogDismissed(int dialogId) {
 
     }
+
 }

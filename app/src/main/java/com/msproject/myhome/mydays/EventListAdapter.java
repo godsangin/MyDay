@@ -200,7 +200,6 @@ public class EventListAdapter extends BaseAdapter {
                         isDraging = false;
                     }
 
-                    Log.d("index==", index + "");
 
                     return true;
                 case DragEvent.ACTION_DRAG_EXITED://되면 여기서 이벤트 추가해서 eventActivity로 콜백 ㄱㄱ

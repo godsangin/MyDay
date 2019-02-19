@@ -1,16 +1,24 @@
 package com.msproject.myhome.mydays;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.nfc.Tag;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
@@ -77,13 +85,34 @@ public class MyService extends Service {
         super.onDestroy();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void sleepingEnd(){//notification발생 && 쓰레드멈춤..?
         callback = true;
+        isStop = true;
+        Log.d("dup??==", "ㅇㅇ");
+        Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent mPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        Bitmap mLargeIconForNoti = BitmapFactory.decodeResource(getResources(), R.drawable.ic_add_white_24dp);
+        //notification
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
+                .setSmallIcon(R.drawable.ic_add_white_24dp)
+                .setContentTitle("수면시간을 등록해보세요.")
+                .setContentText(startTime + "시부터 " + (startTime + count/360) + "시까지 잠을 잤나요?")
+                .setLargeIcon(mLargeIconForNoti)
+                .setAutoCancel(true)
+                .setContentIntent(mPendingIntent);
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager.notify(0, mBuilder.build());
+
     }
 
     private class Counter implements Runnable{
         boolean duplicate;
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void run() {
             while(!isStop){
@@ -92,7 +121,7 @@ public class MyService extends Service {
                 boolean isScreenOn = pm.isScreenOn();
                 Log.d("ScreenOn==", isScreenOn + "");
                 if(isScreenOn){
-                    if(duplicate && count < 3){//3시간=1080
+                    if(duplicate && count < 1080){//3시간=1080
                         count = 0;
                         long now = System.currentTimeMillis();
                         Date date = new Date(now);
@@ -105,7 +134,7 @@ public class MyService extends Service {
                         }
                         callback = true;
                     }
-                    else if(duplicate && count >= 3){
+                    else if(duplicate && count >= 1080){
                         sleepingEnd();
                         break;
                     }
