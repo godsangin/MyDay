@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -24,6 +25,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -108,10 +110,14 @@ public class MainActivity extends AppCompatActivity {
         mydaysDBHelper = new MydaysDBHelper(this,"MyDays.db",null,1);
         categoryDBHelper = new CategoryDBHelper(this,"CATEGORY.db",null,1);
         year = 2018;//임시
+
+
+
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
         setTitleContents();
         setIntro();
+        createSleepDialog();
 
         if(!running){
             startSleepCount();
@@ -522,6 +528,49 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("isEndedMain", "true");
             editor.commit();
         }
+    }
+
+    public void createSleepDialog(){
+        Intent serviceIntent = getIntent();
+        final int startTime = serviceIntent.getIntExtra("startTime", -1);
+        if(startTime != -1){
+            final int endTime = serviceIntent.getIntExtra("endTime", -1);
+            if(endTime != -1){
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setTitle("다음 일정을 등록하시겠습니까?");
+                builder.setMessage("수면: " + startTime + "시 ~ " + endTime + "시");
+                builder.setPositiveButton("확인",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                LocalDate ld = new LocalDate();
+                                String thisDay = ld.toString().replace("-","").substring(2,8);
+                                categoryDBHelper.insert("수면", "#123456");
+                                for(int i = startTime; i < endTime; i++){
+                                    mydaysDBHelper.insert(thisDay, i, "수면", "");
+                                    Log.d("insert==", thisDay + " " + i);
+                                }
+
+
+                            }
+                        });
+                builder.setNegativeButton("취소",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+            }
+        }//수면카테고리생성
     }
 
     public class UpdateListItem{
