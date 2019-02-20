@@ -19,6 +19,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
+        android:background="@color/backBorder"
         >
 
         <FrameLayout
@@ -120,7 +121,7 @@
                 android:layout_width="120dp"
                 android:layout_height="match_parent">
                 <TextView
-                    android:textColor="@color/textColor"
+                    android:textColor="@color/memoColor"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/dayofweek"
@@ -134,10 +135,10 @@
                 android:layout_margin="2dp"
                 android:layout_width="2dp"
                 android:layout_height="match_parent"
-                android:background="@color/colorTitleBar"/>
+                android:background="@color/borderColor"/>
             <EditText
-                android:textColorHint="@color/colorTitleBar"
-                android:textColor="@color/textColor"
+                android:textColorHint="@color/memoColor"
+                android:textColor="@color/memoColor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="30dp"
