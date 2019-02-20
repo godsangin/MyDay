@@ -7,11 +7,13 @@ import android.content.ClipDescription;
 import android.annotation.TargetApi;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.DragEvent;
@@ -20,9 +22,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -87,7 +91,7 @@ public class EventListAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_item, parent, false);
         TextView timeTextView = view.findViewById(R.id.event_time);
-        TextView categoryName = view.findViewById(R.id.category_name);
+        final TextView categoryName = view.findViewById(R.id.category_name);
         TextView eventContent = view.findViewById(R.id.event_content);
         if(events.get(position).eventNo < 10){
             timeTextView.setText("0"+events.get(position).getEventNo()+":00");
@@ -112,28 +116,32 @@ public class EventListAdapter extends BaseAdapter {
             @TargetApi(Build.VERSION_CODES.O)
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                deltaY = event.getY();
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
-                startPos = position;
-
-                if(isDraging){
-                    return false;
+                if((!dragEventCallBackListener.dragable())&& (!categoryName.getText().equals("")) &&event.getAction() == MotionEvent.ACTION_DOWN) {
+                    dragEventCallBackListener.click(position);
                 }
-                v.startDrag(null, shadowBuilder, null, 0);
-                isDraging = true;
-                dragEventCallBackListener.setStartPos(startPos);
+                else{
+                    deltaY = event.getY();
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
+                    startPos = position;
 
-                v.startDragAndDrop(null, shadowBuilder, null, 0);
+//                if(isDraging){
+//                    return false;
+//                }
+                    v.startDrag(null, shadowBuilder, null, 0);
+                    isDraging = true;
+                    dragEventCallBackListener.setStartPos(startPos);
 
+                    v.startDragAndDrop(null, shadowBuilder, null, 0);
+                }
 
-                return false;
+                return true;
             }
 
         });
         views.add(view);
         return view;
     }
-    
+
 
     private class MyListViewDragListener implements View.OnDragListener{
         boolean up;

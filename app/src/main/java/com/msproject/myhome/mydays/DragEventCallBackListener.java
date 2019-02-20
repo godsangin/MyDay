@@ -7,4 +7,5 @@ public interface DragEventCallBackListener {
     public void setCanDrag(boolean canDrag);
     public boolean dragable();
     public void setStartPos(int startPos);
+    public void click(int position);
 }
