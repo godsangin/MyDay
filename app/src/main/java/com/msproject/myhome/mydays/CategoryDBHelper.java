@@ -19,6 +19,7 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS CATEGORY (_id INTEGER PRIMARY KEY AUTOINCREMENT, categoryName TEXT, color TEXT, flag INTEGER);");
+
     }
 
     @Override
@@ -34,6 +35,9 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
         if(exist > 0){
             if(cursor.getInt(3) == 0){
                 update(categoryName, color);
+            }
+            else if(categoryName.equals("수면")){
+
             }
             else{
                 Toast.makeText(context, "이미 존재하는 카테고리입니다.", Toast.LENGTH_SHORT).show();

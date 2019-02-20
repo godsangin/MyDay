@@ -91,6 +91,8 @@ public class MyService extends Service {
         isStop = true;
         Log.d("dup??==", "ㅇㅇ");
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+        resultIntent.putExtra("startTime", startTime);
+        resultIntent.putExtra("endTime", startTime + (count / 6));
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MainActivity.class);
         stackBuilder.addNextIntent(resultIntent);
@@ -100,7 +102,7 @@ public class MyService extends Service {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(R.drawable.ic_add_white_24dp)
                 .setContentTitle("수면시간을 등록해보세요.")
-                .setContentText(startTime + "시부터 " + (startTime + count/360) + "시까지 잠을 잤나요?")
+                .setContentText(startTime + "시부터 " + (startTime + count/6) + "시까지 잠을 잤나요?")//360
                 .setLargeIcon(mLargeIconForNoti)
                 .setAutoCancel(true)
                 .setContentIntent(mPendingIntent);
@@ -121,7 +123,7 @@ public class MyService extends Service {
                 boolean isScreenOn = pm.isScreenOn();
                 Log.d("ScreenOn==", isScreenOn + "");
                 if(isScreenOn){
-                    if(duplicate && count < 1080){//3시간=1080
+                    if(duplicate && count < 6){//3시간=1080
                         count = 0;
                         long now = System.currentTimeMillis();
                         Date date = new Date(now);
@@ -134,7 +136,7 @@ public class MyService extends Service {
                         }
                         callback = true;
                     }
-                    else if(duplicate && count >= 1080){
+                    else if(duplicate && count >= 6){
                         sleepingEnd();
                         break;
                     }
