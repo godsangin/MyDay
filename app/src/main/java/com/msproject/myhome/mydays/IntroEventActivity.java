@@ -1,5 +1,7 @@
 package com.msproject.myhome.mydays;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ public class IntroEventActivity extends AppCompatActivity {
     ImageView imageThird;
     ListView eventListView;
     ArrayList<Event> events = new ArrayList<>();
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +50,12 @@ public class IntroEventActivity extends AppCompatActivity {
         }//listView 생성
         EventListAdapter eventListAdapter = new EventListAdapter(events, this);
         eventListView.setAdapter(eventListAdapter);
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            // 21 버전 이상일 때
+            //상단 바 색상 변경
+            getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
+        }
 
         firstContent.setOnClickListener(new View.OnClickListener() {
             @Override

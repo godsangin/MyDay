@@ -104,6 +104,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
 
         for (int j = 0; j < DBEvents.size(); j++) {
             events.set(DBEvents.get(j).getEventNo() - quarterNo, DBEvents.get(j));
+            Log.d("Event==", DBEvents.get(j).getCategoryName() + " " + DBEvents.get(j).getEventNo());
         }// DB내의 Event들 load
 
         eventListAdapter = new EventListAdapter(events, this);
