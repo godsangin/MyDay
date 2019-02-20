@@ -28,6 +28,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
@@ -44,13 +46,18 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
@@ -103,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         menuButton = findViewById(R.id.menu_bt);
         titleBar = findViewById(R.id.title_bar);
+        dayofweek = findViewById(R.id.dayofweek);
         context = this;
         calendarDate = titleBar.findViewById(R.id.calendar_date);
         ImageView lastdayButton = titleBar.findViewById(R.id.bt_lastday);
@@ -111,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         categoryDBHelper = new CategoryDBHelper(this,"CATEGORY.db",null,1);
         year = 2018;//임시
 
-
+        ColorMakeHelper.setColor("Default", getResources().getColor(R.color.piechartColor));
 
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
@@ -174,10 +182,27 @@ public class MainActivity extends AppCompatActivity {
         pieChart.setDrawHoleEnabled(false);
         pieChart.setTouchEnabled(false);
         pieChart.setHoleColor(Color.WHITE);
-
+        pieChart.setCenterTextColor(getResources().getColor(R.color.pieTextColor));
         updateChart(false, 0, 0, "", ColorMakeHelper.getColor(null));
         updateColorHelper();
         loadEventData();
+
+        calendarDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                changeDayOfWeek();
+            }
+        });
     }
 
     @Override
@@ -203,12 +228,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void makeChart(){
-//        Description description = new Description();
-//        LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
-//        description.setText(year + "." + localDate.getMonthOfYear() + "." + localDate.getDayOfMonth()); //라벨 : 오늘 날짜 적으면 좋을 듯
-//        description.setTextSize(15);
-//        pieChart.setDescription(description);
-
         PieDataSet dataSet = new PieDataSet(yValues,"");
 
         dataSet.setSliceSpace(0);
@@ -217,8 +236,13 @@ public class MainActivity extends AppCompatActivity {
 
         PieData data = new PieData((dataSet));
         data.setValueTextSize(10f);
-        data.setValueTextColor(Color.YELLOW);
-
+        data.setValueTextColor(getResources().getColor(R.color.pieTextColor));
+        data.setValueFormatter(new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return (int)value + " 시간";
+            }
+        });
         pieChart.setData(data);
 
         Legend legend = pieChart.getLegend();
@@ -237,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         legend.setCustom(legendEntries);
-        legend.setTextColor(R.color.textColor);
+        legend.setTextColor(getResources().getColor(R.color.textColor));
     }
     public void updateChart(Boolean add, int start, int end, String category, int color){
         if(add){
@@ -530,6 +554,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void changeDayOfWeek(){
+        Calendar c1 = Calendar.getInstance();
+        LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
+        String date = ld.toString().replace("-","").substring(2);
+        c1.set(Integer.parseInt("20" + date.substring(0,2)),Integer.parseInt(date.substring(2,4)) - 1,Integer.parseInt(date.substring(4,6)));
+
+        String[] dayOfWeekString = {"월", "화", "수", "목", "금", "토", "일"};
+
+        dayofweek.setText(dayOfWeekString[c1.get(Calendar.DAY_OF_WEEK) - 1]);
+    }
     public void createSleepDialog(){
         Intent serviceIntent = getIntent();
         final int startTime = serviceIntent.getIntExtra("startTime", -1);
