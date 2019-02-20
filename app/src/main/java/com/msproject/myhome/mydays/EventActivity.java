@@ -111,7 +111,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
         eventListView.setAdapter(eventListAdapter);
         dragEventCallBackListener = new DragEventCallBackListener() {
             boolean canDrag;
-
+            int position;
             @Override
             public void setCanDrag(boolean canDrag) {
                 this.canDrag = canDrag;
@@ -130,6 +130,11 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
             @Override
             public void setStartPos(int pos) {
                 startPos = pos;
+            }
+
+            @Override
+            public void click(int position) {
+                modifyDialog(position);
             }
         };
         eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
@@ -163,7 +168,6 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
             }
         });
 
-        setOnListViewLongClickListener();
         setMyDialogListener();
         setGridViewLongClickListener();
         setFabOnClickListener();
@@ -172,301 +176,296 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
     }
 
 
-    public void setOnListViewLongClickListener() {
-        eventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+    public void modifyDialog(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("수행할 작업을 선택하세요");
+        builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                Log.d("long==", Integer.toString(position));
-                builder.setTitle("수행할 작업을 선택하세요");
-                builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        eventListAdapter.setItem(position, new Event(((Event) (eventListAdapter.getItem(position))).eventNo, "", ""));
-                        eventListAdapter.notifyDataSetChanged();
-                        myDaysDB.delete(date, ((Event) eventListAdapter.getItem(position)).eventNo);
-                        Toast.makeText(getApplicationContext(), "삭제되었습니다", Toast.LENGTH_LONG).show();
-                    }
-                });
-                builder.setNegativeButton("수정", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String categoryName = ((Event) eventListAdapter.getItem(position)).categoryName;
-                        int eventNo = ((Event) eventListAdapter.getItem(position)).eventNo;
-                        dialog(date, eventNo, categoryName);
-                        Toast.makeText(getApplicationContext(), "수정되었습니다", Toast.LENGTH_LONG).show();
-                    }
-                });
-                AlertDialog longClickDialog = builder.create();
-                longClickDialog.show();
-                return true;
-            }
-        });
-    }
-
-    public void dialog(final String date, final int eventNo, final String categoryName) {
-        final EditText contentEdit = new EditText(this);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Event 내용 입력");
-        builder.setMessage("세부내용을 입력해주세요");
-        builder.setView(contentEdit);
-        builder.setPositiveButton("입력",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        content = contentEdit.getText().toString();
-                        myDaysDB.insert(date, eventNo, categoryName, content);
-                        ArrayList<Event> events = myDaysDB.getResult(date);
-                        eventListAdapter.setItem(eventNo - quarterNo, new Event(eventNo, categoryName, content));
-                        eventListAdapter.notifyDataSetChanged();
-                        setResult(RESPONSE_SAVE_CODE);
-                    }
-                });
-        builder.setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-
-                    }
-                });
-        builder.show();
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_SETTING_CODE) {
-            if (resultCode == RESPONSE_SETTING_CODE) {
-                setCategories();
-                categoryGridAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
-    public void createDialog(final String date, final ArrayList<Event> events, final Category category) {
-        final EditText contentEdit = new EditText(this);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Event 내용 입력");
-        builder.setMessage("세부내용을 입력해주세요");
-        builder.setView(contentEdit);
-        builder.setPositiveButton("입력",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        content = contentEdit.getText().toString();
-                        for (int i = 0; i < events.size(); i++) {
-                            myDaysDB.insert(date, events.get(i).getEventNo(), category.getCategoryName(), content);
-                            eventListAdapter.setItem(events.get(i).getEventNo() - quarterNo, new Event(events.get(i).getEventNo(), category.getCategoryName(), content));
-                        }
-                        eventListAdapter.notifyDataSetChanged();
-                        categoryGridAdapter.notifyDataSetChanged();
-                        setResult(RESPONSE_SAVE_CODE);
-                    }
-                });
-        builder.setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        for (int i = 0; i < events.size(); i++) {
-                            eventListAdapter.getView(events.get(i).getEventNo() - quarterNo).setBackgroundColor(eventListView.getSolidColor());
-                        }
-                        selectedCategory = null;
-                        for (int i = 0; i < gridView.getCount(); i++) {
-                            gridView.getChildAt(i).setBackgroundColor(gridView.getSolidColor());
-                        }
-                        eventListAdapter.notifyDataSetChanged();
-                        dialog.dismiss();
-                    }
-                });
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
+            public void onClick(DialogInterface dialog, int which) {
+                eventListAdapter.setItem(position, new Event(((Event) (eventListAdapter.getItem(position))).eventNo, "", ""));
                 eventListAdapter.notifyDataSetChanged();
-                categoryGridAdapter.notifyDataSetChanged();
-                dialog.dismiss();
+                myDaysDB.delete(date, ((Event) eventListAdapter.getItem(position)).eventNo);
+                Toast.makeText(getApplicationContext(), "삭제되었습니다", Toast.LENGTH_LONG).show();
             }
+        });
+        builder.setNegativeButton("수정", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String categoryName = ((Event) eventListAdapter.getItem(position)).categoryName;
+                int eventNo = ((Event) eventListAdapter.getItem(position)).eventNo;
+                dialog(date, eventNo, categoryName);
+            }
+        });
+        AlertDialog longClickDialog = builder.create();
+        longClickDialog.show();
+
+    }
+
+
+
+public void dialog(final String date,final int eventNo,final String categoryName){
+final EditText contentEdit=new EditText(this);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+
+        builder.setTitle("Event 내용 입력");
+        builder.setMessage("세부내용을 입력해주세요");
+        builder.setView(contentEdit);
+        builder.setPositiveButton("입력",
+        new DialogInterface.OnClickListener(){
+@Override
+public void onClick(DialogInterface dialog,int which){
+        content=contentEdit.getText().toString();
+        myDaysDB.insert(date,eventNo,categoryName,content);
+        ArrayList<Event> events=myDaysDB.getResult(date);
+        eventListAdapter.setItem(eventNo-quarterNo,new Event(eventNo,categoryName,content));
+        eventListAdapter.notifyDataSetChanged();
+        setResult(RESPONSE_SAVE_CODE);
+        }
+        });
+        builder.setNegativeButton("취소",
+        new DialogInterface.OnClickListener(){
+@Override
+public void onClick(DialogInterface dialog,int which){
+        dialog.dismiss();
+
+        }
         });
         builder.show();
-    }
+
+        }
+
+@Override
+protected void onActivityResult(int requestCode,int resultCode,@Nullable Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode==REQUEST_SETTING_CODE){
+        if(resultCode==RESPONSE_SETTING_CODE){
+        setCategories();
+        categoryGridAdapter.notifyDataSetChanged();
+        }
+        }
+        }
+
+public void createDialog(final String date,final ArrayList<Event> events,final Category category){
+final EditText contentEdit=new EditText(this);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+
+        builder.setTitle("Event 내용 입력");
+        builder.setMessage("세부내용을 입력해주세요");
+        builder.setView(contentEdit);
+        builder.setPositiveButton("입력",
+        new DialogInterface.OnClickListener(){
+@Override
+public void onClick(DialogInterface dialog,int which){
+        content=contentEdit.getText().toString();
+        for(int i=0;i<events.size();i++){
+        myDaysDB.insert(date,events.get(i).getEventNo(),category.getCategoryName(),content);
+        eventListAdapter.setItem(events.get(i).getEventNo()-quarterNo,new Event(events.get(i).getEventNo(),category.getCategoryName(),content));
+        }
+        eventListAdapter.notifyDataSetChanged();
+        categoryGridAdapter.notifyDataSetChanged();
+        setResult(RESPONSE_SAVE_CODE);
+        }
+        });
+        builder.setNegativeButton("취소",
+        new DialogInterface.OnClickListener(){
+@Override
+public void onClick(DialogInterface dialog,int which){
+        for(int i=0;i<events.size();i++){
+        eventListAdapter.getView(events.get(i).getEventNo()-quarterNo).setBackgroundColor(eventListView.getSolidColor());
+        }
+        selectedCategory=null;
+        for(int i=0;i<gridView.getCount();i++){
+        gridView.getChildAt(i).setBackgroundColor(gridView.getSolidColor());
+        }
+        eventListAdapter.notifyDataSetChanged();
+        dialog.dismiss();
+        }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener(){
+@Override
+public void onCancel(DialogInterface dialog){
+        eventListAdapter.notifyDataSetChanged();
+        categoryGridAdapter.notifyDataSetChanged();
+        dialog.dismiss();
+        }
+        });
+        builder.show();
+        }
 
 
-    public void setTitleContents(String date) {
+public void setTitleContents(String date){
 
-        ImageView backButton = titleBar.findViewById(R.id.back_bt);
-        TextView dateView = titleBar.findViewById(R.id.bt_title);
-        ImageView menuButton = titleBar.findViewById(R.id.menu_bt);
-        date = date.substring(2, 4) + "월 " + date.substring(4, 6) + "일";
+        ImageView backButton=titleBar.findViewById(R.id.back_bt);
+        TextView dateView=titleBar.findViewById(R.id.bt_title);
+        ImageView menuButton=titleBar.findViewById(R.id.menu_bt);
+        date=date.substring(2,4)+"월 "+date.substring(4,6)+"일";
         dateView.setText(date);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 버튼 클릭시 팝업 메뉴가 나오게 하기
-                // PopupMenu 는 API 11 레벨부터 제공한다
-                PopupMenu p = new PopupMenu(
-                        getApplicationContext(), // 현재 화면의 제어권자
-                        v); // anchor : 팝업을 띄울 기준될 위젯
-                getMenuInflater().inflate(R.menu.menu_main, p.getMenu());
-                // 이벤트 처리
-                p.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.statistic_graph) {//StatisicActivity로 intent
-                            Intent intent = new Intent(EventActivity.this, StatisticActivity.class);
-                            startActivity(intent);
-                        } else if (item.getItemId() == R.id.setting) {
-                            Intent intent = new Intent(EventActivity.this, SettingActivity.class);
-                            startActivityForResult(intent, REQUEST_SETTING_CODE);
+        menuButton.setOnClickListener(new View.OnClickListener(){
+@Override
+public void onClick(View v){
+        // 버튼 클릭시 팝업 메뉴가 나오게 하기
+        // PopupMenu 는 API 11 레벨부터 제공한다
+        PopupMenu p=new PopupMenu(
+        getApplicationContext(), // 현재 화면의 제어권자
+        v); // anchor : 팝업을 띄울 기준될 위젯
+        getMenuInflater().inflate(R.menu.menu_main,p.getMenu());
+        // 이벤트 처리
+        p.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+@Override
+public boolean onMenuItemClick(MenuItem item){
+        if(item.getItemId()==R.id.statistic_graph){//StatisicActivity로 intent
+        Intent intent=new Intent(EventActivity.this,StatisticActivity.class);
+        startActivity(intent);
+        }else if(item.getItemId()==R.id.setting){
+        Intent intent=new Intent(EventActivity.this,SettingActivity.class);
+        startActivityForResult(intent,REQUEST_SETTING_CODE);
 
-                        } else if (item.getItemId() == R.id.remove_ad) {//광고제거
+        }else if(item.getItemId()==R.id.remove_ad){//광고제거
 
-                        }
-                        return false;
-                    }
-                });
-                p.show(); // 메뉴를 띄우기
-            }
+        }
+        return false;
+        }
         });
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                setResult(RESPONSE_SAVE_CODE);
-            }
+        p.show(); // 메뉴를 띄우기
+        }
         });
-    }
+        backButton.setOnClickListener(new View.OnClickListener(){
+@Override
+public void onClick(View v){
+        finish();
+        setResult(RESPONSE_SAVE_CODE);
+        }
+        });
+        }
 
-    public void setCategories() {
-        categories = categoryDB.getResult();
-        categoryGridAdapter = new CategoryGridAdapter(categories, this);
+public void setCategories(){
+        categories=categoryDB.getResult();
+        categoryGridAdapter=new CategoryGridAdapter(categories,this);
         gridView.setAdapter(categoryGridAdapter);
-    }
+        }
 
-    public void setMyDialogListener() {//카테고리를 설정하는 dialog에서 콜백을 받기 위한 Listener(customListener)
-        myDialogListener = new MyDialogListener() {
-            @Override
-            public void onPostClicked(Category category) {
-                categoryDB.insert(category.getCategoryName(), category.getColor());
-                categoryGridAdapter.add(category);
-                categoryGridAdapter.notifyDataSetChanged();
-            }
+public void setMyDialogListener(){//카테고리를 설정하는 dialog에서 콜백을 받기 위한 Listener(customListener)
+        myDialogListener=new MyDialogListener(){
+@Override
+public void onPostClicked(Category category){
+        categoryDB.insert(category.getCategoryName(),category.getColor());
+        categoryGridAdapter.add(category);
+        categoryGridAdapter.notifyDataSetChanged();
+        }
 
-            @Override
-            public void onModifyClicked(Category category, int index) {
-                categoryDB.update(category.getCategoryName(), category.getColor());
-                categoryGridAdapter.modify(category, index);
-                categoryGridAdapter.notifyDataSetChanged();
-            }
+@Override
+public void onModifyClicked(Category category,int index){
+        categoryDB.update(category.getCategoryName(),category.getColor());
+        categoryGridAdapter.modify(category,index);
+        categoryGridAdapter.notifyDataSetChanged();
+        }
 
-            @Override
-            public void onNegativeClicked() {
+@Override
+public void onNegativeClicked(){
 
-            }
+        }
 
-            @Override
-            public void onCalendatItemClicked(LocalDate localDate) {
+@Override
+public void onCalendatItemClicked(LocalDate localDate){
 
-            }
+        }
         };
-    }
+        }
 
-    public void setGridViewLongClickListener() {//GridView의 onItemLongLickListenr.
-        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+public void setGridViewLongClickListener(){//GridView의 onItemLongLickListenr.
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+@Override
+public boolean onItemLongClick(AdapterView<?> parent,View view,final int position,long id){
+        android.app.AlertDialog.Builder builder=new android.app.AlertDialog.Builder(context);
 
-                builder.setTitle("수행할 작업을 선택하세요")
-                        .setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0://수정
-                                        Udialog = new UpdateCategoryDialog(context, (Category) categoryGridAdapter.getItem(position), position);
-                                        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
-                                        Point size = new Point();
-                                        display.getSize(size);
-                                        Udialog.setDialogListener(myDialogListener);
-                                        dialog.dismiss();
-                                        Udialog.show();
-                                        Udialog.setCancelable(true);
-                                        Window window = Udialog.getWindow();
-                                        int x = (int) (size.x * 0.8f);
-                                        int y = (int) (size.y * 0.8f);
-                                        window.setLayout(x, y);
-                                        break;
-                                    case 1://삭제
-                                        categoryDB.delete(((Category) (categoryGridAdapter.getItem(position))).getCategoryName(), ((Category) (categoryGridAdapter.getItem(position))).getColor());
-                                        categoryGridAdapter.delete(position);
-                                        categoryGridAdapter.notifyDataSetChanged();
-                                        dialog.dismiss();
-                                        Toast.makeText(context, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case 2:
-                                        dialog.dismiss();
-                                }
-                            }
-                        });
-                android.app.AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-                return false;
-            }
+        builder.setTitle("수행할 작업을 선택하세요")
+        .setItems(items,new DialogInterface.OnClickListener(){
+@Override
+public void onClick(DialogInterface dialog,int which){
+        switch(which){
+        case 0://수정
+        Udialog=new UpdateCategoryDialog(context,(Category)categoryGridAdapter.getItem(position),position);
+        Display display=((Activity)context).getWindowManager().getDefaultDisplay();
+        Point size=new Point();
+        display.getSize(size);
+        Udialog.setDialogListener(myDialogListener);
+        dialog.dismiss();
+        Udialog.show();
+        Udialog.setCancelable(true);
+        Window window=Udialog.getWindow();
+        int x=(int)(size.x*0.8f);
+        int y=(int)(size.y*0.8f);
+        window.setLayout(x,y);
+        break;
+        case 1://삭제
+        categoryDB.delete(((Category)(categoryGridAdapter.getItem(position))).getCategoryName(),((Category)(categoryGridAdapter.getItem(position))).getColor());
+        categoryGridAdapter.delete(position);
+        categoryGridAdapter.notifyDataSetChanged();
+        dialog.dismiss();
+        Toast.makeText(context,"삭제되었습니다.",Toast.LENGTH_SHORT).show();
+        break;
+        case 2:
+        dialog.dismiss();
+        }
+        }
         });
-    }
-
-    public void setFabOnClickListener() {
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Udialog = new UpdateCategoryDialog(context);
-                Display display = getWindowManager().getDefaultDisplay();
-                Point size = new Point();
-                display.getSize(size);
-                Udialog.setDialogListener(myDialogListener);
-                Udialog.show();
-                Udialog.setCancelable(true);
-                Window window = Udialog.getWindow();
-                int x = (int) (size.x * 0.8f);
-                int y = (int) (size.y * 0.8f);
-
-                window.setLayout(x, y);
-            }
+        android.app.AlertDialog alertDialog=builder.create();
+        alertDialog.show();
+        return false;
+        }
         });
-    }
-    public void setIntro(){
-        SharedPreferences pref = getSharedPreferences("intro", MODE_PRIVATE);
-        String isEnded = pref.getString("isEndedEvent", "");
+        }
+
+public void setFabOnClickListener(){
+        fab.setOnClickListener(new View.OnClickListener(){
+@Override
+public void onClick(View v){
+        Udialog=new UpdateCategoryDialog(context);
+        Display display=getWindowManager().getDefaultDisplay();
+        Point size=new Point();
+        display.getSize(size);
+        Udialog.setDialogListener(myDialogListener);
+        Udialog.show();
+        Udialog.setCancelable(true);
+        Window window=Udialog.getWindow();
+        int x=(int)(size.x*0.8f);
+        int y=(int)(size.y*0.8f);
+
+        window.setLayout(x,y);
+        }
+        });
+        }
+public void setIntro(){
+        SharedPreferences pref=getSharedPreferences("intro",MODE_PRIVATE);
+        String isEnded=pref.getString("isEndedEvent","");
         if(isEnded.equals("")){
-            Intent intent = new Intent(EventActivity.this, IntroEventActivity.class);
-            startActivity(intent);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString("isEndedEvent", "true");
-            editor.commit();
+        Intent intent=new Intent(EventActivity.this,IntroEventActivity.class);
+        startActivity(intent);
+        SharedPreferences.Editor editor=pref.edit();
+        editor.putString("isEndedEvent","true");
+        editor.commit();
         }
-    }
-
-    @Override
-    public void onColorSelected(int dialogId, int color) {
-        switch (dialogId) {
-            case DIALOG_ID:
-                final int invertColor = ~color;
-                final String hexColor = String.format("%X", color);
-                final String hexInvertColor = String.format("%X", invertColor);
-                if (BuildConfig.DEBUG) {
-                    Log.d("color==", "id " + dialogId + " c: " + hexColor + " i:" + hexInvertColor);
-                }
-                Udialog.setPickedColor("#" + hexColor);
-                break;
         }
 
-    }
+@Override
+public void onColorSelected(int dialogId,int color){
+        switch(dialogId){
+        case DIALOG_ID:
+final int invertColor=~color;
+final String hexColor=String.format("%X",color);
+final String hexInvertColor=String.format("%X",invertColor);
+        if(BuildConfig.DEBUG){
+        Log.d("color==","id "+dialogId+" c: "+hexColor+" i:"+hexInvertColor);
+        }
+        Udialog.setPickedColor("#"+hexColor);
+        break;
+        }
 
-    @Override
-    public void onDialogDismissed(int dialogId) {
+        }
 
-    }
+@Override
+public void onDialogDismissed(int dialogId){
 
-}
+        }
+
+        }
