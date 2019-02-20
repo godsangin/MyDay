@@ -82,6 +82,7 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
 
         while (cursor.moveToNext()){
             events.add(new Event(cursor.getInt(1),cursor.getString(2),cursor.getString(3)));
+            Log.d("date==", cursor.getString(0));
         }
         db.close();
         return events;

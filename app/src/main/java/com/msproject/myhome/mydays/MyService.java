@@ -123,7 +123,7 @@ public class MyService extends Service {
                 boolean isScreenOn = pm.isScreenOn();
                 Log.d("ScreenOn==", isScreenOn + "");
                 if(isScreenOn){
-                    if(duplicate && count < 6){//3시간=1080
+                    if(duplicate && count < 1080){//3시간=1080
                         count = 0;
                         long now = System.currentTimeMillis();
                         Date date = new Date(now);
@@ -136,7 +136,7 @@ public class MyService extends Service {
                         }
                         callback = true;
                     }
-                    else if(duplicate && count >= 6){
+                    else if(duplicate && count >= 1080){
                         sleepingEnd();
                         break;
                     }

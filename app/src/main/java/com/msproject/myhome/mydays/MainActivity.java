@@ -52,6 +52,7 @@ import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import com.google.android.gms.ads.MobileAds;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView nextdayButton = titleBar.findViewById(R.id.bt_nextday);
         mydaysDBHelper = new MydaysDBHelper(this,"MyDays.db",null,1);
         categoryDBHelper = new CategoryDBHelper(this,"CATEGORY.db",null,1);
-        year = 2018;//임시
+        year = 2019;//임시
 
 
 
@@ -401,6 +402,7 @@ public class MainActivity extends AppCompatActivity {
     public void setTitleContents(){//Title(today, menu) Button function
         TextView textView = titleBar.findViewById(R.id.today);
         LocalDate ld = new LocalDate();
+        year = ld.getYear();
         calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth() + "일");
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -442,6 +444,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        MobileAds.initialize(this, "ca-app-pub-3136625326865731~8346285691");
     }
 
     public void updateColorHelper(){
@@ -532,6 +535,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void createSleepDialog(){
         Intent serviceIntent = getIntent();
+        if(serviceIntent == null){
+            return;
+        }
+
         final int startTime = serviceIntent.getIntExtra("startTime", -1);
         if(startTime != -1){
             final int endTime = serviceIntent.getIntExtra("endTime", -1);
@@ -551,7 +558,7 @@ public class MainActivity extends AppCompatActivity {
                                     mydaysDBHelper.insert(thisDay, i, "수면", "");
                                     Log.d("insert==", thisDay + " " + i);
                                 }
-
+                                loadEventData();
 
                             }
                         });
@@ -571,6 +578,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.show();
             }
         }//수면카테고리생성
+        setIntent(null);
     }
 
     public class UpdateListItem{
