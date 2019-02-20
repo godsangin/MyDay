@@ -8,4 +8,6 @@ public interface DragEventCallBackListener {
     public boolean dragable();
     public void setStartPos(int startPos);
     public void click(int position);
+    public void setColor(String color);
+    public String getColor();
 }

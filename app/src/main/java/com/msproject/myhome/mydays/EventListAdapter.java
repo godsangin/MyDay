@@ -8,8 +8,11 @@ import android.annotation.TargetApi;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
@@ -117,7 +120,9 @@ public class EventListAdapter extends BaseAdapter {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if((!dragEventCallBackListener.dragable())&& (!categoryName.getText().equals("")) &&event.getAction() == MotionEvent.ACTION_DOWN) {
+//                    v.setBackground(new RippleDrawable(ColorStateList.valueOf(Color.WHITE)),null,null);
                     dragEventCallBackListener.click(position);
+
                 }
                 else{
                     deltaY = event.getY();
@@ -146,11 +151,11 @@ public class EventListAdapter extends BaseAdapter {
     private class MyListViewDragListener implements View.OnDragListener{
         boolean up;
         boolean white;
-
+        String color;
         @SuppressLint("ResourceType")
         @Override
         public boolean onDrag(View v, DragEvent event) {
-
+            color = dragEventCallBackListener.getColor();
             if(!dragEventCallBackListener.dragable()){
                 return false;
             }
@@ -186,7 +191,7 @@ public class EventListAdapter extends BaseAdapter {
                 case DragEvent.ACTION_DRAG_STARTED:
                     return true;
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    v.setBackgroundColor(Color.BLUE);
+                    v.setBackgroundColor(Color.parseColor(color));
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
 
