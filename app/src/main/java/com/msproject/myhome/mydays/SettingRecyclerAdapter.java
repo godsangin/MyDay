@@ -57,7 +57,7 @@ public class SettingRecyclerAdapter extends RecyclerView.Adapter<SettingRecycler
                 Toast.makeText(context, "준비중입니다.", Toast.LENGTH_SHORT).show();
                 break;
             case 1:
-                Intent intent = new Intent(context, SetCategoryActivity.class);
+                Intent intent = new Intent(context, FunctionSettingActivity.class);
                 context.startActivity(intent);
                 break;
         }

@@ -587,13 +587,28 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 LocalDate ld = new LocalDate();
                                 String thisDay = ld.toString().replace("-","").substring(2,8);
-                                categoryDBHelper.insert("수면", "#123456");
-                                for(int i = startTime; i < endTime; i++){
-                                    mydaysDBHelper.insert(thisDay, i, "수면", "");
-                                    Log.d("insert==", thisDay + " " + i);
+                                if(endTime > startTime){//00시이후부터잘때
+                                    categoryDBHelper.insert("수면", "#123456");
+                                    for(int i = startTime; i < endTime; i++){
+                                        mydaysDBHelper.insert(thisDay, i, "수면", "");
+                                        Log.d("insert==", thisDay + " " + i);
+                                    }
                                 }
-                                loadEventData();
+                                else{//00시이전에 자서 하루가 넘어갈 경우
+                                    for(int i = 0; i < endTime; i++){
+                                        mydaysDBHelper.insert(thisDay, i, "수면", "");
+                                        Log.d("insert==", thisDay + " " + i);
+                                    }
+                                    ld = ld.minusDays(1);
+                                    thisDay = ld.toString().replace("-","").substring(2,8);
+                                    for(int i = startTime; i < 24; i++){
+                                        mydaysDBHelper.insert(thisDay, i, "수면", "");
+                                        Log.d("insert==", thisDay + " " + i);
+                                    }
+                                }
 
+                                loadEventData();
+                                pieChart.notifyDataSetChanged();
                             }
                         });
                 builder.setNegativeButton("취소",

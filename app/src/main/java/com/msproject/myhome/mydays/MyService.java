@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class MyService extends Service {
+public class MyService extends Service {//WorkManager사용?..
 
     private boolean isStop;
     int count;
@@ -89,10 +89,13 @@ public class MyService extends Service {
     public void sleepingEnd(){//notification발생 && 쓰레드멈춤..?
         callback = true;
         isStop = true;
-        Log.d("dup??==", "ㅇㅇ");
+        int endTime = startTime + (count / 6);
+        if(endTime > 23){
+            endTime -= 23;
+        }
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
         resultIntent.putExtra("startTime", startTime);
-        resultIntent.putExtra("endTime", startTime + (count / 6));
+        resultIntent.putExtra("endTime", endTime);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MainActivity.class);
         stackBuilder.addNextIntent(resultIntent);

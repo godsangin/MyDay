@@ -91,23 +91,10 @@ public class SettingActivity extends AppCompatActivity {
         ArrayList<SettingItem> mItems = new ArrayList<>();
 
         mItems.add(new SettingItem("테마 설정", "어플리케이션 배경의 색상, 패턴, 디자인 등을 변경할 수 있습니다."));
-        mItems.add(new SettingItem("카테고리 설정", "카테고리를 추가 또는 삭제하거나, 카테고리의 색상을 변경할 수 있습니다."));
+        mItems.add(new SettingItem("기능 설정", "백그라운드 작업 또는 푸시알림 등의 기능을 변경할 수 있습니다."));
 
         return mItems;
     }
 
-    private class IntroDialog extends Dialog{
-        private static final int LAYOUT = R.layout.activity_intro_main;
-        public IntroDialog(Context context) {
-            super(context);
-        }
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(LAYOUT);
-
-
-        }
-    }
 }

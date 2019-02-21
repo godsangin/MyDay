@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3136625326865731~8346285691"/>
+            android:value="ca-app-pub-3136625326865731~8346285691" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +26,6 @@
             android:label="@string/title_activity_statistic"
             android:theme="@style/AppTheme" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".SetCategoryActivity" />
         <activity android:name=".InputActivity" />
         <activity android:name=".IntroMainActivity" />
 
@@ -34,7 +34,8 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".IntroEventActivity"></activity>
+        <activity android:name=".IntroEventActivity" />
+        <activity android:name=".FunctionSettingActivity"></activity>
     </application>
 
 </manifest>
