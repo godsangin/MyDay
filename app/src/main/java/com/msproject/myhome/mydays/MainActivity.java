@@ -86,21 +86,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Integer> colors = new ArrayList<>();
     String[] times = new String[24];
     //서비스 객체
-    private IMySleepCountService binder;
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            //binder전달받음. getCount메소드
-            binder = IMySleepCountService.Stub.asInterface(service);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
     private Intent serviceIntent;
-    private boolean running = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @TargetApi(Build.VERSION_CODES.M)
@@ -128,9 +114,8 @@ public class MainActivity extends AppCompatActivity {
         setIntro();
         createSleepDialog();
 
-        if(!running){
-            startSleepCount();
-        }
+        startSleepCount();
+
 
         if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
@@ -204,6 +189,12 @@ public class MainActivity extends AppCompatActivity {
                 changeDayOfWeek();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(serviceIntent);
+        super.onDestroy();
     }
 
     @Override
@@ -512,38 +503,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void startSleepCount(){
         serviceIntent = new Intent(MainActivity.this, MyService.class);
-        bindService(serviceIntent, connection, BIND_AUTO_CREATE);
-        running = true;
+        startService(serviceIntent);
 //        countThread = new Thread(new GetCountThread());
 //        countThread.start();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void notificationOn(int startTime, int count){
-        Log.d("notification==", "0n");
-        running = false;
-        countThread.interrupt();
-        Thread t;
-
-        unbindService(connection);
-        //https://developer.android.com/guide/topics/ui/notifiers/notifications?hl=ko
-        Intent resultIntent = new Intent(this, MainActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent mPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        Bitmap mLargeIconForNoti = BitmapFactory.decodeResource(getResources(), R.drawable.clock_background);
-        //notification
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainActivity.this)
-                .setSmallIcon(R.drawable.clock_background)
-                .setContentTitle("수면시간을 등록해보세요.")
-                .setContentText(startTime + "시부터 " + (startTime + count) + "시까지 잠을 잤나요?")
-                .setLargeIcon(mLargeIconForNoti)
-                .setAutoCancel(true)
-                .setContentIntent(mPendingIntent);
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mNotificationManager.notify(0, mBuilder.build());
-    }
 
     public void setIntro(){
         SharedPreferences pref = getSharedPreferences("intro", MODE_PRIVATE);
@@ -563,7 +527,7 @@ public class MainActivity extends AppCompatActivity {
         String date = ld.toString().replace("-","").substring(2);
         c1.set(Integer.parseInt("20" + date.substring(0,2)),Integer.parseInt(date.substring(2,4)) - 1,Integer.parseInt(date.substring(4,6)));
 
-        String[] dayOfWeekString = {"월", "화", "수", "목", "금", "토", "일"};
+        String[] dayOfWeekString = {"일", "월", "화", "수", "목", "금", "토"};
 
         dayofweek.setText(dayOfWeekString[c1.get(Calendar.DAY_OF_WEEK) - 1]);
     }
@@ -676,41 +640,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class GetCountThread implements Runnable{
-        private Handler handler = new Handler();
-
-        @Override
-        public void run() {
-            while(running){
-                if(binder == null){
-                    continue;
-                }
-                Log.d("binder==", binder + "");
-
-                boolean post = handler.post(new Runnable() {
-                    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-                    @Override
-                    public void run() {
-                        try {
-                            if (binder.getCallback() && binder.getCount() > 3) {
-                                notificationOn(binder.getStart(), binder.getCount());
-
-                                Log.d("count==", binder.getCount() + "");
-                                Log.d("startTime==", binder.getStart() + "");
-                                return;
-                            }
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                try{
-                    Thread.sleep(10000);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
 }
