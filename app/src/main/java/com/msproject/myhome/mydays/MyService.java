@@ -1,5 +1,6 @@
 package com.msproject.myhome.mydays;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
@@ -64,16 +66,35 @@ public class MyService extends Service {//WorkManager사용?..
 
     @Override
     public boolean onUnbind(Intent intent) {
-        isStop = true;
-        counter.interrupt();
+        Log.d("service==", "unbind");
         return super.onUnbind(intent);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            int startTime = intent.getIntExtra("startTime", -1);
+            int count = intent.getIntExtra("count", -1);
+            if (startTime != -1 && count != -1) {
+                this.startTime = startTime;
+                this.count = count;
+
+            }
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d("service==", "create");
-
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+        String formatDate = sdfNow.format(date);
+        String[] split = formatDate.split(":");
+        startTime = Integer.parseInt(split[0]);
+        unregisterRestartAlarm();
         counter = new Thread(new Counter());
         counter.start();
     }
@@ -81,17 +102,40 @@ public class MyService extends Service {//WorkManager사용?..
     @Override
     public void onDestroy() {
         Log.d("service==", "destroy");
-        isStop = true;
+        counter.interrupt();
+        registerRestartAlarm();
         super.onDestroy();
+    }
+
+    public void registerRestartAlarm(){
+        Log.d("restartAl==", "true");
+        Intent intent = new Intent(MyService.this, MyReceiver.class);
+        intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
+        intent.putExtra("startTime", startTime);
+        intent.putExtra("count", count);
+        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, 0, intent, 0);
+        long firstTime = SystemClock.elapsedRealtime();
+        firstTime += 1 * 1000;
+        AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
+        am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, 10*1000, sender);
+
+        Log.d("startcount==", startTime + " " + count);
+    }
+
+    public void unregisterRestartAlarm(){
+        Log.d("restartAl==", "false");
+        Intent intent = new Intent(MyService.this, MyReceiver.class);
+        intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
+        PendingIntent sender = PendingIntent.getBroadcast(MyService.this,0,intent,0);
+        AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
+        am.cancel(sender);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void sleepingEnd(){//notification발생 && 쓰레드멈춤..?
-        callback = true;
-        isStop = true;
         int endTime = startTime + (count / 6);
-        if(endTime > 23){
-            endTime -= 23;
+        if(endTime > 24){
+            endTime -= 24;
         }
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
         resultIntent.putExtra("startTime", startTime);
@@ -134,14 +178,14 @@ public class MyService extends Service {//WorkManager사용?..
                         String formatDate = sdfNow.format(date);
                         String[] split = formatDate.split(":");
                         startTime = Integer.parseInt(split[0]);
-                        if(Integer.parseInt(split[1]) > 30){
+                        if(Integer.parseInt(split[1]) > 30){//30분이상이면 다음시간으로 취급(hour)
                             startTime++;
                         }
                         callback = true;
                     }
                     else if(duplicate && count >= 1080){
                         sleepingEnd();
-                        break;
+                        count= 0;
                     }
                     duplicate = true;
                 }
