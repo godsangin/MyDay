@@ -143,9 +143,9 @@
                 android:textColor="@color/memoColor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="30dp"
                 android:hint="메모를 입력하세요."
                 android:background="@null"
+                android:gravity="center"
                 android:id="@+id/memo"/>
 
         </LinearLayout>
@@ -157,7 +157,7 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             ads:adSize="SMART_BANNER"
-            ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+            ads:adUnitId="ca-app-pub-3136625326865731~8346285691">
         </com.google.android.gms.ads.AdView>
     </LinearLayout>
 </LinearLayout>

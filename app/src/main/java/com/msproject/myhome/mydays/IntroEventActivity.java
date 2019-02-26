@@ -1,5 +1,8 @@
 package com.msproject.myhome.mydays;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
@@ -68,6 +71,9 @@ public class IntroEventActivity extends AppCompatActivity {
                 Log.d("content==", location[0] + "," + location[1]);
                 fab.getLocationOnScreen(location);
                 Log.d("fabLocationif==", location[0] + "," + location[1]);
+                imageSecond.setImageBitmap(rotateImage(
+                        BitmapFactory.decodeResource(getResources(),
+                                R.drawable.one_finger_mouse), 180));
                 imageSecond.startAnimation(animationClick);
             }
         });
@@ -75,6 +81,7 @@ public class IntroEventActivity extends AppCompatActivity {
         secondContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 imageSecond.clearAnimation();
                 secondContent.setVisibility(View.GONE);
                 thirdContent.setVisibility(View.VISIBLE);
@@ -104,4 +111,16 @@ public class IntroEventActivity extends AppCompatActivity {
 
 
     }
+
+    public Bitmap rotateImage(Bitmap src, float degree) {
+
+        // Matrix 객체 생성
+        Matrix matrix = new Matrix();
+        // 회전 각도 셋팅
+        matrix.postRotate(degree);
+        // 이미지와 Matrix 를 셋팅해서 Bitmap 객체 생성
+        return Bitmap.createBitmap(src, 0, 0, src.getWidth(),
+                src.getHeight(), matrix, true);
+    }
+
 }

@@ -98,10 +98,12 @@ public class MainActivity extends AppCompatActivity {
         menuButton = findViewById(R.id.menu_bt);
         titleBar = findViewById(R.id.title_bar);
         dayofweek = findViewById(R.id.dayofweek);
+        memo = findViewById(R.id.memo);
         context = this;
         calendarDate = titleBar.findViewById(R.id.calendar_date);
         ImageView lastdayButton = titleBar.findViewById(R.id.bt_lastday);
         ImageView nextdayButton = titleBar.findViewById(R.id.bt_nextday);
+
         mydaysDBHelper = new MydaysDBHelper(this,"MyDays.db",null,1);
         categoryDBHelper = new CategoryDBHelper(this,"CATEGORY.db",null,1);
         year = 2019;//임시
@@ -128,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
         pieChart.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(calendarDate.getText().toString(), memo.getText().toString());
+                editor.commit();
                 RectF rectF = pieChart.getCircleBox();
 
                 float centerX = rectF.centerX();
@@ -334,6 +340,10 @@ public class MainActivity extends AppCompatActivity {
                 int y = (int)(size.y * 0.8f);
 
                 window.setLayout(x,y);
+                SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(calendarDate.getText().toString(), memo.getText().toString());
+                editor.commit();
             }
         });
     }
@@ -360,6 +370,10 @@ public class MainActivity extends AppCompatActivity {
                 calendarDate.setText(localDate.getMonthOfYear() + "월 " + localDate.getDayOfMonth() + "일");
                 year = localDate.getYear();
                 calendarDialog.dismiss();
+
+                SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
+                String memoString = pref.getString(calendarDate.getText().toString(), "");
+                memo.setText(memoString);
             }
         };
         calendarDialog.setDialogListener(myDialogListener);
@@ -380,6 +394,10 @@ public class MainActivity extends AppCompatActivity {
         lastdayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(calendarDate.getText().toString(), memo.getText().toString());
+                editor.commit();
                 LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
                 LocalDate lastDate = localDate.minusDays(1);
                 if(localDate.getYear() != lastDate.getYear()) year--;
@@ -391,13 +409,18 @@ public class MainActivity extends AppCompatActivity {
                 pieChart.notifyDataSetChanged();
                 pieChart.invalidate();
 
-                Toast.makeText(getApplicationContext(), "왼쪽", Toast.LENGTH_SHORT).show();
+                String memoString = pref.getString(calendarDate.getText().toString(), "");
+                memo.setText(memoString);
             }
         });
 
         nextdayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(calendarDate.getText().toString(), memo.getText().toString());
+                editor.commit();
                 LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
                 LocalDate nextDate = localDate.plusDays(1);
                 if(localDate.getYear() != nextDate.getYear()) year++;
@@ -409,7 +432,8 @@ public class MainActivity extends AppCompatActivity {
                 pieChart.notifyDataSetChanged();
                 pieChart.invalidate();
 
-                Toast.makeText(getApplicationContext(), "오른쪽", Toast.LENGTH_SHORT).show();
+                String memoString = pref.getString(calendarDate.getText().toString(), "");
+                memo.setText(memoString);
             }
         });
     }
@@ -446,6 +470,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 p.show(); // 메뉴를 띄우기
+                SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(calendarDate.getText().toString(), memo.getText().toString());
+                editor.commit();
             }
         });
 
@@ -455,11 +483,18 @@ public class MainActivity extends AppCompatActivity {
                 LocalDate ld = new LocalDate();
                 calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth() + "일");
                 year = ld.getYear();
-                Intent intent = new Intent(MainActivity.this, IntroMainActivity.class);
-                startActivity(intent);
+                SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(calendarDate.getText().toString(), memo.getText().toString());
+                editor.commit();
             }
         });
-        MobileAds.initialize(this, "ca-app-pub-3136625326865731~8346285691");
+
+        SharedPreferences sharedPreferences = getSharedPreferences("memo", MODE_PRIVATE);
+        String memoString = sharedPreferences.getString(calendarDate.getText().toString(), "");
+        memo.setText(memoString);
+
+//        MobileAds.initialize(this, "ca-app-pub-3136625326865731~8346285691");
     }
 
     public void updateColorHelper(){
@@ -489,6 +524,7 @@ public class MainActivity extends AppCompatActivity {
                 updateListItems.get(updateListItems.size()-1).end++;
             }
             else{
+                Log.d("categoryName==",myEvent.getCategoryName());
                 String colorString = categoryDBHelper.getColor(myEvent.getCategoryName());
                 updateListItems.add(new UpdateListItem(myEvent.getEventNo(), myEvent.getEventNo()+1, myEvent.getCategoryName(), colorString));
             }
@@ -551,8 +587,9 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 LocalDate ld = new LocalDate();
                                 String thisDay = ld.toString().replace("-","").substring(2,8);
-                                if(endTime > startTime){//00시이후부터잘때
-                                    categoryDBHelper.insert("수면", "#123456");
+                                categoryDBHelper.insert("수면", "#123456");
+                                if(endTime <= startTime){//00시이후부터잘때
+
                                     for(int i = startTime; i < endTime; i++){
                                         mydaysDBHelper.insert(thisDay, i, "수면", "");
                                         Log.d("insert==", thisDay + " " + i);

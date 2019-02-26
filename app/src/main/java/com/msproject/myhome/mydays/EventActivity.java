@@ -69,6 +69,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
 
     private final int REQUEST_SETTING_CODE = 3;
     private final int RESPONSE_SETTING_CODE = 4;
+    private final int REQUEST_INTRO_CODE = 5;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -254,6 +255,46 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                 setCategories();
                 categoryGridAdapter.notifyDataSetChanged();
             }
+        }
+        else if(requestCode == REQUEST_INTRO_CODE){//안하면 오류남 이유모름..intro finish()될때 원래 값 초기화되는건가..?
+            dragEventCallBackListener = new DragEventCallBackListener() {
+                boolean canDrag;
+                int position;
+                String selectedColor;
+
+                @Override
+                public void setCanDrag(boolean canDrag) {
+                    this.canDrag = canDrag;
+                }
+
+                @Override
+                public void onDragFinished(ArrayList<Event> events) {
+                    createDialog(date, events, selectedCategory);
+                }
+
+                @Override
+                public boolean dragable() {
+                    return canDrag;
+                }
+
+                @Override
+                public void setStartPos(int pos) {
+                    startPos = pos;
+                }
+
+                @Override
+                public void click(int position) {
+                    modifyDialog(position);
+                }
+
+                public void setColor(String color) {
+                    this.selectedColor = color;
+                }
+
+                public String getColor() {
+                    return selectedColor;
+                }
+            };
         }
     }
 
@@ -453,7 +494,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
         String isEnded = pref.getString("isEndedEvent", "");
         if (isEnded.equals("")) {
             Intent intent = new Intent(EventActivity.this, IntroEventActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_INTRO_CODE);
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("isEndedEvent", "true");
             editor.commit();
