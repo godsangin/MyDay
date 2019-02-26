@@ -23,6 +23,5 @@ public class MyReceiver extends BroadcastReceiver {
             }
             context.startService(i);
         }
-        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

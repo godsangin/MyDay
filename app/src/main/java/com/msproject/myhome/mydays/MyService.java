@@ -34,6 +34,7 @@ public class MyService extends Service {//WorkManager사용?..
     int startTime;
     public boolean callback;
     Thread counter;
+    final int APPLICATION_ID = 12982;
 
     IMySleepCountService.Stub binder = new IMySleepCountService.Stub() {
         @Override
@@ -113,7 +114,7 @@ public class MyService extends Service {//WorkManager사용?..
         intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
         intent.putExtra("startTime", startTime);
         intent.putExtra("count", count);
-        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, 0, intent, 0);
+        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID, intent, 0);
         long firstTime = SystemClock.elapsedRealtime();
         firstTime += 1 * 1000;
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
@@ -126,7 +127,7 @@ public class MyService extends Service {//WorkManager사용?..
         Log.d("restartAl==", "false");
         Intent intent = new Intent(MyService.this, MyReceiver.class);
         intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
-        PendingIntent sender = PendingIntent.getBroadcast(MyService.this,0,intent,0);
+        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID,intent,0);
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
         am.cancel(sender);
     }
@@ -149,7 +150,7 @@ public class MyService extends Service {//WorkManager사용?..
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(R.drawable.ic_add_white_24dp)
                 .setContentTitle("수면시간을 등록해보세요.")
-                .setContentText(startTime + "시부터 " + (startTime + count/6) + "시까지 잠을 잤나요?")//360
+                .setContentText(startTime + "시부터 " + (startTime + count/360) + "시까지 잠을 잤나요?")//360
                 .setLargeIcon(mLargeIconForNoti)
                 .setAutoCancel(true)
                 .setContentIntent(mPendingIntent);

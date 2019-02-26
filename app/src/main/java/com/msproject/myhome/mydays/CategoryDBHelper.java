@@ -81,7 +81,6 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
 
     public String getColor(String categoryName){
         SQLiteDatabase db = getReadableDatabase();
-        Log.d("color==", categoryName);
         Cursor cursor = db.rawQuery("SELECT * FROM CATEGORY where categoryName= "+'"'+categoryName+'"',null);
         cursor.moveToNext();
 
