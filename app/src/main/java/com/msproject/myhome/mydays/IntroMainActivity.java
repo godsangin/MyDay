@@ -1,5 +1,8 @@
 package com.msproject.myhome.mydays;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -19,6 +22,8 @@ public class IntroMainActivity extends AppCompatActivity {
     TextView textSecond;
     ImageView imageThird;
     TextView textThird;
+    ImageView imageFourth;
+    TextView textFourth;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,8 @@ public class IntroMainActivity extends AppCompatActivity {
         textSecond = findViewById(R.id.intro_text2);
         imageThird = findViewById(R.id.mouse_img3);
         textThird = findViewById(R.id.intro_text3);
+        imageFourth = findViewById(R.id.mouse_img4);
+        textFourth = findViewById(R.id.intro_text4);
         final Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.mouse_focus);
         imageFirst.startAnimation(animation);
 
@@ -68,11 +75,37 @@ public class IntroMainActivity extends AppCompatActivity {
         imageThird.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                imageThird.clearAnimation();
+                imageThird.setVisibility(View.GONE);
+                textThird.setVisibility(View.GONE);
+                imageFourth.setVisibility(View.VISIBLE);
+                textFourth.setVisibility(View.VISIBLE);
+                imageFourth.setImageBitmap(rotateImage(
+                        BitmapFactory.decodeResource(getResources(),
+                                R.drawable.one_finger_mouse), 180));
+                imageFourth.startAnimation(animation);
             }
         });
 
-
+        imageFourth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageFourth.clearAnimation();
+                finish();
+            }
+        });
         getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+    }
+
+
+    public Bitmap rotateImage(Bitmap src, float degree) {
+
+        // Matrix 객체 생성
+        Matrix matrix = new Matrix();
+        // 회전 각도 셋팅
+        matrix.postRotate(degree);
+        // 이미지와 Matrix 를 셋팅해서 Bitmap 객체 생성
+        return Bitmap.createBitmap(src, 0, 0, src.getWidth(),
+                src.getHeight(), matrix, true);
     }
 }

@@ -457,8 +457,6 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                             startActivity(intent);
 
-                        } else if (item.getItemId() == R.id.remove_ad) {//광고제거
-
                         }
                         return false;
                     }
@@ -482,6 +480,10 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString(calendarDate.getText().toString(), memo.getText().toString());
                 editor.commit();
+                updateChart(false, 0, 24, "", ColorMakeHelper.getColor(null));
+                loadEventData();
+                pieChart.notifyDataSetChanged();
+                pieChart.invalidate();
             }
         });
 
@@ -608,8 +610,10 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
 
+                                updateChart(false, 0, 24, "", ColorMakeHelper.getColor(null));
                                 loadEventData();
                                 pieChart.notifyDataSetChanged();
+                                pieChart.invalidate();
                             }
                         });
                 builder.setNegativeButton("취소",
