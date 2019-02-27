@@ -33,6 +33,7 @@ public class SettingActivity extends AppCompatActivity {
     Context context;
     private final int CATEGORY_RESULT_CODE = 4;
 
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,21 +58,6 @@ public class SettingActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(settingRecyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.mouseup_event_item);
-//        recyclerView.startAnimation(animation);
-//        Display display = getWindowManager().getDefaultDisplay();
-//        Point size = new Point();
-//        display.getSize(size);
-//        IntroDialog iDialog = new IntroDialog(this);
-//        iDialog.show();
-//        iDialog.setCancelable(true);
-//        iDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-//
-//        Window window = iDialog.getWindow();
-//        int x = (int)(size.x * 1.0f);
-//        int y = (int)(size.y * 1.0f);
-//
-//        window.setLayout(x,y);
     }
 
     public void backButtonEnable(){

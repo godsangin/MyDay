@@ -1,5 +1,6 @@
 package com.msproject.myhome.mydays;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 public class FunctionSettingActivity extends AppCompatActivity {
     ListView functionSettingListView;
     FSListViewAdapter fsListViewAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +63,16 @@ public class FunctionSettingActivity extends AppCompatActivity {
             settingContent.setText(items.get(position).getContent());
             final CheckBox cb = view.findViewById(R.id.checkbox);
             cb.setVisibility(View.VISIBLE);
+
+            final SharedPreferences sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+            boolean push = sharedPreferences.getBoolean("push", false);
+            boolean background = sharedPreferences.getBoolean("background", false);
+            if(push && position == 0){
+                cb.setChecked(true);
+            }
+            else if(background && position == 1){
+                cb.setChecked(true);
+            }
             cb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -69,21 +81,29 @@ public class FunctionSettingActivity extends AppCompatActivity {
                             if(cb.isChecked()){
                                 //푸시 되게
 
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("push", true);
+                                editor.commit();
                                 Toast.makeText(parent.getContext(), "푸시 기능이 활성화됩니다.", Toast.LENGTH_SHORT).show();
                             }else{
                                 //안되게
-
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("push", false);
+                                editor.commit();
                                 Toast.makeText(parent.getContext(), "푸시 기능이 해제됩니다.", Toast.LENGTH_SHORT).show();
                             }
                             break;
                         case 1:
                             if(cb.isChecked()){
                                 //백그라운드 되게
-
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("background", true);
+                                editor.commit();
                                 Toast.makeText(parent.getContext(), "백그라운드 작업이 활성화됩니다.", Toast.LENGTH_SHORT).show();
                             }else{
-
-
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("background", true);
+                                editor.commit();
                                 Toast.makeText(parent.getContext(), "백그라운드 작업이 해제됩니다.", Toast.LENGTH_SHORT).show();
                             }
                             break;

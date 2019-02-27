@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         setTitleContents();
         setIntro();
         createSleepDialog();
-
+        memo.clearFocus();
         startSleepCount();
 
 
@@ -197,10 +197,12 @@ public class MainActivity extends AppCompatActivity {
 
         if(resultCode == 1){
             loadEventData();
+
         }
         else{
 
         }
+        memo.clearFocus();
     }
 
     public void addTime(int index){
@@ -332,6 +334,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString(calendarDate.getText().toString(), memo.getText().toString());
                 editor.commit();
+                memo.clearFocus();
             }
         });
     }
@@ -362,6 +365,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
                 String memoString = pref.getString(calendarDate.getText().toString(), "");
                 memo.setText(memoString);
+                memo.clearFocus();
             }
         };
         calendarDialog.setDialogListener(myDialogListener);
@@ -399,6 +403,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String memoString = pref.getString(calendarDate.getText().toString(), "");
                 memo.setText(memoString);
+                memo.clearFocus();
             }
         });
 
@@ -422,6 +427,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String memoString = pref.getString(calendarDate.getText().toString(), "");
                 memo.setText(memoString);
+                memo.clearFocus();
             }
         });
     }
@@ -462,6 +468,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString(calendarDate.getText().toString(), memo.getText().toString());
                 editor.commit();
+
             }
         });
 
@@ -481,7 +488,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("memo", MODE_PRIVATE);
         String memoString = sharedPreferences.getString(calendarDate.getText().toString(), "");
         memo.setText(memoString);
-
+        memo.clearFocus();
 //        MobileAds.initialize(this, "ca-app-pub-3136625326865731~8346285691");
     }
 
@@ -535,7 +542,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void setIntro(){
         SharedPreferences pref = getSharedPreferences("intro", MODE_PRIVATE);
+        SharedPreferences setting = getSharedPreferences("setting", MODE_PRIVATE);
         String isEnded = pref.getString("isEndedMain", "");
+        SharedPreferences.Editor editors = setting.edit();
+        editors.putBoolean("push", true);
+        editors.putBoolean("background", true);
         if(isEnded.equals("")){
             Intent intent = new Intent(MainActivity.this, IntroMainActivity.class);
             startActivity(intent);
@@ -543,6 +554,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("isEndedMain", "true");
             editor.commit();
         }
+
     }
 
     public void changeDayOfWeek(){

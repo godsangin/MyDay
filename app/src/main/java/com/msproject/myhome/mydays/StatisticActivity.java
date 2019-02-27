@@ -66,8 +66,10 @@ public class StatisticActivity extends AppCompatActivity {
             //상단 바 색상 변경
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
-
+        LocalDate ld = new LocalDate();
         calendarDate = titleBar.findViewById(R.id.calendarDate);
+        calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth() + "일");
+
         dateType = titleBar.findViewById(R.id.dateType);
 
         hasNoItem = findViewById(R.id.sorryNoItem);
@@ -76,7 +78,7 @@ public class StatisticActivity extends AppCompatActivity {
         ImageView nextdayButton = titleBar.findViewById(R.id.btNext);
         mydaysDBHelper = new MydaysDBHelper(this,"MyDays.db",null,1);
         categoryDBHelper = new CategoryDBHelper(this,"CATEGORY.db",null,1);
-        year = 2018;//임시
+        year = ld.getYear();
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
 
