@@ -8,7 +8,4 @@
         android:id="@+id/setting"
         android:title="설정" >
     </item>
-    <item
-        android:id="@+id/remove_ad"
-        android:title="광고 제거" />
 </menu>

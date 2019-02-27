@@ -373,8 +373,6 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                             Intent intent = new Intent(EventActivity.this, SettingActivity.class);
                             startActivityForResult(intent, REQUEST_SETTING_CODE);
 
-                        } else if (item.getItemId() == R.id.remove_ad) {//광고제거
-
                         }
                         return false;
                     }

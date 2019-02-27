@@ -152,6 +152,9 @@ public class MyService extends Service {//WorkManager사용?..
         if(endTime > 24){
             endTime -= 24;
         }
+        if(count % 360 >= 30){
+            count += 360;
+        }
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
         resultIntent.putExtra("startTime", startTime);
         resultIntent.putExtra("endTime", endTime);
