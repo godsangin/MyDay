@@ -1,5 +1,6 @@
 package com.msproject.myhome.mydays;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.nfc.Tag;
@@ -35,6 +37,7 @@ public class MyService extends Service {//WorkManager사용?..
     public boolean callback;
     Thread counter;
     final int APPLICATION_ID = 12982;
+    SharedPreferences sharedPreferences;
 
     IMySleepCountService.Stub binder = new IMySleepCountService.Stub() {
         @Override
@@ -71,6 +74,7 @@ public class MyService extends Service {//WorkManager사용?..
         return super.onUnbind(intent);
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
@@ -82,7 +86,7 @@ public class MyService extends Service {//WorkManager사용?..
 
             }
         }
-        return super.onStartCommand(intent, flags, startId);
+        return super.onStartCommand(intent, START_REDELIVER_INTENT, startId);
     }
 
     @Override
@@ -96,6 +100,12 @@ public class MyService extends Service {//WorkManager사용?..
         String[] split = formatDate.split(":");
         startTime = Integer.parseInt(split[0]);
         unregisterRestartAlarm();
+
+        sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+        boolean background = sharedPreferences.getBoolean("background", false);
+        if(!background){
+            stopSelf();
+        }
         counter = new Thread(new Counter());
         counter.start();
     }
@@ -104,7 +114,11 @@ public class MyService extends Service {//WorkManager사용?..
     public void onDestroy() {
         Log.d("service==", "destroy");
         counter.interrupt();
-        registerRestartAlarm();
+        sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+        boolean background = sharedPreferences.getBoolean("background", false);
+        if(!background){
+            registerRestartAlarm();
+        }
         super.onDestroy();
     }
 
