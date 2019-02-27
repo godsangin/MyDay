@@ -118,6 +118,8 @@ public class StatisticActivity extends AppCompatActivity {
                 LocalDate lastDate = localDate.minusDays(1);
                 if(localDate.getYear() != lastDate.getYear()) year--;
                 calendarDate.setText(lastDate.getMonthOfYear() + "월 " + lastDate.getDayOfMonth() + "일");
+
+                updateChartForDate();
             }
         });
 
@@ -128,6 +130,8 @@ public class StatisticActivity extends AppCompatActivity {
                 LocalDate nextDate = localDate.plusDays(1);
                 if(localDate.getYear() != nextDate.getYear()) year++;
                 calendarDate.setText(nextDate.getMonthOfYear() + "월 " + nextDate.getDayOfMonth() + "일");
+
+                updateChartForDate();
             }
         });
     }
@@ -149,8 +153,24 @@ public class StatisticActivity extends AppCompatActivity {
                 int y = (int)(size.y * 0.8f);
 
                 window.setLayout(x,y);
+
             }
         });
+    }
+
+    /*
+    * TitleBar의 <, >, 날짜 선택에 의해 차트가 변하게 하는 함수
+    * */
+    public void updateChartForDate(){
+        if(dateType.getText().toString().equals("일간")){
+            btn_daily.callOnClick();
+        }
+        else if(dateType.getText().toString().equals("주간")){
+            btn_weekly.callOnClick();
+        }
+        else if(dateType.getText().toString().equals("월간")){
+            btn_monthly.callOnClick();
+        }
     }
 
     public void setCalendarDialogLisetener(){//CalendarDialog를 호출하고 해당 날짜를 클릭했을때 콜백을 받아 날짜 TextView와 전역변수 year를 수정함.
@@ -175,6 +195,7 @@ public class StatisticActivity extends AppCompatActivity {
                 calendarDate.setText(localDate.getMonthOfYear() + "월 " + localDate.getDayOfMonth() + "일");
                 year = localDate.getYear();
                 calendarDialog.dismiss();
+                updateChartForDate();
             }
         };
         calendarDialog.setDialogListener(myDialogListener);
@@ -250,25 +271,59 @@ public class StatisticActivity extends AppCompatActivity {
 
     public ArrayList<String> getOneWeekDays(String date){
         ArrayList<String> weekDays = new ArrayList<>();
-
         Calendar c1 = Calendar.getInstance();
 
-         Log.d("ERROR", "getOneWeekDays: " + date);
-        c1.set(Integer.parseInt("20" + date.substring(0,2)),Integer.parseInt(date.substring(2,4)) - 1,Integer.parseInt(date.substring(4,6)));
+        c1.set(Integer.parseInt("20" + date.substring(0, 2)), Integer.parseInt(date.substring(2, 4)) - 1,
+                Integer.parseInt(date.substring(4, 6)));
 
         int year1 = c1.get(Calendar.YEAR);
-        int month1 = c1.get(Calendar.MONTH)+1;
+        int month1 = c1.get(Calendar.MONTH) + 1;
 
         int day1 = c1.get(Calendar.DAY_OF_MONTH);
-        if(c1.get(Calendar.DAY_OF_WEEK) != 1) {
+        System.out.println(c1.get(Calendar.DAY_OF_WEEK));
+
+        if (c1.get(Calendar.DAY_OF_WEEK) != 1) {
             day1 -= c1.get(Calendar.DAY_OF_WEEK) - 1;
         }
 
         int day7 = day1 + 6;
 
-        for(int d = day1; d <= day7; d++){
-            if(d > 0 && d <= c1.getActualMaximum(Calendar.DAY_OF_MONTH)){
-                weekDays.add(makeDate(year1,month1, d));
+        System.out.println(day1 + ", " + day7);
+        System.out.println("month : " + month1);
+
+        if (day1 <= 0) {
+            int prevMonth = month1 - 1;
+            c1.set(year1, prevMonth - 1, 1);
+            int prevDay1 = c1.getActualMaximum(Calendar.DAY_OF_MONTH) + day1;
+            int prevDay7 = c1.getActualMaximum(Calendar.DAY_OF_MONTH);
+            c1.set(Integer.parseInt("20" + date.substring(0, 2)), Integer.parseInt(date.substring(2, 4)) - 1,
+                    Integer.parseInt(date.substring(4, 6)));
+
+            for (int i = prevDay1; i <= prevDay7; i++) {
+                weekDays.add(makeDate(year1, prevMonth, i));
+            }
+
+        }
+
+
+        for (int d = day1; d <= day7; d++) {
+            if (d > 0 && d <= c1.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+                weekDays.add(makeDate(year1, month1, d));
+            }
+        }
+
+        if(day7 > c1.getActualMaximum(Calendar.DAY_OF_MONTH)){
+            int nextMonth = month1 + 1;
+            if(month1 + 1 > 12) {
+                year1++;
+                nextMonth = 1;
+            }
+            int nextDay1 = 1;
+            int nextDay7 = day7 - c1.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+
+            for (int i = nextDay1; i <= nextDay7; i++) {
+                weekDays.add(makeDate(year1, nextMonth, i));
             }
         }
         return weekDays;
