@@ -156,6 +156,7 @@ public class MyService extends Service {//WorkManager사용?..
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void sleepingEnd(){//notification발생 && 쓰레드멈춤..?
         int endTime = startTime + (count / 6);
+        Log.d("savestartTime==", startTime + "");
         if(endTime > 24){
             endTime -= 24;
         }
@@ -191,6 +192,7 @@ public class MyService extends Service {//WorkManager사용?..
         public void run() {
             while(!isStop){
                 Log.d("count==", count + "");
+                Log.d("startTime==", startTime + "");
                 PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
                 boolean isScreenOn = pm.isScreenOn();
                 Log.d("ScreenOn==", isScreenOn + "");
