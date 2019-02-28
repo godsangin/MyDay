@@ -23,9 +23,11 @@ import android.os.SystemClock;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -103,8 +105,12 @@ public class MyService extends Service {//WorkManager사용?..
 
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
         boolean background = sharedPreferences.getBoolean("background", false);
+        boolean push = sharedPreferences.getBoolean("push", false);
         if(!background){
             stopSelf();
+        }
+        if(push){
+            new AlarmHATT(getApplicationContext()).alarm();
         }
         counter = new Thread(new Counter());
         counter.start();
@@ -116,7 +122,8 @@ public class MyService extends Service {//WorkManager사용?..
         counter.interrupt();
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
         boolean background = sharedPreferences.getBoolean("background", false);
-        if(!background){
+        Log.d("background==", background + "");
+        if(background){
             registerRestartAlarm();
         }
         super.onDestroy();
@@ -128,7 +135,7 @@ public class MyService extends Service {//WorkManager사용?..
         intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
         intent.putExtra("startTime", startTime);
         intent.putExtra("count", count);
-        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID, intent, 0);
+        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         long firstTime = SystemClock.elapsedRealtime();
         firstTime += 1 * 1000;
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
@@ -141,7 +148,7 @@ public class MyService extends Service {//WorkManager사용?..
         Log.d("restartAl==", "false");
         Intent intent = new Intent(MyService.this, MyReceiver.class);
         intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
-        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID,intent,0);
+        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
         am.cancel(sender);
     }
@@ -218,6 +225,29 @@ public class MyService extends Service {//WorkManager사용?..
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private class AlarmHATT{
+        private Context context;
+        public AlarmHATT(Context context){
+            this.context = context;
+        }
+
+        public void alarm(){
+            AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(MyService.this, BroadcastD.class);
+            PendingIntent sender = PendingIntent.getBroadcast(MyService.this, 0, intent, 0);
+
+            Calendar calendar = Calendar.getInstance();
+            //알람시간 calendar에 set해주기
+
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 23, 0, 0);
+
+            //알람 예약
+            am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+
+
         }
     }
 }
