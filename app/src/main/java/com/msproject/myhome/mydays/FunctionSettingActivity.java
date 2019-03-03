@@ -1,6 +1,8 @@
 package com.msproject.myhome.mydays;
 
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ public class FunctionSettingActivity extends AppCompatActivity {
     ListView functionSettingListView;
     FSListViewAdapter fsListViewAdapter;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +31,11 @@ public class FunctionSettingActivity extends AppCompatActivity {
         items.add(new SettingItem("백그라운드 작업 허용", "체크 시 수면시간측정, 일정 등록 알림 등의 작업을 어플이 꺼져있을 경우에도 진행합니다."));
         fsListViewAdapter = new FSListViewAdapter(items);
         functionSettingListView.setAdapter(fsListViewAdapter);
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            // 21 버전 이상일 때
+            getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
+        }
 
     }
 

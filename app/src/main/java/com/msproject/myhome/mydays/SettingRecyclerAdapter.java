@@ -17,6 +17,7 @@ public class SettingRecyclerAdapter extends RecyclerView.Adapter<SettingRecycler
     ArrayList<SettingItem> mItems;
     Context context;
 
+
     public SettingRecyclerAdapter(ArrayList<SettingItem> items, Context context){
         mItems = items;
         this.context = context;

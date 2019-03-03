@@ -4,12 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <!--<color name="colorTitleBar">#A9E2F3</color>-->
-    <color name="colorTitleBar">#61efc6</color>
-    <color name="background">#FFF</color>
-    <color name="backBorder">#FFF</color>
-    <color name="textColor">#61efc6</color>
+    <color name="colorTitleBar">#61efc6 </color>
+    <color name="background">#fff</color>
+    <color name="backBorder">#fff</color>
+    <color name="textColor">#fff </color>
     <!--<color name="textColor">#c6e6f5</color>-->
-    <color name="piechartColor">#DDD</color>
+    <color name="piechartColor">#eee</color>
     <color name="pieTextColor">#888</color>
     <color name="borderColor">#61efc6 </color>
     <color name="memoColor">#888</color>
