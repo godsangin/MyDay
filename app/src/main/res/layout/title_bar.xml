@@ -10,7 +10,7 @@
         android:id="@+id/today"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="today"
+        android:text="Today"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
