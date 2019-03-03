@@ -197,10 +197,9 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putString(calendarDate.getText().toString(), memo.getText().toString());
                     editor.commit();
-                    memo.clearFocus();
                     Toast.makeText(context, "메모가 저장되었습니다.",Toast.LENGTH_SHORT).show();
                 }
-                return true;
+                return false;
             }
         });
     }
