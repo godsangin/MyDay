@@ -21,10 +21,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -48,6 +50,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     int year; // 년도는 view에 존재하지 않기 때문에 변수로 담고 있어야함.
     MydaysDBHelper mydaysDBHelper;
     CategoryDBHelper categoryDBHelper;
-    Thread countThread;
+    private AdView mAdView;
 
     String Default = "";
     String DefaultLabel = "쉬는 시간";
@@ -181,6 +185,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 changeDayOfWeek();
+            }
+        });
+        changeDayOfWeek();
+        memo.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString(calendarDate.getText().toString(), memo.getText().toString());
+                    editor.commit();
+                    memo.clearFocus();
+                    Toast.makeText(context, "메모가 저장되었습니다.",Toast.LENGTH_SHORT).show();
+                }
+                return true;
             }
         });
     }
@@ -364,6 +384,13 @@ public class MainActivity extends AppCompatActivity {
 
                 SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
                 String memoString = pref.getString(calendarDate.getText().toString(), "");
+
+                updateChart(false, 0, 24, "", ColorMakeHelper.getColor(null));
+                loadEventData();
+
+                pieChart.notifyDataSetChanged();
+                pieChart.invalidate();
+
                 memo.setText(memoString);
                 memo.clearFocus();
             }
@@ -491,12 +518,14 @@ public class MainActivity extends AppCompatActivity {
         String memoString = sharedPreferences.getString(calendarDate.getText().toString(), "");
         memo.setText(memoString);
         memo.clearFocus();
-//        MobileAds.initialize(this, "ca-app-pub-3136625326865731~8346285691");
+        MobileAds.initialize(this, "ca-app-pub-3136625326865731~8346285691");
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     public void updateColorHelper(){
         ArrayList<Category> categories = categoryDBHelper.getResult();
-
         for(Category c : categories){
             Log.d("COLOR CHECK", "updateColorHelper: " + c.getCategoryName());
             ColorMakeHelper.setColor(c.getCategoryName(), Color.parseColor(c.getColor()));

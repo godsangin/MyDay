@@ -33,7 +33,7 @@ public class UpdateCategoryDialog extends Dialog implements View.OnClickListener
     public UpdateCategoryDialog(Context context) {
         super(context);
         this.context = context;
-        this.pickedColor = "#567789";
+        this.pickedColor = "#61efc6";
     }
 
     public UpdateCategoryDialog(Context context, Category category, int index){//수정인지 판별 필요
