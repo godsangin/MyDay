@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         legend.setCustom(legendEntries);
-        legend.setTextColor(getResources().getColor(R.color.textColor));
+        legend.setTextColor(getResources().getColor(R.color.legendColor));
     }
     public void updateChart(Boolean add, int start, int end, String category, int color){
         if(add){
