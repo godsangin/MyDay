@@ -81,8 +81,8 @@
                 android:background="@null"
                 android:gravity="center"
                 android:id="@+id/memo"
-                android:inputType="text"
-                android:imeOptions="actionDone"/>
+                android:inputType="textMultiLine"
+                />
 
         </LinearLayout>
         <com.google.android.gms.ads.AdView
