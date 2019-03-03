@@ -21,10 +21,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -181,6 +183,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 changeDayOfWeek();
+            }
+        });
+
+        memo.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    SharedPreferences pref = getSharedPreferences("memo", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString(calendarDate.getText().toString(), memo.getText().toString());
+                    editor.commit();
+                    Toast.makeText(context, "메모가 저장되었습니다.",Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                return false;
             }
         });
     }

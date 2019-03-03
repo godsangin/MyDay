@@ -12,6 +12,6 @@
     <color name="piechartColor">#DDD</color>
     <color name="pieTextColor">#888</color>
     <color name="borderColor">#61efc6 </color>
-    <color name="memoColor">#61efc6</color>
+    <color name="memoColor">#888</color>
 
 </resources>
