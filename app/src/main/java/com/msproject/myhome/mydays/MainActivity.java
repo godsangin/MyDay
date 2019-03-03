@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
@@ -27,6 +28,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -94,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
         ImageView lastdayButton = titleBar.findViewById(R.id.bt_lastday);
         ImageView nextdayButton = titleBar.findViewById(R.id.bt_nextday);
 
+        memo.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        memo.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mydaysDBHelper = new MydaysDBHelper(this,"MyDays.db",null,1);
         categoryDBHelper = new CategoryDBHelper(this,"CATEGORY.db",null,1);
         year = 2019;//임시
@@ -195,7 +199,10 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putString(calendarDate.getText().toString(), memo.getText().toString());
                     editor.commit();
-                    Toast.makeText(context, "메모가 저장되었습니다.",Toast.LENGTH_SHORT).show();
+                    memo.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(memo.getWindowToken(), 0);
+
                     return false;
                 }
                 return false;
