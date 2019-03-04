@@ -2,6 +2,7 @@ package com.msproject.myhome.mydays;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
@@ -31,6 +34,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     MydaysDBHelper mydaysDBHelper;
     CategoryDBHelper categoryDBHelper;
     private AdView mAdView;
+    SoftKeyboard mSoftKeyboard;
 
     String Default = "";
     String DefaultLabel = "쉬는 시간";
@@ -207,6 +212,35 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(context, "메모가 저장되었습니다.",Toast.LENGTH_SHORT).show();
                 }
                 return false;
+            }
+        });
+        LinearLayout wholeContainer = findViewById(R.id.whole_container);
+        InputMethodManager controlManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+        mSoftKeyboard = new SoftKeyboard(wholeContainer, controlManager);
+        mSoftKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
+            @Override
+            public void onSoftKeyboardHide() {
+                new Handler(Looper.getMainLooper())
+                        .post(new Runnable() {
+                            @Override
+                            public void run() {
+                                // 키보드 내려왔을때
+                                mAdView.setVisibility(View.VISIBLE);
+                                AdRequest adRequest = new AdRequest.Builder().build();
+                                mAdView.loadAd(adRequest);
+                            }
+                        });
+            }
+            @Override
+            public void onSoftKeyboardShow() {
+                new Handler(Looper.getMainLooper())
+                        .post(new Runnable() {
+                            @Override
+                            public void run() {
+                                // 키보드 올라왔을때
+                                mAdView.setVisibility(View.GONE);
+                            }
+                        });
             }
         });
     }
