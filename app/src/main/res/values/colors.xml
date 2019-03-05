@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <!--<color name="colorTitleBar">#A9E2F3</color>-->
-    <color name="colorTitleBar">#61efc6 </color>
+    <color name="colorTitleBar">#50deb5 </color>
     <color name="background">#fff</color>
     <color name="backBorder">#fff</color>
     <color name="textColor">#fff </color>
