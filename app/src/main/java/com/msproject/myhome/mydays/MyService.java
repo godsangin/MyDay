@@ -140,7 +140,6 @@ public class MyService extends Service {//WorkManager사용?..
         firstTime += 1 * 1000;
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
         am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, 10*1000, sender);
-
         Log.d("startcount==", startTime + " " + count);
     }
 
@@ -155,13 +154,13 @@ public class MyService extends Service {//WorkManager사용?..
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void sleepingEnd(){//notification발생 && 쓰레드멈춤..?
-        int endTime = startTime + (count / 6);
+        int endTime = startTime + (count / 180);
         Log.d("savestartTime==", startTime + "");
         if(endTime > 24){
             endTime -= 24;
         }
-        if(count % 360 >= 30){
-            count += 360;
+        if(count % 180 >= 90){
+            count += 180;
         }
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
         resultIntent.putExtra("startTime", startTime);
@@ -175,7 +174,7 @@ public class MyService extends Service {//WorkManager사용?..
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(R.drawable.ic_add_white_24dp)
                 .setContentTitle("수면시간을 등록해보세요.")
-                .setContentText(startTime + "시부터 " + (startTime + count/360) + "시까지 잠을 잤나요?")//360
+                .setContentText(startTime + "시부터 " + (startTime + count/180) + "시까지 잠을 잤나요?")//360
                 .setLargeIcon(mLargeIconForNoti)
                 .setAutoCancel(true)
                 .setContentIntent(mPendingIntent);
@@ -197,7 +196,7 @@ public class MyService extends Service {//WorkManager사용?..
                 boolean isScreenOn = pm.isScreenOn();
                 Log.d("ScreenOn==", isScreenOn + "");
                 if(isScreenOn){
-                    if(duplicate && count < 1080){//3시간=1080
+                    if(duplicate && count < 540){//3시간=1080
                         count = 0;
                         long now = System.currentTimeMillis();
                         Date date = new Date(now);
@@ -210,7 +209,7 @@ public class MyService extends Service {//WorkManager사용?..
                         }
                         callback = true;
                     }
-                    else if(duplicate && count >= 1080){
+                    else if(duplicate && count >= 540){
                         sleepingEnd();
                         count= 0;
                     }
@@ -221,7 +220,7 @@ public class MyService extends Service {//WorkManager사용?..
                     callback = false;
                 }
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(20000);
                     count++;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
