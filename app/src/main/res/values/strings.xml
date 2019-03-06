@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MyDays</string>
     <string name="title_activity_statistic">StatisticActivity</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3136625326865731/3599680889</string>
 </resources>

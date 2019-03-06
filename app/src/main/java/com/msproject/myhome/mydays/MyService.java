@@ -40,6 +40,7 @@ public class MyService extends Service {//WorkManager사용?..
     Thread counter;
     final int APPLICATION_ID = 12982;
     SharedPreferences sharedPreferences;
+    boolean threadRunning;
 
     IMySleepCountService.Stub binder = new IMySleepCountService.Stub() {
         @Override
@@ -88,6 +89,11 @@ public class MyService extends Service {//WorkManager사용?..
 
             }
         }
+        if(!threadRunning){
+            counter = new Thread(new Counter());
+            counter.start();
+            threadRunning = true;
+        }
         return super.onStartCommand(intent, START_REDELIVER_INTENT, startId);
     }
 
@@ -114,6 +120,7 @@ public class MyService extends Service {//WorkManager사용?..
         }
         counter = new Thread(new Counter());
         counter.start();
+        threadRunning = true;
     }
 
     @Override
@@ -123,23 +130,26 @@ public class MyService extends Service {//WorkManager사용?..
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
         boolean background = sharedPreferences.getBoolean("background", false);
         Log.d("background==", background + "");
-        if(background){
+        if(background && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             registerRestartAlarm();
         }
         super.onDestroy();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void registerRestartAlarm(){
         Log.d("restartAl==", "true");
         Intent intent = new Intent(MyService.this, MyReceiver.class);
         intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
         intent.putExtra("startTime", startTime);
-        intent.putExtra("count", count);
+        intent.putExtra("count", count + (10 * 30));
         PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        long firstTime = SystemClock.elapsedRealtime();
-        firstTime += 1 * 1000;
+        Calendar restart = Calendar.getInstance();
+        restart.setTimeInMillis(System.currentTimeMillis());
+        restart.add(Calendar.MINUTE, 10);
+
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
-        am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, 10*1000, sender);
+        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, restart.getTimeInMillis(),  sender);//doze모드에서도 정상작동하기위함
         Log.d("startcount==", startTime + " " + count);
     }
 
