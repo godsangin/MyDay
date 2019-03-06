@@ -1,5 +1,7 @@
+
 package com.msproject.myhome.mydays;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Service;
@@ -7,16 +9,22 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +40,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.PermissionRequest;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -75,10 +84,8 @@ public class MainActivity extends AppCompatActivity {
     CategoryDBHelper categoryDBHelper;
     private AdView mAdView;
     SoftKeyboard mSoftKeyboard;
-
     String Default = "";
     String DefaultLabel = "쉬는 시간";
-
     int i = 0;
 
     ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
@@ -87,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     //서비스 객체
     private Intent serviceIntent;
 
+
     @SuppressLint("ClickableViewAccessibility")
     @TargetApi(Build.VERSION_CODES.M)
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -94,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         menuButton = findViewById(R.id.menu_bt);
         titleBar = findViewById(R.id.title_bar);
         dayofweek = findViewById(R.id.dayofweek);
@@ -108,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
         mydaysDBHelper = new MydaysDBHelper(this,"MyDays.db",null,1);
         categoryDBHelper = new CategoryDBHelper(this,"CATEGORY.db",null,1);
         year = 2019;//임시
-
         ColorMakeHelper.setColor("Default", getResources().getColor(R.color.piechartColor));
 
         setMoveDay(lastdayButton, nextdayButton);
@@ -118,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         createSleepDialog();
         memo.clearFocus();
         startSleepCount();
-
 
         if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
@@ -139,9 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
                 float centerX = rectF.centerX();
                 float centerY =rectF.centerY();
-
                 float r = (rectF.right - rectF.left)/2;
-
                 float touchX = motionEvent.getX();
                 float touchY = motionEvent.getY();
                 if( Math.pow((touchX - centerX),2) + Math.pow((touchY - centerY), 2) <= Math.pow(r,2)){
@@ -558,9 +563,15 @@ public class MainActivity extends AppCompatActivity {
         String memoString = sharedPreferences.getString(calendarDate.getText().toString(), "");
         memo.setText(memoString);
         memo.clearFocus();
+
+        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+
         MobileAds.initialize(this, "ca-app-pub-3136625326865731~8346285691");
         mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder().setLocation(location)
+                                                        .build();
         mAdView.loadAd(adRequest);
     }
 
