@@ -143,13 +143,13 @@ public class MyService extends Service {//WorkManager사용?..
         intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
         intent.putExtra("startTime", startTime);
         intent.putExtra("count", count + (10 * 30));
-        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID, intent, 0);
         Calendar restart = Calendar.getInstance();
         restart.setTimeInMillis(System.currentTimeMillis());
         restart.add(Calendar.MINUTE, 10);
 
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
-        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, restart.getTimeInMillis(),  sender);//doze모드에서도 정상작동하기위함
+        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 10 * 60 * 1000,  sender);//doze모드에서도 정상작동하기위함 10분 뒤 서비스 재시작
         Log.d("startcount==", startTime + " " + count);
     }
 
@@ -157,7 +157,7 @@ public class MyService extends Service {//WorkManager사용?..
         Log.d("restartAl==", "false");
         Intent intent = new Intent(MyService.this, MyReceiver.class);
         intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
-        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID,intent,0);
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
         am.cancel(sender);
     }

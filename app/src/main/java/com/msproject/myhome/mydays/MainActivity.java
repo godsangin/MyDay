@@ -669,8 +669,15 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 LocalDate ld = new LocalDate();
                                 String thisDay = ld.toString().replace("-","").substring(2,8);
-                                categoryDBHelper.insert("수면", "#123456");
-                                if(endTime <= startTime){//00시이후부터잘때
+                                SharedPreferences sharedPreferences = getSharedPreferences("sleep", MODE_PRIVATE);
+                                boolean created = sharedPreferences.getBoolean("created", false);
+                                if(!created) {
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putBoolean("created", true);
+                                    editor.commit();
+                                    categoryDBHelper.insert("수면", "#123456");
+                                }
+                                if(endTime >= startTime){//00시이후에 잘때
 
                                     for(int i = startTime; i < endTime; i++){
                                         mydaysDBHelper.insert(thisDay, i, "수면", "");
