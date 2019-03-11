@@ -563,15 +563,26 @@ public class MainActivity extends AppCompatActivity {
         String memoString = sharedPreferences.getString(calendarDate.getText().toString(), "");
         memo.setText(memoString);
         memo.clearFocus();
+        Location location = null;
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
 
-        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
 
 
         MobileAds.initialize(this, "ca-app-pub-3136625326865731~8346285691");
         mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().setLocation(location)
-                                                        .build();
+        AdRequest adRequest;
+        AdRequest.Builder builder = new AdRequest.Builder();
+        if(location != null){
+            builder.setLocation(location);
+
+        }
+        adRequest = builder.build();
         mAdView.loadAd(adRequest);
     }
 
