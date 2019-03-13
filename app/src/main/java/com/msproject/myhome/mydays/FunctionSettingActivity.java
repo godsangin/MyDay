@@ -5,6 +5,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +76,8 @@ public class FunctionSettingActivity extends AppCompatActivity {
             final SharedPreferences sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
             boolean push = sharedPreferences.getBoolean("push", false);
             boolean background = sharedPreferences.getBoolean("background", false);
+            Log.d("push==", push + "");
+            Log.d("background==", background + "");
             if(push && position == 0){
                 cb.setChecked(true);
             }
