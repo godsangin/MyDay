@@ -566,7 +566,7 @@ public class MainActivity extends AppCompatActivity {
         Location location = null;
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED) {
             final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
@@ -627,6 +627,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startSleepCount(){
         serviceIntent = new Intent(MainActivity.this, MyService.class);
+        serviceIntent.putExtra("main", true);
         startService(serviceIntent);
 //        countThread = new Thread(new GetCountThread());
 //        countThread.start();
@@ -637,15 +638,17 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences pref = getSharedPreferences("intro", MODE_PRIVATE);
         SharedPreferences setting = getSharedPreferences("setting", MODE_PRIVATE);
         String isEnded = pref.getString("isEndedMain", "");
-        SharedPreferences.Editor editors = setting.edit();
-        editors.putBoolean("push", true);
-        editors.putBoolean("background", true);
         if(isEnded.equals("")){
+            SharedPreferences.Editor editors = setting.edit();
+            editors.putBoolean("push", true);
+            editors.putBoolean("background", true);
+            editors.commit();
             Intent intent = new Intent(MainActivity.this, IntroMainActivity.class);
             startActivity(intent);
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("isEndedMain", "true");
             editor.commit();
+
         }
 
     }

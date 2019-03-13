@@ -1,7 +1,9 @@
 package com.msproject.myhome.mydays;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -41,6 +43,8 @@ public class MyService extends Service {//WorkManager사용?..
     final int APPLICATION_ID = 12982;
     SharedPreferences sharedPreferences;
     boolean threadRunning;
+    WiseSaying wiseSaying;
+    Saying todaySaying;
 
     IMySleepCountService.Stub binder = new IMySleepCountService.Stub() {
         @Override
@@ -77,24 +81,43 @@ public class MyService extends Service {//WorkManager사용?..
         return super.onUnbind(intent);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @SuppressLint("WrongConstant")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null) {
-            int startTime = intent.getIntExtra("startTime", -1);
-            int count = intent.getIntExtra("count", -1);
-            if (startTime != -1 && count != -1) {
-                this.startTime = startTime;
-                this.count = count;
 
-            }
-        }
         if(!threadRunning){
             counter = new Thread(new Counter());
             counter.start();
             threadRunning = true;
         }
-        return super.onStartCommand(intent, START_REDELIVER_INTENT, startId);
+
+        if (intent != null) {
+            int startTime = intent.getIntExtra("startTime", -1);
+            int count = intent.getIntExtra("count", -1);
+            boolean isMain = intent.getBooleanExtra("main", false);
+            if (startTime != -1 && count != -1) {
+                this.startTime = startTime;
+                this.count = count;
+            }
+            startForeground(1, new Notification());
+            Log.d("intent==", "main");
+            /**
+             * startForeground 를 사용하면 notification 을 보여주어야 하는데 없애기 위한 코드
+             */
+            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            Notification notification;
+            Log.d("count==", todaySaying.getSay());
+            notification = new Notification.Builder(getApplicationContext())
+                    .setContentTitle(todaySaying.getSay())
+                    .setContentText(" - " + todaySaying.getSource())
+                    .setSmallIcon(R.drawable.logo3)
+                    .build();
+
+
+            nm.notify(startId, notification);
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -107,6 +130,8 @@ public class MyService extends Service {//WorkManager사용?..
         String formatDate = sdfNow.format(date);
         String[] split = formatDate.split(":");
         startTime = Integer.parseInt(split[0]);
+        wiseSaying = WiseSaying.getInstance();
+        todaySaying = wiseSaying.getWiseSay();
         unregisterRestartAlarm();
 
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
@@ -142,7 +167,7 @@ public class MyService extends Service {//WorkManager사용?..
         Intent intent = new Intent(MyService.this, MyReceiver.class);
         intent.setAction(MyReceiver.ACTION_RESTART_PERSISTENTSERVICE);
         intent.putExtra("startTime", startTime);
-        intent.putExtra("count", count + (10 * 30));
+        intent.putExtra("count", count + (10 * 3));
         PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID, intent, 0);
         Calendar restart = Calendar.getInstance();
         restart.setTimeInMillis(System.currentTimeMillis());
@@ -179,10 +204,10 @@ public class MyService extends Service {//WorkManager사용?..
         stackBuilder.addParentStack(MainActivity.class);
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent mPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        Bitmap mLargeIconForNoti = BitmapFactory.decodeResource(getResources(), R.drawable.ic_add_white_24dp);
+        Bitmap mLargeIconForNoti = BitmapFactory.decodeResource(getResources(), R.drawable.logo3);
         //notification
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.ic_add_white_24dp)
+                .setSmallIcon(R.drawable.logo3)
                 .setContentTitle("수면시간을 등록해보세요.")
                 .setContentText(startTime + "시부터 " + (startTime + count/180) + "시까지 잠을 잤나요?")//360
                 .setLargeIcon(mLargeIconForNoti)
@@ -257,8 +282,7 @@ public class MyService extends Service {//WorkManager사용?..
 
             //알람 예약
             am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-
-
+            todaySaying = WiseSaying.getInstance().getWiseSay();
         }
     }
 }

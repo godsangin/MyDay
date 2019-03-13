@@ -34,9 +34,12 @@ public class SplashActivity extends Activity {
         else{
 
         }
-
-        Handler hd = new Handler();
-        hd.postDelayed(new splashhandler(), 3000);
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Handler hd = new Handler();
+            hd.postDelayed(new splashhandler(), 3000);
+        }
     }
 
     @Override
@@ -47,7 +50,8 @@ public class SplashActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this,"승인이 허가되었습니다.",Toast.LENGTH_LONG).show();
-
+                    startActivity(new Intent(getApplication(), MainActivity.class));
+                    SplashActivity.this.finish();
                 } else {
                     Toast.makeText(this,"승인되지 않았습니다.",Toast.LENGTH_LONG).show();
                     finish();
