@@ -48,6 +48,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -126,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         createSleepDialog();
         memo.clearFocus();
         startSleepCount();
+        setJobdispatcher();
 
         if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
@@ -628,7 +636,7 @@ public class MainActivity extends AppCompatActivity {
     public void startSleepCount(){
         serviceIntent = new Intent(MainActivity.this, MyService.class);
         serviceIntent.putExtra("main", true);
-        startService(serviceIntent);
+//        startService(serviceIntent);
 //        countThread = new Thread(new GetCountThread());
 //        countThread.start();
     }
@@ -734,6 +742,24 @@ public class MainActivity extends AppCompatActivity {
             }
         }//수면카테고리생성
         setIntent(null);
+    }
+    public void setJobdispatcher(){
+        FirebaseJobDispatcher dispatcher;
+        dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
+        dispatcher.cancelAll();
+        Bundle jobParameters = new Bundle();
+
+        Job autoJob= dispatcher.newJobBuilder().setTag("auto-attendance")
+                .setRecurring(true)
+                .setService(SampleJobService.class)
+                .setLifetime(Lifetime.FOREVER)
+                .setTrigger(Trigger.executionWindow(10, 10 + 15))
+                .setReplaceCurrent(false)
+                .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
+                .setConstraints(Constraint.ON_UNMETERED_NETWORK)
+                .build();
+        dispatcher.mustSchedule(autoJob);
+        Log.d("job==", "called");
     }
 
     public class UpdateListItem{
