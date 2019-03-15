@@ -65,6 +65,7 @@ public class MyService extends Service {//WorkManager사용?..
 
 
     public MyService() {
+
     }
 
     @Override
@@ -113,9 +114,8 @@ public class MyService extends Service {//WorkManager사용?..
                     .setContentText(" - " + todaySaying.getSource())
                     .setSmallIcon(R.drawable.logo3)
                     .build();
-
-
-            nm.notify(startId, notification);
+            notification.flags = Notification.FLAG_NO_CLEAR;
+            nm.notify(APPLICATION_ID, notification);
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -231,6 +231,20 @@ public class MyService extends Service {//WorkManager사용?..
                 boolean isScreenOn = pm.isScreenOn();
                 Log.d("ScreenOn==", isScreenOn + "");
                 if(isScreenOn){
+                    if(count > 100){
+                        todaySaying = WiseSaying.getInstance().getWiseSay();
+                        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        Notification notification;
+                        Log.d("count==", todaySaying.getSay());
+                        notification = new Notification.Builder(getApplicationContext())
+                                .setContentTitle(todaySaying.getSay())
+                                .setContentText(" - " + todaySaying.getSource())
+                                .setSmallIcon(R.drawable.logo3)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                .build();
+                        notification.flags = Notification.FLAG_NO_CLEAR;
+                        nm.notify(APPLICATION_ID, notification);
+                    }
                     if(duplicate && count < 540){//3시간=1080
                         count = 0;
                         long now = System.currentTimeMillis();
