@@ -45,6 +45,7 @@ public class MyService extends Service {//WorkManager사용?..
     boolean threadRunning;
     WiseSaying wiseSaying;
     Saying todaySaying;
+    boolean restart;
 
     IMySleepCountService.Stub binder = new IMySleepCountService.Stub() {
         @Override
@@ -86,13 +87,6 @@ public class MyService extends Service {//WorkManager사용?..
     @SuppressLint("WrongConstant")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        if(!threadRunning){
-            counter = new Thread(new Counter());
-            counter.start();
-            threadRunning = true;
-        }
-
         if (intent != null) {
             int startTime = intent.getIntExtra("startTime", -1);
             int count = intent.getIntExtra("count", -1);
@@ -101,22 +95,11 @@ public class MyService extends Service {//WorkManager사용?..
                 this.startTime = startTime;
                 this.count = count;
             }
-            startForeground(1, new Notification());
+            restart = intent.getBooleanExtra("restart", false);
             Log.d("intent==", "main");
-            /**
-             * startForeground 를 사용하면 notification 을 보여주어야 하는데 없애기 위한 코드
-             */
-            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            Notification notification;
-            Log.d("count==", todaySaying.getSay());
-            notification = new Notification.Builder(getApplicationContext())
-                    .setContentTitle(todaySaying.getSay())
-                    .setContentText(" - " + todaySaying.getSource())
-                    .setSmallIcon(R.drawable.logo3)
-                    .build();
-            notification.flags = Notification.FLAG_NO_CLEAR;
-            nm.notify(APPLICATION_ID, notification);
         }
+        MyNotiControl c1 = new MyNotiControl(this);
+        startForeground(1, c1.getNoti());
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -132,6 +115,7 @@ public class MyService extends Service {//WorkManager사용?..
         startTime = Integer.parseInt(split[0]);
         wiseSaying = WiseSaying.getInstance();
         todaySaying = wiseSaying.getWiseSay();
+        restart = true;
         unregisterRestartAlarm();
 
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
@@ -145,17 +129,21 @@ public class MyService extends Service {//WorkManager사용?..
         }
         counter = new Thread(new Counter());
         counter.start();
-        threadRunning = true;
     }
+
 
     @Override
     public void onDestroy() {
         Log.d("service==", "destroy");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(Service.STOP_FOREGROUND_DETACH);
+        }
+        isStop = true;
         counter.interrupt();
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
         boolean background = sharedPreferences.getBoolean("background", false);
         Log.d("background==", background + "");
-        if(background && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        if(background && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !restart){
             registerRestartAlarm();
         }
         super.onDestroy();
@@ -171,10 +159,10 @@ public class MyService extends Service {//WorkManager사용?..
         PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID, intent, 0);
         Calendar restart = Calendar.getInstance();
         restart.setTimeInMillis(System.currentTimeMillis());
-        restart.add(Calendar.MINUTE, 10);
+        restart.add(Calendar.SECOND, 10);
 
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
-        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 10 * 60 * 1000,  sender);//doze모드에서도 정상작동하기위함 10분 뒤 서비스 재시작
+        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1*1000,  sender);//doze모드에서도 정상작동하기위함 10분 뒤 서비스 재시작
         Log.d("startcount==", startTime + " " + count);
     }
 
@@ -231,20 +219,6 @@ public class MyService extends Service {//WorkManager사용?..
                 boolean isScreenOn = pm.isScreenOn();
                 Log.d("ScreenOn==", isScreenOn + "");
                 if(isScreenOn){
-                    if(count > 100){
-                        todaySaying = WiseSaying.getInstance().getWiseSay();
-                        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        Notification notification;
-                        Log.d("count==", todaySaying.getSay());
-                        notification = new Notification.Builder(getApplicationContext())
-                                .setContentTitle(todaySaying.getSay())
-                                .setContentText(" - " + todaySaying.getSource())
-                                .setSmallIcon(R.drawable.logo3)
-                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                .build();
-                        notification.flags = Notification.FLAG_NO_CLEAR;
-                        nm.notify(APPLICATION_ID, notification);
-                    }
                     if(duplicate && count < 540){//3시간=1080
                         count = 0;
                         long now = System.currentTimeMillis();
