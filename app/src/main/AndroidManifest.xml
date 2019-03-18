@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
@@ -18,6 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".MyNotiControlActivity"></activity>
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3136625326865731~8346285691" />
@@ -25,7 +27,7 @@
         <activity android:name=".MainActivity">
             <meta-data
                 android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version"/>
+                android:value="@integer/google_play_services_version" />
         </activity>
         <activity android:name=".EventActivity" />
         <activity
@@ -43,9 +45,10 @@
 
         <activity android:name=".IntroEventActivity" />
         <activity android:name=".FunctionSettingActivity" />
+
         <service
-        android:name=".SampleJobService"
-        android:exported="false">
+            android:name=".SampleJobService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
@@ -57,7 +60,7 @@
             android:exported="true"
             android:process=":remote">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="ACTION.Restart.MyService" />
             </intent-filter>
         </receiver>
@@ -71,17 +74,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.google.android.gms.ads.AdActivity"
-
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-
             android:theme="@android:style/Theme.Translucent" />
 
         <receiver
             android:name=".BroadcastD"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
     </application>
 
 </manifest>

@@ -94,12 +94,13 @@ public class MainActivity extends AppCompatActivity {
     String Default = "";
     String DefaultLabel = "쉬는 시간";
     int i = 0;
+    static boolean restartNoti;
 
     ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
     ArrayList<Integer> colors = new ArrayList<>();
     String[] times = new String[24];
     //서비스 객체
-    private Intent serviceIntent;
+    public Intent serviceIntent;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -125,7 +126,11 @@ public class MainActivity extends AppCompatActivity {
         categoryDBHelper = new CategoryDBHelper(this,"CATEGORY.db",null,1);
         year = 2019;//임시
         ColorMakeHelper.setColor("Default", getResources().getColor(R.color.piechartColor));
-
+        Intent intent = getIntent();
+        if(intent != null){
+            restartNoti = getIntent().getBooleanExtra("restart", false);
+        }
+        Log.d("restart==", restartNoti + "");
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
         setTitleContents();
@@ -133,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         createSleepDialog();
         memo.clearFocus();
         startSleepCount();
-        setJobdispatcher();
+//        setJobdispatcher();
 
         if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
@@ -260,9 +265,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(serviceIntent);
         super.onDestroy();
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {//추가된 이벤트가 있으면 chart를 새로그림 !
@@ -634,9 +640,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startSleepCount(){
+        if(restartNoti) return;
         serviceIntent = new Intent(MainActivity.this, MyService.class);
         serviceIntent.putExtra("main", true);
-//        startService(serviceIntent);
+        serviceIntent.putExtra("restart", restartNoti);
+        startService(serviceIntent);
 //        countThread = new Thread(new GetCountThread());
 //        countThread.start();
     }
