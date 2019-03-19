@@ -43,6 +43,7 @@
             android:layout_height="match_parent"
             android:background="@color/borderColor"/>
         <EditText
+            android:focusableInTouchMode="false"
             android:textColorHint="@color/memoColor"
             android:textColor="@color/memoColor"
             android:layout_width="match_parent"
