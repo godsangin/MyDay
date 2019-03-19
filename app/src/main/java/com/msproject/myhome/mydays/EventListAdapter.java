@@ -119,7 +119,7 @@ public class EventListAdapter extends BaseAdapter {
             @TargetApi(Build.VERSION_CODES.O)
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if((!dragEventCallBackListener.dragable())&& (!categoryName.getText().equals("")) &&event.getAction() == MotionEvent.ACTION_DOWN) {
+                if((!dragEventCallBackListener.dragable())&& (!categoryName.getText().equals("")) && event.getAction() == MotionEvent.ACTION_DOWN) {
 //                    v.setBackground(new RippleDrawable(ColorStateList.valueOf(Color.WHITE)),null,null);
                     dragEventCallBackListener.click(position);
 
