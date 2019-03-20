@@ -217,30 +217,31 @@ public class MyService extends Service {//WorkManager사용?..
                 Log.d("startTime==", startTime + "");
                 PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
                 boolean isScreenOn = pm.isScreenOn();
+                SharedPreferences sharedPreferences = getSharedPreferences("alarm", MODE_PRIVATE);
+                int writedTime = sharedPreferences.getInt("startTime", -1);
                 Log.d("ScreenOn==", isScreenOn + "");
                 if(isScreenOn){
-                    if(duplicate && count < 540){//3시간=1080
-                        count = 0;
-                        long now = System.currentTimeMillis();
-                        Date date = new Date(now);
-                        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
-                        String formatDate = sdfNow.format(date);
-                        String[] split = formatDate.split(":");
-                        startTime = Integer.parseInt(split[0]);
-                        if(Integer.parseInt(split[1]) > 30){//30분이상이면 다음시간으로 취급(hour)
-                            startTime++;
-                        }
-                        callback = true;
+                    long now = System.currentTimeMillis();
+                    Date date = new Date(now);
+                    SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+                    String formatDate = sdfNow.format(date);
+                    String[] split = formatDate.split(":");
+                    startTime = Integer.parseInt(split[0]);
+                    if(Integer.parseInt(split[1]) > 30){//30분이상이면 다음시간으로 취급(hour)
+                        startTime++;
                     }
-                    else if(duplicate && count >= 540){
+                    if(duplicate && (writedTime - startTime < 3 || startTime - writedTime < 3)){//3시간=1080
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt("startTime", startTime);
+                        editor.commit();
+                    }
+                    else if(duplicate && (writedTime - startTime >= 3 || startTime - writedTime >= 3)){
                         sleepingEnd();
-                        count= 0;
                     }
                     duplicate = true;
                 }
                 else{
                     duplicate = false;
-                    callback = false;
                 }
                 try {
                     Thread.sleep(20000);
