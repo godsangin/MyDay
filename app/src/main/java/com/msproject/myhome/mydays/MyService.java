@@ -176,8 +176,8 @@ public class MyService extends Service {//WorkManager사용?..
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void sleepingEnd(){//notification발생 && 쓰레드멈춤..?
-        int endTime = startTime + (count / 180);
+    public void sleepingEnd(int pastTime){//notification발생 && 쓰레드멈춤..?
+        int endTime = startTime;
         Log.d("savestartTime==", startTime + "");
         if(endTime > 24){
             endTime -= 24;
@@ -186,7 +186,7 @@ public class MyService extends Service {//WorkManager사용?..
             count += 180;
         }
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-        resultIntent.putExtra("startTime", startTime);
+        resultIntent.putExtra("startTime", pastTime);
         resultIntent.putExtra("endTime", endTime);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MainActivity.class);
@@ -197,7 +197,7 @@ public class MyService extends Service {//WorkManager사용?..
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(R.drawable.logo3)
                 .setContentTitle("수면시간을 등록해보세요.")
-                .setContentText(startTime + "시부터 " + (startTime + count/180) + "시까지 잠을 잤나요?")//360
+                .setContentText(pastTime + "시부터 " + startTime + "시까지 잠을 잤나요?")//360
                 .setLargeIcon(mLargeIconForNoti)
                 .setAutoCancel(true)
                 .setContentIntent(mPendingIntent);
@@ -214,11 +214,12 @@ public class MyService extends Service {//WorkManager사용?..
         public void run() {
             while(!isStop){
                 Log.d("count==", count + "");
-                Log.d("startTime==", startTime + "");
+
                 PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
                 boolean isScreenOn = pm.isScreenOn();
                 SharedPreferences sharedPreferences = getSharedPreferences("alarm", MODE_PRIVATE);
                 int writedTime = sharedPreferences.getInt("startTime", -1);
+                Log.d("wstartTime==", writedTime + "");
                 Log.d("ScreenOn==", isScreenOn + "");
                 if(isScreenOn){
                     long now = System.currentTimeMillis();
@@ -227,17 +228,21 @@ public class MyService extends Service {//WorkManager사용?..
                     String formatDate = sdfNow.format(date);
                     String[] split = formatDate.split(":");
                     startTime = Integer.parseInt(split[0]);
-                    if(Integer.parseInt(split[1]) > 30){//30분이상이면 다음시간으로 취급(hour)
-                        startTime++;
-                    }
-                    if(duplicate && (writedTime - startTime < 3 || startTime - writedTime < 3)){//3시간=1080
+                    if(duplicate){
+                        if(Integer.parseInt(split[1]) > 30) {
+                            startTime++;
+                        }
+                        if(writedTime > startTime && writedTime - startTime >= 3){
+                            sleepingEnd(writedTime);
+                        }
+                        else if(writedTime < startTime && startTime - writedTime >= 3){
+                            sleepingEnd(writedTime);
+                        }
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putInt("startTime", startTime);
                         editor.commit();
                     }
-                    else if(duplicate && (writedTime - startTime >= 3 || startTime - writedTime >= 3)){
-                        sleepingEnd();
-                    }
+
                     duplicate = true;
                 }
                 else{
