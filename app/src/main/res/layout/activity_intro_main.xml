@@ -99,7 +99,7 @@
         android:padding="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="오늘의 날짜를 확인하고 \n클릭 시 캘린더가 생성됩니다."
+        android:text="일정 통계를 확인하거나 설정을 변경할 수 있습니다."
         android:textColor="#777777"
         android:visibility="gone"/>
     <ImageView
