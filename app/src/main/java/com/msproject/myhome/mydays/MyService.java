@@ -231,8 +231,16 @@ public class MyService extends Service {//WorkManager사용?..
                     if(duplicate){
                         if(Integer.parseInt(split[1]) > 30) {
                             startTime++;
+                            if(startTime == 24){
+                                startTime = 0;
+                            }
                         }
-                        if(writedTime > startTime && writedTime - startTime >= 3){
+                        if(writedTime >= 22){
+                            if(24 + startTime - writedTime >= 3){
+                                sleepingEnd(writedTime);
+                            }
+                        }
+                        else if(writedTime > startTime && writedTime - startTime >= 3){
                             sleepingEnd(writedTime);
                         }
                         else if(writedTime < startTime && startTime - writedTime >= 3){
