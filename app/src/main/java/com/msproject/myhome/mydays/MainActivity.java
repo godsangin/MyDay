@@ -68,8 +68,10 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import org.joda.time.LocalDate;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.AdRequest;
@@ -641,6 +643,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void startSleepCount(){
         if(restartNoti) return;
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+        String formatDate = sdfNow.format(date);
+        String[] split = formatDate.split(":");
+        int startTime = Integer.parseInt(split[0]);
+        SharedPreferences sharedPreferences = getSharedPreferences("alarm", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("startTime", startTime);
+        editor.commit();
         serviceIntent = new Intent(MainActivity.this, MyService.class);
         serviceIntent.putExtra("main", true);
         serviceIntent.putExtra("restart", restartNoti);
