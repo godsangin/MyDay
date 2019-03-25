@@ -236,7 +236,7 @@ public class MyService extends Service {//WorkManager사용?..
                             }
                         }
                         if(writedTime >= 22){
-                            if(24 + startTime - writedTime >= 3){
+                            if(writedTime > startTime && startTime + 24 - writedTime >= 3){
                                 sleepingEnd(writedTime);
                             }
                         }
