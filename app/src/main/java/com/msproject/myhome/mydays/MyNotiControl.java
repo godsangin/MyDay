@@ -15,6 +15,7 @@ public class MyNotiControl {
     public MyNotiControl (Context parent)
     {
         this.context= parent;
+
         nBuilder = new NotificationCompat.Builder(context)
                 .setContentTitle("GUNMAN SERVICE")
                 .setSmallIcon(R.drawable.logo3)
