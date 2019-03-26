@@ -36,6 +36,7 @@ import java.util.HashSet;
 public class StatisticActivity extends AppCompatActivity {
 
     PieChart pieChart;
+    private final String[] statisType = {"일간", "주간", "월간"};
 
     Button btn_daily, btn_weekly, btn_monthly;
 
@@ -213,7 +214,7 @@ public class StatisticActivity extends AppCompatActivity {
         LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
         String todayString = ld.toString().replace("-","").substring(2);
 
-        Toast.makeText(getApplicationContext(), todayString, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), todayString + "의 " + statisType[dateType] + "일정입니다.", Toast.LENGTH_SHORT).show();
         if(dateType == 0){
             getOneDayPlanner(category, times, todayString);
             this.dateType.setText("일간");
