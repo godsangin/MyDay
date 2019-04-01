@@ -3,7 +3,6 @@ package com.msproject.myhome.mydays;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -106,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     @SuppressLint("ClickableViewAccessibility")
-    @TargetApi(Build.VERSION_CODES.M)
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,11 +138,9 @@ public class MainActivity extends AppCompatActivity {
         createSleepDialog();
         memo.clearFocus();
         startSleepCount();
-//        setJobdispatcher();
-
-        if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
             //상단 바 색상 변경
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
 
@@ -656,7 +652,11 @@ public class MainActivity extends AppCompatActivity {
         serviceIntent = new Intent(MainActivity.this, MyService.class);
         serviceIntent.putExtra("main", true);
         serviceIntent.putExtra("restart", restartNoti);
-        startService(serviceIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        }else{
+            startService(serviceIntent);
+        }
 //        countThread = new Thread(new GetCountThread());
 //        countThread.start();
     }

@@ -52,7 +52,6 @@ public class StatisticActivity extends AppCompatActivity {
     ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
     ArrayList<Integer> colors = new ArrayList<>();
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,11 +61,10 @@ public class StatisticActivity extends AppCompatActivity {
         titleBar = findViewById(R.id.statics_title_bar);
         context = this;
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 21 버전 이상일 때
-            //상단 바 색상 변경
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
+
         LocalDate ld = new LocalDate();
         calendarDate = titleBar.findViewById(R.id.calendarDate);
         calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth() + "일");

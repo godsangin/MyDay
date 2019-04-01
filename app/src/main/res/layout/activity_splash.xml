@@ -13,5 +13,5 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/logo3"/>
+        android:src="@drawable/logo3"/>
 </android.support.constraint.ConstraintLayout>
