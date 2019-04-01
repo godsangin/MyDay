@@ -28,7 +28,6 @@ public class IntroEventActivity extends AppCompatActivity {
     ImageView imageThird;
     ListView eventListView;
     ArrayList<Event> events = new ArrayList<>();
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,11 +53,10 @@ public class IntroEventActivity extends AppCompatActivity {
         EventListAdapter eventListAdapter = new EventListAdapter(events, this);
         eventListView.setAdapter(eventListAdapter);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 21 버전 이상일 때
-            //상단 바 색상 변경
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
+
 
         firstContent.setOnClickListener(new View.OnClickListener() {
             @Override

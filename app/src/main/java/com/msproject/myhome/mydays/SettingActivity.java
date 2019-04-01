@@ -34,16 +34,15 @@ public class SettingActivity extends AppCompatActivity {
     private final int CATEGORY_RESULT_CODE = 4;
 
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 21 버전 이상일 때
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
+
 
         titleBar = findViewById(R.id.title_bar);
         recyclerView = findViewById(R.id.setting_recycler_view);

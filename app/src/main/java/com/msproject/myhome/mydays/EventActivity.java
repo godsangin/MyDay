@@ -71,7 +71,6 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
     private final int RESPONSE_SETTING_CODE = 4;
     private final int REQUEST_INTRO_CODE = 5;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,11 +93,10 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
         ArrayList<Event> DBEvents = myDaysDB.getEvents(date, quarterNo);
 
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 21 버전 이상일 때
-            //상단 바 색상 변경
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
+
 
         for (int i = 0; i < 6; i++) {
             events.add(new Event(quarterNo + i, "", ""));
@@ -111,7 +109,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
 
         eventListAdapter = new EventListAdapter(events, this);
 
-        eventListView.setAdapter(eventListAdapter);
+
         dragEventCallBackListener = new DragEventCallBackListener() {
             boolean canDrag;
             int position;
@@ -175,13 +173,14 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
             }
         });
         eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
+
         eventListView.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 return false;
             }
         });
-
+        eventListView.setAdapter(eventListAdapter);
         setMyDialogListener();
         setGridViewLongClickListener();
         setFabOnClickListener();

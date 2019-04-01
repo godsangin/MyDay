@@ -21,7 +21,6 @@ public class FunctionSettingActivity extends AppCompatActivity {
     ListView functionSettingListView;
     FSListViewAdapter fsListViewAdapter;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,10 +32,10 @@ public class FunctionSettingActivity extends AppCompatActivity {
         fsListViewAdapter = new FSListViewAdapter(items);
         functionSettingListView.setAdapter(fsListViewAdapter);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 21 버전 이상일 때
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getColor(R.color.colorTitleBar));
         }
+
 
     }
 
