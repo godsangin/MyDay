@@ -104,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
     public Intent serviceIntent;
 
 
-    @SuppressLint("ClickableViewAccessibility")
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -613,7 +611,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("today==",todayString);
         ArrayList<Event> events = mydaysDBHelper.getResult(todayString);
         if(events.isEmpty()){
-            updateChart(true, 0, 24, Default, ColorMakeHelper.getColor(Default));
+            updateChart(true, 0, 23, Default, ColorMakeHelper.getColor(Default));
             return;
         }
         ArrayList<UpdateListItem> updateListItems = new ArrayList<>();

@@ -160,12 +160,15 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                 Log.d("what==", categoryGridAdapter.getItem(position).toString());
                 if (selectedCategory != null && ((Category) (categoryGridAdapter.getItem(position))).equals(selectedCategory)) {
                     selectedCategory = null;
+
                     eventListAdapter.setDragable(false);
 
                 } else {
                     selectedCategory = (Category) categoryGridAdapter.getItem(position);
+                    Log.d("selected==", selectedCategory.getColor());
                     view.setBackgroundColor(Color.parseColor("#6EA2D5"));
                     dragEventCallBackListener.setColor(selectedCategory.getColor());
+                    eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
                     eventListAdapter.setDragable(true);
                 }
 
