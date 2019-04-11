@@ -83,8 +83,6 @@ public class MyService extends Service {//WorkManager사용?..
         return super.onUnbind(intent);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    @SuppressLint("WrongConstant")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
@@ -149,7 +147,6 @@ public class MyService extends Service {//WorkManager사용?..
         super.onDestroy();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public void registerRestartAlarm(){
         Log.d("restartAl==", "true");
         Intent intent = new Intent(MyService.this, MyReceiver.class);
@@ -162,7 +159,9 @@ public class MyService extends Service {//WorkManager사용?..
         restart.add(Calendar.SECOND, 10);
 
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
-        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1*1000,  sender);//doze모드에서도 정상작동하기위함 10분 뒤 서비스 재시작
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1*1000,  sender);//doze모드에서도 정상작동하기위함 10분 뒤 서비스 재시작
+        }
         Log.d("startcount==", startTime + " " + count);
     }
 
@@ -175,7 +174,6 @@ public class MyService extends Service {//WorkManager사용?..
         am.cancel(sender);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void sleepingEnd(int pastTime){//notification발생 && 쓰레드멈춤..?
         int endTime = startTime;
         Log.d("savestartTime==", startTime + "");
@@ -188,28 +186,29 @@ public class MyService extends Service {//WorkManager사용?..
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
         resultIntent.putExtra("startTime", pastTime);
         resultIntent.putExtra("endTime", endTime);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent mPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        Bitmap mLargeIconForNoti = BitmapFactory.decodeResource(getResources(), R.drawable.logo3);
-        //notification
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.logo3)
-                .setContentTitle("수면시간을 등록해보세요.")
-                .setContentText(pastTime + "시부터 " + startTime + "시까지 잠을 잤나요?")//360
-                .setLargeIcon(mLargeIconForNoti)
-                .setAutoCancel(true)
-                .setContentIntent(mPendingIntent);
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mNotificationManager.notify(0, mBuilder.build());
-
+        TaskStackBuilder stackBuilder = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(MainActivity.class);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent mPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            Bitmap mLargeIconForNoti = BitmapFactory.decodeResource(getResources(), R.drawable.logo3);
+            //notification
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
+                    .setSmallIcon(R.drawable.logo3)
+                    .setContentTitle("수면시간을 등록해보세요.")
+                    .setContentText(pastTime + "시부터 " + startTime + "시까지 잠을 잤나요?")//360
+                    .setLargeIcon(mLargeIconForNoti)
+                    .setAutoCancel(true)
+                    .setContentIntent(mPendingIntent);
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            mNotificationManager.notify(0, mBuilder.build());
+        }
     }
 
     private class Counter implements Runnable{
         boolean duplicate;
 
-        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void run() {
             while(!isStop){
