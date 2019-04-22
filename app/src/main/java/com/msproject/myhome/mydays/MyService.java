@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -15,6 +16,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.nfc.Tag;
 import android.os.Build;
 import android.os.Handler;
@@ -97,7 +99,12 @@ public class MyService extends Service {//WorkManager사용?..
             Log.d("intent==", "main");
         }
         MyNotiControl c1 = new MyNotiControl(this);
-        startForeground(1, c1.getNoti());
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            startMyOwnForeground();
+        }else{
+            startForeground(1, c1.getNoti());
+        }
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -172,6 +179,28 @@ public class MyService extends Service {//WorkManager사용?..
         PendingIntent sender = PendingIntent.getBroadcast(MyService.this, APPLICATION_ID,intent,0);
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
         am.cancel(sender);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void startMyOwnForeground(){
+        String NOTIFICATION_CHANNEL_ID = "com.msproject.myhome.mydays";
+        String channelName = "My Background Service";
+        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_MIN);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.createNotificationChannel(chan);
+
+        MyNotiControl c1 = new MyNotiControl(this, NOTIFICATION_CHANNEL_ID, channelName);
+//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+//        Notification notification = notificationBuilder.setOngoing(true)
+//                .setSmallIcon(R.drawable.logo3)
+//                .setContentTitle("App is running in background")
+//                .setPriority(NotificationManager.IMPORTANCE_MIN)
+//                .setCategory(Notification.CATEGORY_SERVICE)
+//                .build();
+        startForeground(2, c1.getNoti());
     }
 
     public void sleepingEnd(int pastTime){//notification발생 && 쓰레드멈춤..?
