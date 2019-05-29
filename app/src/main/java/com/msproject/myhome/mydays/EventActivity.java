@@ -107,8 +107,6 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
             Log.d("Event==", DBEvents.get(j).getCategoryName() + " " + DBEvents.get(j).getEventNo());
         }// DB내의 Event들 load
 
-        eventListAdapter = new EventListAdapter(events, this);
-
 
         dragEventCallBackListener = new DragEventCallBackListener() {
             boolean canDrag;
@@ -148,6 +146,7 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                 return selectedColor;
             }
         };
+        eventListAdapter = new EventListAdapter(events, this, dragEventCallBackListener);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -175,7 +174,8 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
 
             }
         });
-        eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
+
+//        eventListAdapter.setDragEventCallBackListener(dragEventCallBackListener);
 
         eventListView.setOnDragListener(new View.OnDragListener() {
             @Override
