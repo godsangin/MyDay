@@ -58,12 +58,13 @@ public class EventListAdapter extends BaseAdapter {
         this.dragEventCallBackListener.setCanDrag(b);
     }
 
-    public EventListAdapter(ArrayList<Event> events, Context context){
+    public EventListAdapter(ArrayList<Event> events, Context context, DragEventCallBackListener dragEventCallBackListener){
         this.events = events;
         this.context = context;
         dbHelper = new CategoryDBHelper(context, "CATEGORY.db", null, 1);
         views = new ArrayList<>();
         touch = new Point();
+        setDragEventCallBackListener(dragEventCallBackListener);
 //        setTouchBoundaryListener();
     }
 
@@ -116,7 +117,7 @@ public class EventListAdapter extends BaseAdapter {
         final MyListViewDragListener myListViewDragListener = new MyListViewDragListener();
         view.setOnDragListener(myListViewDragListener);
         view.setOnTouchListener(new View.OnTouchListener() {
-            @TargetApi(Build.VERSION_CODES.O)
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if((!dragEventCallBackListener.dragable())&& (!categoryName.getText().equals("")) && event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -126,17 +127,22 @@ public class EventListAdapter extends BaseAdapter {
                 }
                 else{
                     deltaY = event.getY();
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
+                    View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder();
                     startPos = position;
 
 //                if(isDraging){
 //                    return false;
 //                }
-                    v.startDrag(null, shadowBuilder, null, 0);
+//                    v.startDrag(null, shadowBuilder, null, 0);
                     isDraging = true;
                     dragEventCallBackListener.setStartPos(startPos);
 
-                    v.startDragAndDrop(null, shadowBuilder, null, 0);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        v.startDragAndDrop(null, shadowBuilder, null, 0);
+                    }
+                    else{
+                        v.startDrag(null, shadowBuilder, null, 0);
+                    }
                 }
 
                 return true;
@@ -243,5 +249,11 @@ public class EventListAdapter extends BaseAdapter {
         }
     }
 
-
+    public class MyDragShadowBuilder extends View.DragShadowBuilder {
+        @Override
+        public void onProvideShadowMetrics(Point outShadowSize, Point outShadowTouchPoint) {
+            outShadowSize.set(1,1);
+            outShadowTouchPoint.set(0,0);
+        }
+    }
 }

@@ -50,7 +50,7 @@ public class IntroEventActivity extends AppCompatActivity {
         for (int i = 0; i < 6; i++) {
             events.add(new Event( i, "", ""));
         }//listView 생성
-        EventListAdapter eventListAdapter = new EventListAdapter(events, this);
+        EventListAdapter eventListAdapter = new EventListAdapter(events, this, null);
         eventListView.setAdapter(eventListAdapter);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
