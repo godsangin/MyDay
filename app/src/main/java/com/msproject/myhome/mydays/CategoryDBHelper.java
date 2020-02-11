@@ -19,7 +19,9 @@ public class CategoryDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS CATEGORY (_id INTEGER PRIMARY KEY AUTOINCREMENT, categoryName TEXT, color TEXT, flag INTEGER);");
-
+        db.execSQL("insert into category values(null,"+'"'+"수면"+'"'+","+'"'+"#0000CD"+'"'+",1);");
+        db.execSQL("insert into category values(null,"+'"'+"식사"+'"'+","+'"'+"#52E252"+'"'+",1);");
+        db.execSQL("insert into category values(null,"+'"'+"운동"+'"'+","+'"'+"#FF0000"+'"'+",1);");
     }
 
     @Override

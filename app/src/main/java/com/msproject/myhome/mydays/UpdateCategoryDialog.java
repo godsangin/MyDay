@@ -19,7 +19,7 @@ public class UpdateCategoryDialog extends Dialog implements View.OnClickListener
     private static final int LAYOUT = R.layout.dialog_update_category;
     private Context context;
     private EditText categoryEditText;
-    private LinearLayout categoryColorSetectButton;
+    private LinearLayout categoryColorSelectButton;
     private Button submitButton;
     private Button cancelButton;
     private String pickedColor;
@@ -50,7 +50,7 @@ public class UpdateCategoryDialog extends Dialog implements View.OnClickListener
 
     public void setPickedColor(String pickedColor) {
         this.pickedColor = pickedColor;
-        categoryColorSetectButton.setBackgroundColor(Color.parseColor(this.pickedColor));
+        categoryColorSelectButton.setBackgroundColor(Color.parseColor(this.pickedColor));
     }
 
     public void setDialogListener(MyDialogListener myDialogListener){
@@ -63,7 +63,7 @@ public class UpdateCategoryDialog extends Dialog implements View.OnClickListener
         setContentView(LAYOUT);
 
         categoryEditText = findViewById(R.id.category_edittext);
-        categoryColorSetectButton = findViewById(R.id.color_selec_bt);
+        categoryColorSelectButton = findViewById(R.id.color_selec_bt);
         submitButton = findViewById(R.id.submit_bt);
         cancelButton = findViewById(R.id.cancel_bt);
 
@@ -75,7 +75,7 @@ public class UpdateCategoryDialog extends Dialog implements View.OnClickListener
         }
         submitButton.setOnClickListener(this);
         cancelButton.setOnClickListener(this);
-        categoryColorSetectButton.setOnClickListener(this);
+        categoryColorSelectButton.setOnClickListener(this);
     }
 
     @Override

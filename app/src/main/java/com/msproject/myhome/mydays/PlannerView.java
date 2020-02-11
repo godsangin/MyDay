@@ -24,8 +24,6 @@ import org.joda.time.LocalDate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PlannerView extends ConstraintLayout {
     TextView yearText;
@@ -41,8 +39,8 @@ public class PlannerView extends ConstraintLayout {
     Button previousButton;
     Button nextButton;
     LocalDate date;
-    HashMap<String, ArrayList<Event>> hashMap;
     MyDialogListener dialogListener;
+    MydaysDBHelper db;
 
     public PlannerView(Context context) {
         super(context);
@@ -64,14 +62,13 @@ public class PlannerView extends ConstraintLayout {
         this.date = localDate;
         removeAllViews();
         this.isExistToday = false;
+        db = new MydaysDBHelper(context, "MyDays.db", null, 1);
 
         String infService = Context.LAYOUT_INFLATER_SERVICE;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(infService);
 
         final View view = inflater.inflate(R.layout.planner_view, this, false);
         addView(view);
-
-        hashMap = new HashMap<>();
 
         todayButton = view.findViewById(R.id.calendar_today_bt);
         todayButton.setOnClickListener(new OnClickListener() {
@@ -317,31 +314,11 @@ public class PlannerView extends ConstraintLayout {
 
                 }
 
-
-                for(Map.Entry<String, ArrayList<Event>> entry : hashMap.entrySet()) {
-                    ArrayList<Event> events = entry.getValue();
-
-                    for(int i = 0; i < events.size(); i++) {
-                        Event event = events.get(i);
-
-
-                        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-                        if(entry.getKey().equals(format.format(this.calendar.toDate()))) {
-//                            viewHolder.adapter.events.add(event);
-                        }
-                    }
-                }
                 LocalDate today = viewHolder.getLocalDate();
-                SimpleDateFormat format = new SimpleDateFormat("yy.MM.dd");
-
+                SimpleDateFormat format = new SimpleDateFormat("yyMMdd");
                 String key = format.format(today.toDate());
-//                viewHolder.adapter.notifyDataSetChanged();
-                String todayEvent = mContext.getSharedPreferences("EVENT", Context.MODE_PRIVATE).getString(key, "");
-
-                if(!todayEvent.equals("")){
-                    eventExist.setVisibility(View.VISIBLE);
-                }
-
+                int time = db.getEventTimeInDay(key);
+                viewHolder.saveTimeText.setText(time + "시간");
 
                 this.calendar = this.calendar.plusDays(1);
             }
@@ -354,13 +331,13 @@ public class PlannerView extends ConstraintLayout {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView dateText;
+            TextView saveTimeText;
             LocalDate localDate;
-            ListView dateListView;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 dateText = itemView.findViewById(R.id.planner_item_day);
-
+                saveTimeText = itemView.findViewById(R.id.saved_time_text);
             }
 
             public void setLocalDate(LocalDate localDate) {

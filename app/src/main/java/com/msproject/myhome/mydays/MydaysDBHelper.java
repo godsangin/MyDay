@@ -50,7 +50,6 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
 
     public void update(String date, int eventNo, String categoryName,String eventContent){
         SQLiteDatabase db = getWritableDatabase();
-        Log.d("update==", categoryName);
         String updateSql = "Update MyDays SET categoryName ="+'"'+categoryName+'"'+",eventContent = "+'"'+eventContent+'"'+"where date="+'"'+date+'"'+" and eventNo="+eventNo;
         db.execSQL(updateSql);
     }
@@ -74,10 +73,18 @@ public class MydaysDBHelper extends SQLiteOpenHelper {
         return events;
     }
 
+    public int getEventTimeInDay(String date){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM MyDays where date="+date,null);
+        cursor.moveToNext();
+        int time = cursor.getInt(0);
+        db.close();
+        return time;
+    }
+
     public ArrayList<Event> getEvents(String date,int startNo){
         ArrayList<Event> events = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Log.d("time==", date + startNo);
         Cursor cursor = db.rawQuery("SELECT * FROM MyDays where date="+date+" and eventNo Between "+startNo+" and "+(startNo+5),null);
 
         while (cursor.moveToNext()){

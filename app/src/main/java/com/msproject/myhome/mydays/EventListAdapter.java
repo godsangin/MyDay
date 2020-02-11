@@ -120,6 +120,9 @@ public class EventListAdapter extends BaseAdapter {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                if(dragEventCallBackListener == null){
+                    return false;
+                }
                 if((!dragEventCallBackListener.dragable())&& (!categoryName.getText().equals("")) && event.getAction() == MotionEvent.ACTION_DOWN) {
 //                    v.setBackground(new RippleDrawable(ColorStateList.valueOf(Color.WHITE)),null,null);
                     dragEventCallBackListener.click(position);
@@ -129,11 +132,6 @@ public class EventListAdapter extends BaseAdapter {
                     deltaY = event.getY();
                     View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder();
                     startPos = position;
-
-//                if(isDraging){
-//                    return false;
-//                }
-//                    v.startDrag(null, shadowBuilder, null, 0);
                     isDraging = true;
                     dragEventCallBackListener.setStartPos(startPos);
 
@@ -166,7 +164,6 @@ public class EventListAdapter extends BaseAdapter {
                 return false;
             }
             final int action = event.getAction();
-            Log.d("action2==",Integer.toString(action));
             switch(action){
                 case DragEvent.ACTION_DRAG_LOCATION:
 
@@ -239,7 +236,6 @@ public class EventListAdapter extends BaseAdapter {
                     }
                     dragEventCallBackListener.onDragFinished(selectedEvent);
                     dragEventCallBackListener.setCanDrag(false);
-                    Log.d("endPos==",Integer.toString(endPos));
                     isDraging = false;
                     return true;
                 default:

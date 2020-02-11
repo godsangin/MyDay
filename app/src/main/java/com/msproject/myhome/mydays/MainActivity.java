@@ -128,12 +128,10 @@ public class MainActivity extends AppCompatActivity {
         if(intent != null){
             restartNoti = getIntent().getBooleanExtra("restart", false);
         }
-        Log.d("restart==", restartNoti + "");
         setMoveDay(lastdayButton, nextdayButton);
         setCalendarView();
         setTitleContents();
         setIntro();
-        createSleepDialog();
         memo.clearFocus();
         startSleepCount();
             // 21 버전 이상일 때
@@ -284,9 +282,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, EventActivity.class);
         intent.putExtra("Hour", index + "");
         LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
-        Log.d("date==",ld.toString());
         intent.putExtra("Date", ld.toString().replace("-","").substring(2,8));
-        Log.d("date==",ld.toString().replace("-",""));
         startActivityForResult(intent, 0);
     }
 
@@ -392,7 +388,6 @@ public class MainActivity extends AppCompatActivity {
         calendarDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calendarDialog = new CalendarDialog(context, parsingLocalDate(calendarDate.getText().toString()));
                 Display display = getWindowManager().getDefaultDisplay();
                 Point size = new Point();
                 display.getSize(size);
@@ -474,8 +469,13 @@ public class MainActivity extends AppCompatActivity {
                 editor.commit();
                 LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
                 LocalDate lastDate = localDate.minusDays(1);
-                if(localDate.getYear() != lastDate.getYear()) year--;
+                if(localDate.getYear() != lastDate.getYear()) {
+                    year--;
+                }
                 calendarDate.setText(lastDate.getMonthOfYear() + "월 " + lastDate.getDayOfMonth() + "일");
+                if(localDate.monthOfYear() != lastDate.monthOfYear()){
+                    calendarDialog = new CalendarDialog(context, parsingLocalDate(calendarDate.getText().toString()));
+                }
 
                 updateChart(false, 0, 24, "", ColorMakeHelper.getColor(null));
                 loadEventData();
@@ -498,8 +498,13 @@ public class MainActivity extends AppCompatActivity {
                 editor.commit();
                 LocalDate localDate = parsingLocalDate(calendarDate.getText().toString());
                 LocalDate nextDate = localDate.plusDays(1);
-                if(localDate.getYear() != nextDate.getYear()) year++;
+                if(localDate.getYear() != nextDate.getYear()) {
+                    year++;
+                }
                 calendarDate.setText(nextDate.getMonthOfYear() + "월 " + nextDate.getDayOfMonth() + "일");
+                if(localDate.monthOfYear() != nextDate.monthOfYear()){
+                    calendarDialog = new CalendarDialog(context, parsingLocalDate(calendarDate.getText().toString()));
+                }
 
                 updateChart(false, 0, 24, "", ColorMakeHelper.getColor(null));
                 loadEventData();
@@ -519,6 +524,7 @@ public class MainActivity extends AppCompatActivity {
         LocalDate ld = new LocalDate();
         year = ld.getYear();
         calendarDate.setText(ld.getMonthOfYear() + "월 " + ld.getDayOfMonth() + "일");
+        calendarDialog = new CalendarDialog(context, parsingLocalDate(calendarDate.getText().toString()));
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -599,7 +605,6 @@ public class MainActivity extends AppCompatActivity {
     public void updateColorHelper(){
         ArrayList<Category> categories = categoryDBHelper.getResult();
         for(Category c : categories){
-            Log.d("COLOR CHECK", "updateColorHelper: " + c.getCategoryName());
             ColorMakeHelper.setColor(c.getCategoryName(), Color.parseColor(c.getColor()));
         }
     }
@@ -608,7 +613,6 @@ public class MainActivity extends AppCompatActivity {
         //이벤트 추가
         LocalDate ld = this.parsingLocalDate(calendarDate.getText().toString());
         String todayString = ld.toString().replace("-","").substring(2,8);
-        Log.d("today==",todayString);
         ArrayList<Event> events = mydaysDBHelper.getResult(todayString);
         if(events.isEmpty()){
             updateChart(true, 0, 23, Default, ColorMakeHelper.getColor(Default));
@@ -622,7 +626,6 @@ public class MainActivity extends AppCompatActivity {
                 updateListItems.get(updateListItems.size()-1).end++;
             }
             else{
-                Log.d("categoryName==",myEvent.getCategoryName());
                 String colorString = categoryDBHelper.getColor(myEvent.getCategoryName());
                 updateListItems.add(new UpdateListItem(myEvent.getEventNo(), myEvent.getEventNo()+1, myEvent.getCategoryName(), colorString));
             }
@@ -647,16 +650,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("startTime", startTime);
         editor.commit();
-        serviceIntent = new Intent(MainActivity.this, MyService.class);
-        serviceIntent.putExtra("main", true);
-        serviceIntent.putExtra("restart", restartNoti);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        }else{
-            startService(serviceIntent);
-        }
-//        countThread = new Thread(new GetCountThread());
-//        countThread.start();
     }
 
 
@@ -689,97 +682,6 @@ public class MainActivity extends AppCompatActivity {
 
         dayofweek.setText(dayOfWeekString[c1.get(Calendar.DAY_OF_WEEK) - 1]);
     }
-    public void createSleepDialog(){
-        Intent serviceIntent = getIntent();
-        if(serviceIntent == null){
-            return;
-        }
-
-        final int startTime = serviceIntent.getIntExtra("startTime", -1);
-        if(startTime != -1){
-            final int endTime = serviceIntent.getIntExtra("endTime", -1);
-            if(endTime != -1){
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-                builder.setTitle("다음 일정을 등록하시겠습니까?");
-                builder.setMessage("수면: " + startTime + "시 ~ " + endTime + "시");
-                builder.setPositiveButton("확인",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                LocalDate ld = new LocalDate();
-                                String thisDay = ld.toString().replace("-","").substring(2,8);
-                                SharedPreferences sharedPreferences = getSharedPreferences("sleep", MODE_PRIVATE);
-                                boolean created = sharedPreferences.getBoolean("created", false);
-                                if(!created) {
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putBoolean("created", true);
-                                    editor.commit();
-                                    categoryDBHelper.insert("수면", "#123456");
-                                }
-                                if(endTime >= startTime){//00시이후에 잘때
-
-                                    for(int i = startTime; i < endTime; i++){
-                                        mydaysDBHelper.insert(thisDay, i, "수면", "");
-                                        Log.d("insert==", thisDay + " " + i);
-                                    }
-                                }
-                                else{//00시이전에 자서 하루가 넘어갈 경우
-                                    for(int i = 0; i < endTime; i++){
-                                        mydaysDBHelper.insert(thisDay, i, "수면", "");
-                                        Log.d("insert==", thisDay + " " + i);
-                                    }
-                                    ld = ld.minusDays(1);
-                                    thisDay = ld.toString().replace("-","").substring(2,8);
-                                    for(int i = startTime; i < 24; i++){
-                                        mydaysDBHelper.insert(thisDay, i, "수면", "");
-                                        Log.d("insert==", thisDay + " " + i);
-                                    }
-                                }
-
-                                updateChart(false, 0, 24, "", ColorMakeHelper.getColor(null));
-                                loadEventData();
-                                pieChart.notifyDataSetChanged();
-                                pieChart.invalidate();
-                            }
-                        });
-                builder.setNegativeButton("취소",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();
-            }
-        }//수면카테고리생성
-        setIntent(null);
-    }
-    public void setJobdispatcher(){
-        FirebaseJobDispatcher dispatcher;
-        dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
-        dispatcher.cancelAll();
-        Bundle jobParameters = new Bundle();
-
-        Job autoJob= dispatcher.newJobBuilder().setTag("auto-attendance")
-                .setRecurring(true)
-                .setService(SampleJobService.class)
-                .setLifetime(Lifetime.FOREVER)
-                .setTrigger(Trigger.executionWindow(10, 10 + 15))
-                .setReplaceCurrent(false)
-                .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
-                .setConstraints(Constraint.ON_UNMETERED_NETWORK)
-                .build();
-        dispatcher.mustSchedule(autoJob);
-        Log.d("job==", "called");
-    }
-
     public class UpdateListItem{
         int start;
         int end;

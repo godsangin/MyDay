@@ -156,7 +156,6 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
                 for (int i = 0; i < gridView.getCount(); i++) {
                     gridView.getChildAt(i).setBackgroundColor(gridView.getSolidColor());
                 }
-                Log.d("what==", categoryGridAdapter.getItem(position).toString());
                 if (selectedCategory != null && ((Category) (categoryGridAdapter.getItem(position))).equals(selectedCategory)) {
                     selectedCategory = null;
 

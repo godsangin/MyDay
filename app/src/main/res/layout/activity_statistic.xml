@@ -55,7 +55,6 @@
             android:orientation="horizontal">
             <Button
                 android:textColor="@color/stasticButtonTextColor"
-
                 android:id="@+id/btn_daily"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -69,7 +68,6 @@
             android:orientation="horizontal">
             <Button
                 android:textColor="@color/stasticButtonTextColor"
-
                 android:id="@+id/btn_weekly"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -91,18 +89,4 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="60dip"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:background="#000"-->
-        <!--android:gravity="center">-->
-        <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="광고"-->
-            <!--android:textSize="30dip"-->
-            <!--android:textColor="#FFF"-->
-            <!--android:textAlignment="center" />-->
-    <!--</LinearLayout>-->
 </LinearLayout>

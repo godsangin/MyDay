@@ -6,8 +6,8 @@ android {
         applicationId "com.msproject.myhome.mydays"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 12
-        versionName "2.0.1"
+        versionCode 14
+        versionName "2.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true;
     }
