@@ -5,9 +5,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -17,21 +15,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.animation.Easing;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 
 public class StatisticActivity extends AppCompatActivity {
 
@@ -58,7 +53,7 @@ public class StatisticActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistic);
 
 
-        titleBar = findViewById(R.id.statics_title_bar);
+        titleBar = (ConstraintLayout) findViewById(R.id.statics_title_bar);
         context = this;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -71,7 +66,7 @@ public class StatisticActivity extends AppCompatActivity {
 
         dateType = titleBar.findViewById(R.id.dateType);
 
-        hasNoItem = findViewById(R.id.sorryNoItem);
+        hasNoItem = (TextView) findViewById(R.id.sorryNoItem);
 
         ImageView lastdayButton = titleBar.findViewById(R.id.btPrev);
         ImageView nextdayButton = titleBar.findViewById(R.id.btNext);

@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -28,14 +28,14 @@ public class IntroMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_main);
 
-        imageFirst = findViewById(R.id.mouse_img);
-        textFirst = findViewById(R.id.intro_text);
-        imageSecond = findViewById(R.id.mouse_img2);
-        textSecond = findViewById(R.id.intro_text2);
-        imageThird = findViewById(R.id.mouse_img3);
-        textThird = findViewById(R.id.intro_text3);
-        imageFourth = findViewById(R.id.mouse_img4);
-        textFourth = findViewById(R.id.intro_text4);
+        imageFirst = (ImageView) findViewById(R.id.mouse_img);
+        textFirst = (TextView) findViewById(R.id.intro_text);
+        imageSecond = (ImageView) findViewById(R.id.mouse_img2);
+        textSecond = (TextView) findViewById(R.id.intro_text2);
+        imageThird = (ImageView) findViewById(R.id.mouse_img3);
+        textThird = (TextView) findViewById(R.id.intro_text3);
+        imageFourth = (ImageView) findViewById(R.id.mouse_img4);
+        textFourth = (TextView) findViewById(R.id.intro_text4);
         final Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.mouse_focus);
         imageFirst.startAnimation(animation);
 

@@ -4,9 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +13,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -33,17 +33,17 @@ public class IntroEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_event);
 
-        firstContent = findViewById(R.id.first_content);
-        secondContent = findViewById(R.id.second_content);
-        thirdContent = findViewById(R.id.third_content);
-        fourthContent = findViewById(R.id.fourth_content);
-        imageFirst = findViewById(R.id.mouse_img);
-        imageSecond = findViewById(R.id.mouse_img2);
-        imageThird = findViewById(R.id.mouse_img3);
-        eventListView = findViewById(R.id.event_listview);
+        firstContent = (LinearLayout) findViewById(R.id.first_content);
+        secondContent = (LinearLayout) findViewById(R.id.second_content);
+        thirdContent = (LinearLayout) findViewById(R.id.third_content);
+        fourthContent = (LinearLayout) findViewById(R.id.fourth_content);
+        imageFirst = (ImageView) findViewById(R.id.mouse_img);
+        imageSecond = (ImageView) findViewById(R.id.mouse_img2);
+        imageThird = (ImageView) findViewById(R.id.mouse_img3);
+        eventListView = (ListView) findViewById(R.id.event_listview);
         final Animation animationClick = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.mouse_focus);
         imageFirst.startAnimation(animationClick);
-        final FloatingActionButton fab = findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         final int[] location = new int[2];
         fab.getLocationOnScreen(location);
         Log.d("fabLocation==", location[0] + "," + location[1]);

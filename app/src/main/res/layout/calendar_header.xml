@@ -12,7 +12,7 @@
         android:textSize="16sp"
         android:textColor="#FF0000"
         android:layout_margin="4dp"
-        android:textAlignment="center"
+        android:gravity="center"
         android:layout_weight="1"/>
 
     <TextView
@@ -22,7 +22,7 @@
         android:textSize="16sp"
         android:textColor="#000000"
         android:layout_margin="4dp"
-        android:textAlignment="center"
+        android:gravity="center"
         android:layout_weight="1"/>
 
     <TextView
@@ -32,7 +32,7 @@
         android:textSize="16sp"
         android:textColor="#000000"
         android:layout_margin="4dp"
-        android:textAlignment="center"
+        android:gravity="center"
         android:layout_weight="1"/>
 
     <TextView
@@ -42,7 +42,7 @@
         android:textSize="16sp"
         android:textColor="#000000"
         android:layout_margin="4dp"
-        android:textAlignment="center"
+        android:gravity="center"
         android:layout_weight="1"/>
 
     <TextView
@@ -52,7 +52,7 @@
         android:textSize="16sp"
         android:textColor="#000000"
         android:layout_margin="4dp"
-        android:textAlignment="center"
+        android:gravity="center"
         android:layout_weight="1"/>
 
     <TextView
@@ -62,7 +62,7 @@
         android:textSize="16sp"
         android:textColor="#000000"
         android:layout_margin="4dp"
-        android:textAlignment="center"
+        android:gravity="center"
         android:layout_weight="1"/>
 
     <TextView
@@ -72,7 +72,7 @@
         android:textSize="16sp"
         android:textColor="#0000FF"
         android:layout_margin="4dp"
-        android:textAlignment="center"
+        android:gravity="center"
         android:layout_weight="1"/>
 
 </LinearLayout>

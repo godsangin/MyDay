@@ -1,7 +1,5 @@
 package com.msproject.myhome.mydays;
 
-import android.graphics.Color;
-
 import java.util.HashMap;
 
 public class ColorMakeHelper {

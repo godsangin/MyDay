@@ -2,15 +2,14 @@ package com.msproject.myhome.mydays;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.widget.Toast;
 
 public class SplashActivity extends Activity {
@@ -52,7 +51,7 @@ public class SplashActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this,"승인이 허가되었습니다.",Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(getApplication(), MainActivity.class));
+                    startActivity(new Intent(getApplication(), com.msproject.myhome.mydays.main.MainActivity.class));
                     SplashActivity.this.finish();
                 } else {
                     Toast.makeText(this,"승인되지 않았습니다.",Toast.LENGTH_LONG).show();
@@ -68,7 +67,7 @@ public class SplashActivity extends Activity {
     private class splashhandler implements Runnable{
         @Override
         public void run() {
-            startActivity(new Intent(getApplication(), MainActivity.class));
+            startActivity(new Intent(getApplication(), com.msproject.myhome.mydays.main.MainActivity.class));
             SplashActivity.this.finish();
         }
     }

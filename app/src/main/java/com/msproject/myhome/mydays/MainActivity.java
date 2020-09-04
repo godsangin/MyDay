@@ -2,11 +2,14 @@
 package com.msproject.myhome.mydays;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,20 +20,10 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -39,7 +32,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.PermissionRequest;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,15 +39,12 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.RetryStrategy;
-import com.firebase.jobdispatcher.Trigger;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.data.Entry;
@@ -64,13 +53,9 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
-
 import org.joda.time.LocalDate;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.AdRequest;
@@ -109,10 +94,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        menuButton = findViewById(R.id.menu_bt);
-        titleBar = findViewById(R.id.title_bar);
-        dayofweek = findViewById(R.id.dayofweek);
-        memo = findViewById(R.id.memo);
+
+        menuButton = (ImageView) findViewById(R.id.menu_bt);
+        titleBar = (ConstraintLayout) findViewById(R.id.title_bar);
+        dayofweek = (TextView) findViewById(R.id.dayofweek);
+        memo = (EditText) findViewById(R.id.memo);
         context = this;
         calendarDate = titleBar.findViewById(R.id.calendar_date);
         ImageView lastdayButton = titleBar.findViewById(R.id.bt_lastday);
@@ -226,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        LinearLayout wholeContainer = findViewById(R.id.whole_container);
+        LinearLayout wholeContainer = (LinearLayout) findViewById(R.id.whole_container);
         InputMethodManager controlManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         mSoftKeyboard = new SoftKeyboard(wholeContainer, controlManager);
         mSoftKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
@@ -296,12 +282,12 @@ public class MainActivity extends AppCompatActivity {
         PieData data = new PieData((dataSet));
         data.setValueTextSize(10f);
         data.setValueTextColor(getResources().getColor(R.color.pieTextColor));
-        data.setValueFormatter(new IValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                return (int)value + " 시간";
-            }
-        });
+//        data.setValueFormatter(new IValueFormatter() {
+//            @Override
+//            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+//                return (int)value + " 시간";
+//            }
+//        });
         pieChart.setData(data);
 
         Legend legend = pieChart.getLegend();
@@ -591,7 +577,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         MobileAds.initialize(this, "ca-app-pub-3136625326865731~8346285691");
-        mAdView = findViewById(R.id.adView);
+        mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest;
         AdRequest.Builder builder = new AdRequest.Builder();
         if(location != null){
@@ -639,17 +625,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startSleepCount(){
-        if(restartNoti) return;
-        long now = System.currentTimeMillis();
-        Date date = new Date(now);
-        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
-        String formatDate = sdfNow.format(date);
-        String[] split = formatDate.split(":");
-        int startTime = Integer.parseInt(split[0]);
-        SharedPreferences sharedPreferences = getSharedPreferences("alarm", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("startTime", startTime);
-        editor.commit();
+
+
     }
 
 

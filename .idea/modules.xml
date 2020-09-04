@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MyDay.iml" filepath="$PROJECT_DIR$/MyDay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/MyDay-app.iml" filepath="$PROJECT_DIR$/app/MyDay-app.iml" group="MyDay/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git-MyDay.iml" filepath="$PROJECT_DIR$/git-MyDay.iml" group="MyDay" />
     </modules>
   </component>
 </project>

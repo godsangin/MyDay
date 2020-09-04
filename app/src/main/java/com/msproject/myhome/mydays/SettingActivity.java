@@ -1,29 +1,15 @@
 package com.msproject.myhome.mydays;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Build;;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DialogTitle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.Display;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -44,8 +30,8 @@ public class SettingActivity extends AppCompatActivity {
         }
 
 
-        titleBar = findViewById(R.id.title_bar);
-        recyclerView = findViewById(R.id.setting_recycler_view);
+        titleBar = (ConstraintLayout) findViewById(R.id.title_bar);
+        recyclerView = (RecyclerView) findViewById(R.id.setting_recycler_view);
         context = this;
         setResult(CATEGORY_RESULT_CODE);//수정확인위함
 
