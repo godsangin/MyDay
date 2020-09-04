@@ -1,6 +1,5 @@
 package com.msproject.myhome.mydays;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,17 +9,13 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.DragEvent;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -32,6 +27,9 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 
 import org.joda.time.LocalDate;
@@ -79,10 +77,10 @@ public class EventActivity extends AppCompatActivity implements ColorPickerDialo
         Intent mainIntent = getIntent();
         date = mainIntent.getStringExtra("Date");
         categories = new ArrayList<>();
-        eventListView = findViewById(R.id.event_listview);
-        gridView = findViewById(R.id.category_gridview);
-        titleBar = findViewById(R.id.title_bar);
-        fab = findViewById(R.id.fab);
+        eventListView = (ListView) findViewById(R.id.event_listview);
+        gridView = (GridView) findViewById(R.id.category_gridview);
+        titleBar = (ConstraintLayout) findViewById(R.id.title_bar);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         quarterNo = Integer.parseInt(mainIntent.getStringExtra("Hour"));
         setResult(RESPONSE_UNSAVE_CODE);
         setTitleContents(date);

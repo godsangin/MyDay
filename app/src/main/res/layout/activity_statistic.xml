@@ -22,12 +22,12 @@
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/sorryNoItem"
             android:text="저장된 기록이\n없어요 ㅠ_ㅠ"
-            android:textAlignment="center"
-            android:gravity="center_vertical"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:textSize="24dp"
             android:textColor="#AAAAAA"
             />

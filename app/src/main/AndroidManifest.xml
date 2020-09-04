@@ -10,9 +10,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
+        android:name=".application.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo3"
         android:label="@string/app_name"
@@ -24,36 +24,21 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3136625326865731~8346285691" />
 
-        <activity android:name=".MainActivity">
-            <meta-data
-                android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version" />
-        </activity>
+<!--        <activity android:name=".MainActivity">-->
+<!--            <meta-data-->
+<!--                android:name="com.google.android.gms.version"-->
+<!--                android:value="@integer/google_play_services_version" />-->
+<!--        </activity>-->
         <activity android:name=".EventActivity" />
         <activity
             android:name=".StatisticActivity"
             android:label="@string/title_activity_statistic"
             android:theme="@style/AppTheme" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".InputActivity" />
         <activity android:name=".IntroMainActivity" />
-
-        <service
-            android:name=".MyService"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity android:name=".IntroEventActivity" />
         <activity android:name=".FunctionSettingActivity" />
-
-        <service
-            android:name=".SampleJobService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
-
+        <activity android:name=".main.MainActivity"/>
         <activity
             android:name=".SplashActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
@@ -67,11 +52,6 @@
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
-
-        <receiver
-            android:name=".BroadcastD"
-            android:enabled="true"
-            android:exported="true" />
     </application>
 
 </manifest>

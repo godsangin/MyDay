@@ -2,8 +2,7 @@ package com.msproject.myhome.mydays;
 
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +24,7 @@ public class FunctionSettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_function_setting);
-        functionSettingListView = findViewById(R.id.function_setting_listview);
+        functionSettingListView = (ListView) findViewById(R.id.function_setting_listview);
         ArrayList<SettingItem> items = new ArrayList<>();
         items.add(new SettingItem("푸시알림 허용", "체크 시 푸시 알림 기능을 활성화하고 이벤트를 수신합니다."));
         items.add(new SettingItem("백그라운드 작업 허용", "체크 시 수면시간측정, 일정 등록 알림 등의 작업을 어플이 꺼져있을 경우에도 진행합니다."));
