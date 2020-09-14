@@ -1,8 +1,10 @@
 package com.msproject.myhome.mydays.main
 
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import com.msproject.myhome.mydays.model.ChartData
+import com.msproject.myhome.mydays.model.Event
 import com.msproject.myhome.mydays.repository.CategoryRepository
 import com.msproject.myhome.mydays.repository.EventRepository
 import kotlinx.coroutines.CoroutineScope
@@ -17,43 +19,43 @@ class MainViewModel @Inject constructor(private val eventRepository: EventReposi
     //usecase(getDailyEvents -> chart insert, getDailyMemo, insertMemo)
     //field(eventPartitionView, events, eventStatisticView, eventCalendarDialog, eventSettingView)
     val _eventList = MutableLiveData<List<ChartData>>()
-    val _date = MutableLiveData<Date>()
+    val _date = MutableLiveData<Date>(Date())
 
     val eventList:LiveData<List<ChartData>> get() = _eventList
     val date:LiveData<Date> get() = _date
 
-    init {
-        _date.postValue(Date())
-    }
-
     fun initData(owner:LifecycleOwner){
-        //date에 따라 usecase로 나누기
-        val calendar = Calendar.getInstance()
-        calendar.time = date.value
-        calendar.add(Calendar.DATE, 1)
         val format = SimpleDateFormat("yyyy-MM-dd")
-        var startDate = format.parse(format.format(date.value)).time
-        val endDate = format.parse(format.format(calendar.time)).time
-        eventRepository.getEventList(startDate, endDate).observe(owner, Observer {
+        val dateString = format.format(date.value)
+        val dateLong = format.parse(dateString).time
+        eventRepository.getEventList(dateLong).observe(owner, Observer {
             CoroutineScope(Dispatchers.IO).launch {
                 val chartDataList = ArrayList<ChartData>()
                 if(it.isEmpty()){
                     chartDataList.add(ChartData("","","#ffffff", 24))
                 }
-                for(item in it){
-                    if(item.startDate < startDate){
-                        item.startDate = startDate
+                else {
+                    var time = 0
+                    var lastItemIndex = 0
+                    var lastItem: Event? = null
+                    for (item in it) {
+                        val category = categoryRepository.getCategoryById(item.cid)
+                        if (time != item.time) {
+                            chartDataList.add(ChartData("", "", "#ffffff", item.time - time))
+                            lastItem = null
+                        }
+                        if (item.cid == lastItem?.cid) {
+                            chartDataList.get(lastItemIndex).size++
+                        } else {
+                            chartDataList.add(ChartData(category.name, item.content, category.color, 1))
+                            lastItemIndex = chartDataList.size - 1
+                        }
+                        lastItem = item
+                        time = item.time + 1
                     }
-                    if(item.endDate > endDate){
-                        item.endDate = endDate
+                    if (time != 23) {
+                        chartDataList.add(ChartData("", "", "#ffffff", 24 - time))
                     }
-                    if(item.startDate > startDate){
-                        val emptyData = ChartData("", "", "#ffffff", ((item.startDate - startDate) / 3600000).toInt())
-                        chartDataList.add(emptyData)
-                    }
-                    val category = categoryRepository.getCategoryById(item.cid)
-                    chartDataList.add(ChartData(category.name, item.content, category.color, ((item.endDate - item.startDate) / 3600000).toInt()))
-                    startDate = item.endDate
                 }
                 _eventList.postValue(chartDataList)
             }

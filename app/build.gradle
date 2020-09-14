@@ -7,13 +7,13 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.msproject.myhome.mydays"
-        minSdkVersion 15
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 14
         versionName "2.1.0"
         multiDexEnabled true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        vectorDrawables.useSupportLibrary = true;
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {

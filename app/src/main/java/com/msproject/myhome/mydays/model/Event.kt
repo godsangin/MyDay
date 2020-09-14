@@ -8,7 +8,7 @@ data class Event(
     @PrimaryKey(autoGenerate = true)
     var id:Long = 0,
     var cid:Long = 0,
-    var startDate:Long = 0,
-    var endDate:Long = 0,
+    var date:Long = 0,
+    var time:Int = 0,
     var content:String = ""
 )

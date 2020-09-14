@@ -6,4 +6,6 @@
     <string name="my_channel_id">MyDaysChannel</string>
     <string name="default_notification_channel_id">noti_channel</string>
     <string name="noti_title_check_sleep_time">수면시간 등록</string>
+    <string name="title_event">시간별 일정</string>
+    <string name="text_submit">확인</string>
 </resources>

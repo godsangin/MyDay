@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout>
+    <data>
+        <variable
+            name="model"
+            type="com.msproject.myhome.mydays.main.MainViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -37,6 +43,7 @@
             android:id="@+id/calendar_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            bind_date="@{model.date}"
             android:text="12월 31일"
             android:textSize="20sp"
             android:textColor="#ffffff"/>
@@ -57,4 +64,5 @@
         android:background="@drawable/ic_menu_white_24dp"
         android:layout_gravity="center"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

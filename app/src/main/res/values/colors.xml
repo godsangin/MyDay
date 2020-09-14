@@ -8,6 +8,8 @@
     <color name="background">#fff</color>
     <color name="backBorder">#fff</color>
     <color name="textColor">#fff </color>
+    <color name="colorGrey">#aaa</color>
+    <color name="colorWhite">#fff</color>
     <color name="legendColor">#000</color>
     <!--<color name="textColor">#c6e6f5</color>-->
     <color name="piechartColor">#eee</color>
