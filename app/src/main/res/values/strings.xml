@@ -8,4 +8,23 @@
     <string name="noti_title_check_sleep_time">수면시간 등록</string>
     <string name="title_event">시간별 일정</string>
     <string name="text_submit">확인</string>
+    <string name="text_cancel">취소</string>
+    <string name="title_input_event">이벤트 입력</string>
+    <string name="message_input_event">이벤트의 내용을 입력하세요.</string>
+    <string name="text_category_name">카테고리 명: </string>
+    <string name="message_dialog_empty_category">카테고리 명을 입력해주세요.</string>
+    <string name="message_category_added">새로운 카테고리가 등록되었습니다.</string>
+
+    <string name="category_1">#9370db</string>
+    <string name="category_2">#ff0000</string>
+    <string name="category_3">#ee82ee</string>
+    <string name="category_4">#4169e1</string>
+    <string name="category_5">#6495ed</string>
+    <string name="category_6">#00bfff</string>
+    <string name="category_7">#00ffff</string>
+    <string name="category_8">#32cd32</string>
+    <string name="category_9">#ffff00</string>
+    <string name="category_10">#f0e68c</string>
+    <string name="category_11">#ff7f50</string>
+    <string name="category_12">#d3d3d3</string>
 </resources>

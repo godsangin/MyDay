@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="model"
+            type="com.msproject.myhome.mydays.main.event.CategoryDialogViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@color/colorWhite">
+        <ImageView
+            android:id="@+id/space_1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/space_2"
+            android:layout_margin="12dp"
+            android:background="@color/category_1"
+            android:src="@{model.selectedColor.equals(@string/category_1) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_1)}"/>
+        <ImageView
+            android:id="@+id/space_2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/space_1"
+            app:layout_constraintRight_toLeftOf="@id/space_3"
+            android:layout_margin="12dp"
+            android:background="@color/category_2"
+            android:src="@{model.selectedColor.equals(@string/category_2) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_2)}"/>
+        <ImageView
+            android:id="@+id/space_3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/space_2"
+            app:layout_constraintRight_toLeftOf="@id/space_4"
+            android:layout_margin="12dp"
+            android:background="@color/category_3"
+            android:src="@{model.selectedColor.equals(@string/category_3) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_3)}"/>
+        <ImageView
+            android:id="@+id/space_4"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/space_3"
+            app:layout_constraintRight_toLeftOf="@id/space_5"
+            android:layout_margin="12dp"
+            android:background="@color/category_4"
+            android:src="@{model.selectedColor.equals(@string/category_4) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_4)}"/>
+        <ImageView
+            android:id="@+id/space_5"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/space_4"
+            app:layout_constraintRight_toLeftOf="@id/space_6"
+            android:layout_margin="12dp"
+            android:background="@color/category_5"
+            android:src="@{model.selectedColor.equals(@string/category_5) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_5)}"/>
+        <ImageView
+            android:id="@+id/space_6"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/space_5"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_margin="12dp"
+            android:background="@color/category_6"
+            android:src="@{model.selectedColor.equals(@string/category_6) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_6)}"/>
+        <ImageView
+            android:id="@+id/space_7"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toBottomOf="@id/space_1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/space_8"
+            android:layout_margin="12dp"
+            android:background="@color/cateogry_7"
+            android:src="@{model.selectedColor.equals(@string/category_7) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_7)}"/>
+        <ImageView
+            android:id="@+id/space_8"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toBottomOf="@id/space_1"
+            app:layout_constraintLeft_toRightOf="@id/space_7"
+            app:layout_constraintRight_toLeftOf="@id/space_9"
+            android:layout_margin="12dp"
+            android:background="@color/category_8"
+            android:src="@{model.selectedColor.equals(@string/category_8) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_8)}"/>
+        <ImageView
+            android:id="@+id/space_9"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toBottomOf="@id/space_1"
+            app:layout_constraintLeft_toRightOf="@id/space_8"
+            app:layout_constraintRight_toLeftOf="@id/space_10"
+            android:layout_margin="12dp"
+            android:background="@color/category_9"
+            android:src="@{model.selectedColor.equals(@string/category_9) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_9)}"/>
+        <ImageView
+            android:id="@+id/space_10"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toBottomOf="@id/space_1"
+            app:layout_constraintLeft_toRightOf="@id/space_9"
+            app:layout_constraintRight_toLeftOf="@id/space_11"
+            android:layout_margin="12dp"
+            android:background="@color/category_10"
+            android:src="@{model.selectedColor.equals(@string/category_10) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_10)}"/>
+        <ImageView
+            android:id="@+id/space_11"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toBottomOf="@id/space_1"
+            app:layout_constraintLeft_toRightOf="@id/space_10"
+            app:layout_constraintRight_toLeftOf="@id/space_12"
+            android:layout_margin="12dp"
+            android:background="@color/category_11"
+            android:src="@{model.selectedColor.equals(@string/category_11) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_11)}"/>
+        <ImageView
+            android:id="@+id/space_12"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toBottomOf="@id/space_1"
+            app:layout_constraintLeft_toRightOf="@id/space_11"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_margin="12dp"
+            android:background="@color/category_12"
+            android:src="@{model.selectedColor.equals(@string/category_12) ? @drawable/ic_baseline_check_24 : null}"
+            android:onClick="@{() -> model.setSelectedColor(@string/category_12)}"/>
+        <LinearLayout
+            android:id="@+id/name_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/space_7"
+            android:padding="8dp">
+            <TextView
+                android:id="@+id/name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                android:text="@string/text_category_name"/>
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:layout_gravity="bottom"
+                android:text="@={model._categoryName}"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/negative_bt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/name_container"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/positive_bt"
+            android:background="@color/colorWhite"
+            android:text="@string/text_cancel"
+            android:onClick="@{() -> model.cancel()}"/>
+        <Button
+            android:id="@+id/positive_bt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/name_container"
+            app:layout_constraintLeft_toRightOf="@id/negative_bt"
+            app:layout_constraintRight_toRightOf="parent"
+            android:background="@color/colorWhite"
+            android:text="@string/text_submit"
+            android:onClick="@{() -> model.submit()}"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

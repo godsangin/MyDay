@@ -24,6 +24,10 @@ class EventRepositoryImpl @Inject constructor(private val appDatabase: AppDataba
         return getEventDao().getEventList(date, startTime, endTime)
     }
 
+    override fun exist(date: Long, time: Int): Event {
+        return getEventDao().getEvent(date, time)
+    }
+
     override fun insertEvent(event: Event){
         getEventDao().insert(event)
     }

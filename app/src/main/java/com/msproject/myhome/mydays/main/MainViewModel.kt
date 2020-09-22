@@ -19,14 +19,21 @@ class MainViewModel @Inject constructor(private val eventRepository: EventReposi
     //usecase(getDailyEvents -> chart insert, getDailyMemo, insertMemo)
     //field(eventPartitionView, events, eventStatisticView, eventCalendarDialog, eventSettingView)
     val _eventList = MutableLiveData<List<ChartData>>()
-    val _date = MutableLiveData<Date>(Date())
+    val _date = MutableLiveData<Date>()
 
     val eventList:LiveData<List<ChartData>> get() = _eventList
     val date:LiveData<Date> get() = _date
 
     fun initData(owner:LifecycleOwner){
+        date.observe(owner, Observer {
+            getDailyData(it, owner)
+        })
+        _date.postValue(Date())
+    }
+
+    fun getDailyData(date:Date, owner:LifecycleOwner){
         val format = SimpleDateFormat("yyyy-MM-dd")
-        val dateString = format.format(date.value)
+        val dateString = format.format(date)
         val dateLong = format.parse(dateString).time
         eventRepository.getEventList(dateLong).observe(owner, Observer {
             CoroutineScope(Dispatchers.IO).launch {
@@ -61,14 +68,19 @@ class MainViewModel @Inject constructor(private val eventRepository: EventReposi
             }
         })
     }
-    fun initDataTest(){
-        val chartDataList = ArrayList<ChartData>()
-        chartDataList.add(ChartData("", "", "#eeeeee", 4))
-        chartDataList.add(ChartData("수면", "숙면", "#123456", 4))
-        chartDataList.add(ChartData("운동", "운동", "#345678", 1))
-        chartDataList.add(ChartData("", "", "#eeeeee", 4))
-        chartDataList.add(ChartData("공부", "수학공부", "#987654", 4))
-        chartDataList.add(ChartData("", "", "#eeeeee", 7))
-        _eventList.value = chartDataList
+    fun prevDate(){
+        var time = date.value?.time ?: 0
+        time -= (24 * 60 * 60 * 1000)
+        _date.postValue(Date(time))
+    }
+
+    fun nextDate(){
+        var time = date.value?.time ?: 0
+        time += (24 * 60 * 60 * 1000)
+        _date.postValue(Date(time))
+    }
+
+    fun getToday(){
+        _date.postValue(Date())
     }
 }

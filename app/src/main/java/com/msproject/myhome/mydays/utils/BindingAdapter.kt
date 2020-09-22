@@ -3,6 +3,7 @@ package com.msproject.myhome.mydays.utils
 import android.graphics.Color
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -125,8 +126,15 @@ object BindingAdapter {
 
     @BindingAdapter("bind_date")
     @JvmStatic
-    fun bindDate(textView: TextView, date:Date){
+    fun bindDate(textView: TextView, date:Date?){
+        if(date == null) return
         val format = SimpleDateFormat("MM월dd일")
         textView.text = format.format(date)
+    }
+
+    @BindingAdapter("bind_color_select")
+    @JvmStatic
+    fun bindColorSelect(imageView: ImageView, color:String){
+
     }
 }

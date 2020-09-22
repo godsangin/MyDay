@@ -2,6 +2,7 @@ package com.msproject.myhome.mydays.di.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.msproject.myhome.mydays.main.MainViewModel
+import com.msproject.myhome.mydays.main.event.CategoryDialogViewModel
 import com.msproject.myhome.mydays.main.event.EventViewModel
 import dagger.Binds
 import dagger.Module
@@ -19,5 +20,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EventViewModel::class)
     abstract fun eventViewModel(viewModel: EventViewModel): ViewModel
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CategoryDialogViewModel::class)
+    abstract fun categoryViewModel(viewModel: CategoryDialogViewModel): ViewModel
 
 }

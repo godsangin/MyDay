@@ -12,8 +12,6 @@ import com.msproject.myhome.mydays.model.EventItem
 
 class EventRecyclerViewAdapter :RecyclerView.Adapter<EventRecyclerViewAdapter.ViewHolder>(){
     var eventList:List<EventItem> = ArrayList()
-    var insertEventList:List<Event> = ArrayList()
-    var updateEventList:List<Event> = ArrayList()
     var category:Category? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,21 +29,24 @@ class EventRecyclerViewAdapter :RecyclerView.Adapter<EventRecyclerViewAdapter.Vi
             val view = it
             category?.let {
                 val eventItem = eventList[position].event
+                val event = Event(eventItem.id, it.id, eventItem.date, eventItem.time, "")
                 if(eventList[position].category == null){
-                    (insertEventList as ArrayList).add(Event(0, it.id, eventItem.date, eventItem.time,""))
-                    view.setBackgroundColor(Color.parseColor(it.color ?: "#ffffff"))
+                    eventList[position].category = category
+                    eventList[position].event = event
+                }
+                else if(eventList[position].category?.id != category?.id){
+                    eventList[position].category = category
+                    eventList[position].event = event
                 }
                 else{
-                    (updateEventList as ArrayList).add(Event(eventItem.id, it.id, eventItem.date, eventItem.time,""))
-                    view.setBackgroundColor(Color.parseColor(it.color ?: "#ffffff"))
+                    eventList[position].category = null
                 }
+                notifyDataSetChanged()
             }
         }
     }
 
     fun clear(){
-        insertEventList = ArrayList()
-        updateEventList = ArrayList()
         category = null
     }
 

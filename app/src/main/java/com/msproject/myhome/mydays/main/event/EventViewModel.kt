@@ -25,6 +25,8 @@ class EventViewModel @Inject constructor(private val eventRepository: EventRepos
     val _categoryList = MutableLiveData<List<Category>>()
     val _date = MutableLiveData<Date>()
     val finishEvent = SingleLiveEvent<Unit>()
+    val contentDialogEvent = SingleLiveEvent<Unit>()
+    val categoryDialogEvent = SingleLiveEvent<Unit>()
 
     val eventList: LiveData<List<EventItem>> get() = _eventList
     val categoryList: LiveData<List<Category>> get() = _categoryList
@@ -68,19 +70,41 @@ class EventViewModel @Inject constructor(private val eventRepository: EventRepos
     }
 
     fun submitEventList(){
+        contentDialogEvent.call()
+    }
+    fun postEventList(content:String){
         CoroutineScope(Dispatchers.IO).launch {
-            for(item in eventAdapter.value?.insertEventList ?: ArrayList()){
-                eventRepository.insertEvent(item)
+            eventAdapter.value?.apply {
+                for(item in eventList) {
+                    val exist = eventRepository.exist(item.event.date, item.event.time)
+                    if(exist == null){
+                        if(item.category != null){
+                            item.event.content = content
+                            eventRepository.insertEvent(item.event)
+                        }
+                    }
+                    else{
+                        if(item.category == null){
+                            eventRepository.deleteEventById(item.event.id)
+                        }
+                        else if(item.category?.id != exist.cid){
+                            item.event.content = content
+                            eventRepository.updateEvent(item.event)
+                        }
+                    }
+                }
+                clear()
+                categoryAdapter.value?.clear()
             }
-            for(item in eventAdapter.value?.updateEventList ?: ArrayList()){
-                eventRepository.updateEvent(item)
-            }
-            eventAdapter.value?.clear()
-            categoryAdapter.value?.clear()
+
         }
     }
 
     fun onClickBackButton(){
         finishEvent.call()
+    }
+
+    fun addCategory(){
+        categoryDialogEvent.call()
     }
 }
