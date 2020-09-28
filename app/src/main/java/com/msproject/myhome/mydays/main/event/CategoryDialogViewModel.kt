@@ -19,9 +19,19 @@ class CategoryDialogViewModel @Inject constructor(private val categoryRepository
     val snackbarEvent =  SingleLiveEvent<Int>()
     val _selectedColor = MutableLiveData<String>("")
     val _categoryName = MutableLiveData<String>("")
+    val _category = MutableLiveData<Category>()
 
     val selectedColor:LiveData<String> get() = _selectedColor
     val categoryName:LiveData<String> get() = _categoryName
+    val category:LiveData<Category> get() = _category
+
+    fun getInitialCategory(cid:Long){
+        CoroutineScope(Dispatchers.IO).launch {
+            val exist = categoryRepository.getCategoryById(cid)
+            _category.postValue(exist)
+            _categoryName.postValue(exist?.name ?: "")
+        }
+    }
 
     fun setSelectedColor(color:String){
         _selectedColor.postValue(color)
@@ -36,7 +46,15 @@ class CategoryDialogViewModel @Inject constructor(private val categoryRepository
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
-            categoryRepository.insertCategory(Category(0, categoryName.value ?: "", selectedColor.value ?: ""))
+            val newCategory = category.value
+            if(newCategory == null){
+                categoryRepository.insertCategory(Category(0, categoryName?.value ?: "", selectedColor?.value ?: ""))
+            }
+            else{
+                newCategory?.name = categoryName?.value ?: ""
+                newCategory?.color = selectedColor?.value ?: ""
+                categoryRepository.updateCategory(newCategory)
+            }
         }
         submitEvent.call()
     }

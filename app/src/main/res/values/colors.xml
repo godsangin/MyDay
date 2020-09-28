@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#50deb5</color>
-    <color name="colorPrimaryDark">#50deb5</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#32cd32</color>
+    <color name="colorPrimaryDark">#32cd32</color>
+    <color name="colorAccent">#6666cc</color>
     <!--<color name="colorTitleBar">#A9E2F3</color>-->
-    <color name="colorTitleBar">#50deb5 </color>
+    <color name="colorTitleBar">#fafafa </color>
     <color name="background">#fff</color>
     <color name="backBorder">#fff</color>
-    <color name="textColor">#fff </color>
+    <color name="textColor">#32cd32 </color>
     <color name="colorGrey">#aaa</color>
     <color name="colorWhite">#fff</color>
+    <color name="colorBlack">#000</color>
+    <color name="colorBackgroundWhite">#eee</color>
+    <color name="colorTextBlack">#090909</color>
     <color name="legendColor">#000</color>
     <!--<color name="textColor">#c6e6f5</color>-->
     <color name="piechartColor">#eee</color>

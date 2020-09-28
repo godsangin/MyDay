@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.view.LayoutInflater
-import android.view.View
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -14,12 +12,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.msproject.myhome.mydays.R
 import com.msproject.myhome.mydays.databinding.DialogCategoryBinding
 
-class BottomSheetDialogFragment(private val viewModelFactory: ViewModelProvider.Factory, private val activity:Activity) :BottomSheetDialogFragment(){
+class BottomSheetDialogFragment(private val viewModelFactory: ViewModelProvider.Factory, private val activity:Activity, private val cid:Long) :BottomSheetDialogFragment(){
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
-//        val contentView = View.inflate(context, R.layout.dialog_category, null)
-//        dialog.setContentView(contentView)
         val binding = DialogCategoryBinding.inflate(LayoutInflater.from(context))
         val categoryDialogViewModel = ViewModelProviders.of(this, viewModelFactory)[CategoryDialogViewModel::class.java]
         binding?.lifecycleOwner = this
@@ -27,6 +23,7 @@ class BottomSheetDialogFragment(private val viewModelFactory: ViewModelProvider.
         dialog.setContentView(binding.root)
         val owner = this
         categoryDialogViewModel.apply {
+            getInitialCategory(cid)
             cancelEvent.observe(owner, Observer {
                 dialog.dismiss()
             })

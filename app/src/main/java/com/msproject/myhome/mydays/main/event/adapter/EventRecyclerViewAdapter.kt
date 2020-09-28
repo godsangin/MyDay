@@ -5,7 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.msproject.myhome.mydays.databinding.EventItemBinding
+import com.msproject.myhome.mydays.databinding.ItemEventBinding
 import com.msproject.myhome.mydays.model.Category
 import com.msproject.myhome.mydays.model.Event
 import com.msproject.myhome.mydays.model.EventItem
@@ -15,7 +15,7 @@ class EventRecyclerViewAdapter :RecyclerView.Adapter<EventRecyclerViewAdapter.Vi
     var category:Category? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = EventItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -50,7 +50,7 @@ class EventRecyclerViewAdapter :RecyclerView.Adapter<EventRecyclerViewAdapter.Vi
         category = null
     }
 
-    class ViewHolder(val binding:EventItemBinding):RecyclerView.ViewHolder(binding.root){
+    class ViewHolder(val binding:ItemEventBinding):RecyclerView.ViewHolder(binding.root){
         fun bind(item:EventItem){
             binding.model = item
         }

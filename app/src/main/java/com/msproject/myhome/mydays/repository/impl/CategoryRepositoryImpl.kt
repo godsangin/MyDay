@@ -17,7 +17,7 @@ class CategoryRepositoryImpl @Inject constructor(private val appDatabase: AppDat
         return getCategoryDao().getCategoryList()
     }
 
-    override fun getCategoryById(id: Long): Category {
+    override fun getCategoryById(id: Long): Category? {
         return getCategoryDao().getCategoryById(id)
     }
 

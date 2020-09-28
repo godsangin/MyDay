@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.msproject.myhome.mydays.R
 import com.msproject.myhome.mydays.application.MyApplication
 import com.msproject.myhome.mydays.databinding.ActivityEventBinding
@@ -44,6 +45,12 @@ class EventActivity :AppCompatActivity(){
             categoryDialogEvent.observe(owner, Observer {
                 showCategoryDialog()
             })
+            categoryLongClickEvent.observe(owner, Observer {
+                showCategoryOptionsDialog(it)
+            })
+            categoryRemovedEvent.observe(owner, Observer {
+                showSnackbar(getString(R.string.message_category_removed))
+            })
         }
     }
 
@@ -61,8 +68,41 @@ class EventActivity :AppCompatActivity(){
                 }
         builder.show()
     }
-    fun showCategoryDialog(){
-        val bottomDialogFragment = BottomSheetDialogFragment(viewModelFactory, this)
+    fun showCategoryDialog(cid:Long = (-1).toLong()){
+        val bottomDialogFragment = BottomSheetDialogFragment(viewModelFactory, this, cid)
         bottomDialogFragment.show(supportFragmentManager, bottomDialogFragment.tag)
+    }
+
+    fun showCategoryOptionsDialog(cid:Long){
+        val dialog = AlertDialog.Builder(this)
+                .setItems(resources.getStringArray(R.array.category_dialog_options)){
+                    _, which ->
+                    when(which){
+                        0 -> {
+                            showCategoryDialog(cid)
+                        }
+                        1 -> {
+                            showRemoveCategoryConfirmDialog(cid)
+                        }
+                    }
+                }
+        dialog.show()
+    }
+
+    fun showRemoveCategoryConfirmDialog(cid:Long){
+        val dialog = AlertDialog.Builder(this)
+                .setTitle(getString(R.string.title_dialog_category_remove))
+                .setMessage(getString(R.string.message_dialog_category_remove))
+                .setPositiveButton(getString(R.string.text_submit)){
+                    _,_->
+                    eventViewModel.removeCategory(cid)
+                }
+                .setNegativeButton(getString(R.string.text_cancel)){
+                    _,_->
+                }
+        dialog.show()
+    }
+    fun showSnackbar(message:String){
+        Snackbar.make(window.decorView.rootView, message, Snackbar.LENGTH_SHORT).show()
     }
 }

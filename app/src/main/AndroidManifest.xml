@@ -19,26 +19,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".main.dailygraph.DailyGraphActivity"></activity>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3136625326865731~8346285691" />
-
-<!--        <activity android:name=".MainActivity">-->
-<!--            <meta-data-->
-<!--                android:name="com.google.android.gms.version"-->
-<!--                android:value="@integer/google_play_services_version" />-->
-<!--        </activity>-->
+            android:value="ca-app-pub-3136625326865731~8346285691" /> <!-- <activity android:name=".MainActivity"> -->
+        <!-- <meta-data -->
+        <!-- android:name="com.google.android.gms.version" -->
+        <!-- android:value="@integer/google_play_services_version" /> -->
+        <!-- </activity> -->
         <activity android:name=".main.event.EventActivity" />
-        <activity
-            android:name=".StatisticActivity"
-            android:label="@string/title_activity_statistic"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".SettingActivity" />
-        <activity android:name=".IntroMainActivity" />
-        <activity android:name=".IntroEventActivity" />
-        <activity android:name=".FunctionSettingActivity" />
-        <activity android:name=".main.MainActivity"/>
+        <activity android:name=".main.MainActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SplashActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">

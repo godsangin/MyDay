@@ -29,7 +29,7 @@ object BindingAdapter {
         if(items == null) {
             val yValues = ArrayList<PieEntry>()
             yValues.add(PieEntry(1.toFloat(),"Empty"))
-            val dataSet = PieDataSet(yValues, "plan")
+            val dataSet = PieDataSet(yValues, "Empty")
             dataSet.setColors(Color.WHITE, 0xff)
             val data = PieData(dataSet)
             data.setValueTextSize(10F)
@@ -55,6 +55,7 @@ object BindingAdapter {
         }
         val dataSet = PieDataSet(yValues, "plan")
         dataSet.setColors(colorArray.toIntArray(), 0xff)
+        dataSet.valueFormatter = MyIntValueFormatter()
 
         val data = PieData(dataSet)
         data.setValueTextSize(10F)
@@ -117,6 +118,15 @@ object BindingAdapter {
     @BindingAdapter("bind_color")
     @JvmStatic
     fun bindColor(layout:LinearLayout, color:String?){
+        if(color == null){
+            layout.setBackgroundColor(Color.parseColor("#ffffff"))
+            return
+        }
+        layout.setBackgroundColor(Color.parseColor(color))
+    }
+    @BindingAdapter("bind_color")
+    @JvmStatic
+    fun bindColor(layout:ImageView, color:String?){
         if(color == null){
             layout.setBackgroundColor(Color.parseColor("#ffffff"))
             return

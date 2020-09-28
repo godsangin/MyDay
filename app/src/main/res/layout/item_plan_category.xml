@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="model"
+            type="com.msproject.myhome.mydays.main.fragment.adapter.DetailRecyclerItemViewModel"/>
+    </data>
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/chart"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:transitionName="pair_thumb"
+                bind_pie_chart_item="@{model.chartCategory}"
+                android:onClick="@{() -> model.startDailyGraphActivity()}"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/chart"
+                app:layout_constraintDimensionRatio="1:1"
+                android:text="@string/text_title_classification_graph"
+                android:textSize="20sp"
+                android:textColor="@color/colorBlack"
+                android:gravity="center"
+                android:padding="12dp"
+                android:onClick="@{() -> model.startDailyGraphActivity()}"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
