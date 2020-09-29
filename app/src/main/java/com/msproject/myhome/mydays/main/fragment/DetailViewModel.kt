@@ -67,10 +67,10 @@ class DetailViewModel @Inject constructor(private val eventRepository: EventRepo
             val cidMap = HashMap<Long, Int>()
             for(item in it){
                 if(!cidMap.contains(item.cid)){
-                    cidMap.put(item.cid, 0)
+                    cidMap.put(item.cid, 1)
                 }
                 else{
-                    cidMap.set(item.cid, ((cidMap.get(item.cid) ?: 0) + 1))
+                    cidMap.set(item.cid, ((cidMap.get(item.cid) ?: 1) + 1))
                 }
             }
             CoroutineScope(Dispatchers.IO).launch {

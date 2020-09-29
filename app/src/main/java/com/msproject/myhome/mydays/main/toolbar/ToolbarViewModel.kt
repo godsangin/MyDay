@@ -8,8 +8,13 @@ import javax.inject.Inject
 class ToolbarViewModel @Inject constructor() :ViewModel(){
     val titleText = MutableLiveData<String>("")
     val backButtonEvent = SingleLiveEvent<Unit>()
+    val drawerEvent = SingleLiveEvent<Unit>()
 
     fun onClickBackButton(){
         backButtonEvent.call()
+    }
+
+    fun onMenuClicked(){
+        drawerEvent.call()
     }
 }

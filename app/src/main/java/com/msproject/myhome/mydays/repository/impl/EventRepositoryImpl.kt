@@ -20,10 +20,16 @@ class EventRepositoryImpl @Inject constructor(private val appDatabase: AppDataba
         return getEventDao().getEventList(date)
     }
 
+    override fun getEventListSync(date: Long): List<Event> {
+        return getEventDao().getEventListSync(date)
+    }
     override fun getEventList(startDate: Long, endDate: Long): LiveData<List<Event>> {
         return getEventDao().getEventList(startDate, endDate)
     }
 
+    override fun getEventListSync(startDate: Long, endDate: Long): List<Event> {
+        return getEventDao().getEventListSync(startDate, endDate)
+    }
     override fun getEventList(date: Long, startTime: Int, endTime: Int): LiveData<List<Event>> {
         return getEventDao().getEventList(date, startTime, endTime)
     }

@@ -8,11 +8,17 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.msproject.myhome.mydays.databinding.ItemPlanCategoryBinding
 import com.msproject.myhome.mydays.databinding.ItemPlanTimeBinding
 import com.msproject.myhome.mydays.main.dailygraph.DailyGraphActivity
+import com.msproject.myhome.mydays.main.statistic.StatisticActivity
 import com.msproject.myhome.mydays.model.Category
+import kotlinx.android.synthetic.main.item_plan_category.view.*
 import kotlinx.android.synthetic.main.item_plan_time.view.*
+import kotlinx.android.synthetic.main.item_plan_time.view.chart
 
 class DetailRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     var items = ArrayList<Pair<Int, List<Any>>>()
@@ -78,6 +84,22 @@ class DetailRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>()
         fun bind(items:List<Pair<Category, Int>>, activity:Activity){
             viewModel._chartCategory.postValue(items)
             binding.model = viewModel
+            viewModel.startActivityEvent.observe(binding.lifecycleOwner!!, Observer {
+                if(activity == null) return@Observer
+                val context = binding.root.context
+                val intent = Intent(context, StatisticActivity::class.java)
+                val optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, binding.root.piechart, binding.root.piechart.transitionName)
+                context.startActivity(intent, optionsCompat.toBundle())
+            })
+            binding.root.piechart.setOnChartValueSelectedListener(object:OnChartValueSelectedListener{
+                override fun onNothingSelected() {
+                    viewModel.startActivityEvent.call()
+                }
+
+                override fun onValueSelected(e: Entry?, h: Highlight?) {
+                    viewModel.startActivityEvent.call()
+                }
+            })
         }
     }
 }

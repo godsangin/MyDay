@@ -16,8 +16,8 @@ class DatabaseModule {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
                         db.execSQL("insert into category (name, color) values ('수면', '#123456');")
-                        db.execSQL("insert into category (name, color) values ('공부', '#456789');")
-                        db.execSQL("insert into category (name, color) values ('운동', '#A98765');")
+                        db.execSQL("insert into category (name, color) values ('공부', '#ff0000');")
+                        db.execSQL("insert into category (name, color) values ('운동', '#4169e1');")
                     }
                 })
                 .build()

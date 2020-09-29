@@ -14,20 +14,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/chart"
+                android:id="@+id/piechart"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                android:transitionName="pair_thumb"
+                android:transitionName="pair_piechart"
                 bind_pie_chart_item="@{model.chartCategory}"
                 android:onClick="@{() -> model.startDailyGraphActivity()}"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/chart"
+                app:layout_constraintTop_toBottomOf="@id/piechart"
                 app:layout_constraintDimensionRatio="1:1"
                 android:text="@string/text_title_classification_graph"
                 android:textSize="20sp"

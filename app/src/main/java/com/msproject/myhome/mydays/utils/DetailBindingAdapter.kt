@@ -135,20 +135,19 @@ object DetailBindingAdapter {
 
         val yValues = ArrayList<PieEntry>()
         val colorArray = ArrayList<Int>()
-
+        var total = 0
         for(item in items){
+            total += item.second
             val entry = PieEntry(item.second.toFloat(), item.first.name)
             yValues.add(entry)
             colorArray.add(Color.parseColor(item.first.color ?: "#ffffff"))
         }
         val dataSet = PieDataSet(yValues, "plan")
         dataSet.setColors(colorArray.toIntArray(), 0xff)
-        dataSet.valueTextSize = 5F
-        dataSet.valueFormatter = MyNullValueFormatter()
-
+        dataSet.valueFormatter = MyPercentValueFormatter(total)
         val data = PieData(dataSet)
         data.setValueTextSize(10F)
-        data.setValueTextColor(Color.BLACK)
+        data.setValueTextColor(Color.WHITE)
 
         chart.data = data
         chart.notifyDataSetChanged()
@@ -165,9 +164,6 @@ object DetailBindingAdapter {
 
         }
         val list = ArrayList<Pair<Int, List<Any>>>()
-        for(item in citems){
-            Log.d("items==", item.toString())
-        }
         list.add(Pair(0, items))
         list.add(Pair(1, citems))
         list.add(Pair(0, items))

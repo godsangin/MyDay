@@ -8,6 +8,7 @@ import com.msproject.myhome.mydays.main.dailygraph.DailyGraphActivity
 import com.msproject.myhome.mydays.main.event.EventActivity
 import com.msproject.myhome.mydays.main.fragment.DetailFragment
 import com.msproject.myhome.mydays.main.fragment.PlannerFragment
+import com.msproject.myhome.mydays.main.statistic.StatisticActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -24,4 +25,5 @@ interface AppComponent {
     fun inject(fragment:DetailFragment)
     fun inject(fragment:PlannerFragment)
     fun inject(activity:DailyGraphActivity)
+    fun inject(activity:StatisticActivity)
 }

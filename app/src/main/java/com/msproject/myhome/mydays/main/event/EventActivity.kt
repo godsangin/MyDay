@@ -14,12 +14,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.msproject.myhome.mydays.R
 import com.msproject.myhome.mydays.application.MyApplication
+import com.msproject.myhome.mydays.base.BaseActivity
 import com.msproject.myhome.mydays.databinding.ActivityEventBinding
 import com.msproject.myhome.mydays.databinding.DialogCategoryBinding
 import com.msproject.myhome.mydays.main.event.adapter.CategoryRecyclerViewAdapter
 import javax.inject.Inject
 
-class EventActivity :AppCompatActivity(){
+class EventActivity : BaseActivity(){
 
     lateinit var eventViewModel: EventViewModel
     @Inject

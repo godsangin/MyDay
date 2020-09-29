@@ -115,6 +115,14 @@ object BindingAdapter {
         textView.text = text
     }
 
+    @BindingAdapter("bind_text")
+    @JvmStatic
+    fun bindLongText(textView: TextView, date:Long?){
+        if(date == null) return
+        val format = SimpleDateFormat("yyyy-MM-dd")
+        textView.text = format.format(Date(date))
+    }
+
     @BindingAdapter("bind_color")
     @JvmStatic
     fun bindColor(layout:LinearLayout, color:String?){

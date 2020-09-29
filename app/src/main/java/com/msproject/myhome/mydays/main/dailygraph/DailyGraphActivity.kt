@@ -2,6 +2,7 @@ package com.msproject.myhome.mydays.main.dailygraph
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -12,12 +13,13 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.msproject.myhome.mydays.R
 import com.msproject.myhome.mydays.application.MyApplication
+import com.msproject.myhome.mydays.base.BaseActivity
 import com.msproject.myhome.mydays.databinding.ActivityDailyGraphBinding
 import com.msproject.myhome.mydays.main.toolbar.ToolbarViewModel
 import kotlinx.android.synthetic.main.activity_daily_graph.view.*
 import javax.inject.Inject
 
-class DailyGraphActivity : AppCompatActivity(), OnChartValueSelectedListener{
+class DailyGraphActivity : BaseActivity(), OnChartValueSelectedListener{
     lateinit var dailyGraphViewModel: DailyGraphViewModel
     lateinit var toolbarViewModel: ToolbarViewModel
     @Inject
@@ -50,6 +52,7 @@ class DailyGraphActivity : AppCompatActivity(), OnChartValueSelectedListener{
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
+        Log.d("entry==", e?.x?.toString())
         dailyGraphViewModel.setDate(e?.x?.toInt() ?: 6)
     }
 }

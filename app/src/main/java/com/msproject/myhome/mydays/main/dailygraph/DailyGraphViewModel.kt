@@ -24,6 +24,7 @@ class DailyGraphViewModel @Inject constructor(private val eventRepository: Event
     val toDay = MutableLiveData<Int>()
     val dailyTime:LiveData<List<Int>> get() = _dailyTime
     val chartCategoryList:LiveData<List<ChartCategory>> get() = _chartCategoryList
+    var initialDate:Long? = 0.toLong()
 
     fun initData(owner:LifecycleOwner){
         //최근 7일 데이터로 dailyTime구하기
@@ -34,6 +35,7 @@ class DailyGraphViewModel @Inject constructor(private val eventRepository: Event
         val format = SimpleDateFormat("yyyy-MM-dd")
         val dateString = format.format(Date())
         val dateLong = format.parse(dateString).time
+        initialDate = dateLong
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"))
         calendar.timeInMillis = dateLong
         toDay.postValue(calendar.get(Calendar.DAY_OF_WEEK) - 1)
@@ -51,14 +53,15 @@ class DailyGraphViewModel @Inject constructor(private val eventRepository: Event
             _dailyTime.postValue(timeArray)
         })
         dateLiveData.observe(owner, Observer {
-            eventRepository.getEventList(it.time).observe(owner, Observer {
+            CoroutineScope(Dispatchers.IO).launch {
+                val eventList = eventRepository.getEventListSync(it.time)
                 val cidMap = HashMap<Long, Int>()
-                for(item in it){
+                for(item in eventList){
                     if(!cidMap.contains(item.cid)){
-                        cidMap.put(item.cid, 0)
+                        cidMap.put(item.cid, 1)
                     }
                     else{
-                        cidMap.set(item.cid, ((cidMap.get(item.cid) ?: 0) + 1))
+                        cidMap.set(item.cid, ((cidMap.get(item.cid) ?: 1) + 1))
                     }
                 }
                 val cidList = cidMap.toList()
@@ -66,22 +69,21 @@ class DailyGraphViewModel @Inject constructor(private val eventRepository: Event
                     it.second
                 }
                 val chartList = ArrayList<ChartCategory>()
-                CoroutineScope(Dispatchers.IO).launch {
                     for(pair in cidList){
                         val category = categoryRepository.getCategoryById(pair.first)
-                        chartList.add(ChartCategory(category ?: Category(), (pair.second.toDouble() * 100 / it.size).toInt().toString() + "%"))
+                        chartList.add(ChartCategory(category ?: Category(), (pair.second.toDouble() * 100 / eventList.size).toInt().toString() + "%"))
                     }
                     _chartCategoryList.postValue(chartList)
-                }
-            })
+
+            }
         })
     }
 
     fun setDate(pos:Int){
         dateLiveData.value.run {
             if(this == null) return
-            var time = time
-            time = time?.minus((24 * 60 * 60 * 1000 * (6 - pos)).toLong())
+            var time = initialDate ?: Date().time
+            time = time?.minus((24 * 60 * 60 * 1000 * (7 - pos + (toDay.value ?: 0))).toLong())
             dateLiveData.postValue(Date(time))
         }
     }

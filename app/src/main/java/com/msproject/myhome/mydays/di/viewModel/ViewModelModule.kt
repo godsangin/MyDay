@@ -6,6 +6,8 @@ import com.msproject.myhome.mydays.main.fragment.PlannerViewModel
 import com.msproject.myhome.mydays.main.fragment.DetailViewModel
 import com.msproject.myhome.mydays.main.event.CategoryDialogViewModel
 import com.msproject.myhome.mydays.main.event.EventViewModel
+import com.msproject.myhome.mydays.main.statistic.StatisticActivity
+import com.msproject.myhome.mydays.main.statistic.StatisticViewModel
 import com.msproject.myhome.mydays.main.toolbar.ToolbarViewModel
 import dagger.Binds
 import dagger.Module
@@ -43,6 +45,11 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(DailyGraphViewModel::class)
-    abstract fun dailyGraphVieMdeol(viewModel:DailyGraphViewModel):ViewModel
+    abstract fun dailyGraphVieModel(viewModel:DailyGraphViewModel):ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(StatisticViewModel::class)
+    abstract fun statisticViewModel(viewModel:StatisticViewModel):ViewModel
 
 }
