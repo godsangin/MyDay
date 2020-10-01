@@ -19,9 +19,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".main.statistic.StatisticActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".main.dailygraph.DailyGraphActivity"
+        <activity android:name=".main.challenge.ChallengeActivity"></activity>
+        <activity
+            android:name=".main.statistic.StatisticActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main.dailygraph.DailyGraphActivity"
             android:screenOrientation="portrait" />
 
         <meta-data
@@ -39,7 +42,7 @@
             android:name=".SplashActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

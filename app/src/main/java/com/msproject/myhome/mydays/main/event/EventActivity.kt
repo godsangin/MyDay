@@ -40,9 +40,9 @@ class EventActivity : BaseActivity(){
             finishEvent.observe(owner, Observer {
                 finish()
             })
-            contentDialogEvent.observe(owner, Observer {
-                showInputDialog()
-            })
+//            contentDialogEvent.observe(owner, Observer {
+//                showInputDialog()
+//            })
             categoryDialogEvent.observe(owner, Observer {
                 showCategoryDialog()
             })
@@ -55,20 +55,20 @@ class EventActivity : BaseActivity(){
         }
     }
 
-    fun showInputDialog(){
-        val inputView = EditText(this)
-        val builder = AlertDialog.Builder(this)
-                .setTitle(getString(R.string.title_input_event))
-                .setMessage(getString(R.string.message_input_event))
-                .setView(inputView)
-                .setPositiveButton(getString(R.string.text_submit)) { _, _ ->
-                    eventViewModel.postEventList(inputView.text.toString())
-                }
-                .setNegativeButton(getString(R.string.text_cancel)) { _,_ ->
-
-                }
-        builder.show()
-    }
+//    fun showInputDialog(){
+//        val inputView = EditText(this)
+//        val builder = AlertDialog.Builder(this)
+//                .setTitle(getString(R.string.title_input_event))
+//                .setMessage(getString(R.string.message_input_event))
+//                .setView(inputView)
+//                .setPositiveButton(getString(R.string.text_submit)) { _, _ ->
+//                    eventViewModel.postEventList(inputView.text.toString())
+//                }
+//                .setNegativeButton(getString(R.string.text_cancel)) { _,_ ->
+//
+//                }
+//        builder.show()
+//    }
     fun showCategoryDialog(cid:Long = (-1).toLong()){
         val bottomDialogFragment = BottomSheetDialogFragment(viewModelFactory, this, cid)
         bottomDialogFragment.show(supportFragmentManager, bottomDialogFragment.tag)

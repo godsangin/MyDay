@@ -18,11 +18,13 @@ import com.msproject.myhome.mydays.R
 import com.msproject.myhome.mydays.application.MyApplication
 import com.msproject.myhome.mydays.base.BaseActivity
 import com.msproject.myhome.mydays.databinding.ActivityMainBinding
+import com.msproject.myhome.mydays.main.challenge.ChallengeActivity
 import com.msproject.myhome.mydays.main.fragment.DetailViewModel
 import com.msproject.myhome.mydays.main.fragment.DetailFragment
 import com.msproject.myhome.mydays.main.fragment.PlannerFragment
 import com.msproject.myhome.mydays.main.fragment.PlannerViewModel
 import com.msproject.myhome.mydays.main.toolbar.ToolbarViewModel
+import com.msproject.myhome.mydays.utils.BackPressedForFinish
 import kotlinx.android.synthetic.main.activity_main.view.*
 import java.text.SimpleDateFormat
 import javax.inject.Inject
@@ -34,11 +36,13 @@ class MainActivity :BaseActivity(){
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var binding:ActivityMainBinding
+    lateinit var backPressedForFinish: BackPressedForFinish
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (application as MyApplication).appComponent.inject(this)
         binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        backPressedForFinish = BackPressedForFinish(this, getString(R.string.toast_finish_app))
         setActionBar(binding.root)
         plannerViewModel = ViewModelProviders.of(this, viewModelFactory)[PlannerViewModel::class.java]
         detailViewModel = ViewModelProviders.of(this, viewModelFactory)[DetailViewModel::class.java]
@@ -81,7 +85,7 @@ class MainActivity :BaseActivity(){
             override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
                 val monthText = if(month + 1 < 10) "0" + (month+1).toString() else (month+1).toString()
                 val dayText = if(dayOfMonth < 10) "0" + (dayOfMonth).toString() else (dayOfMonth).toString()
-                val text = year.toString() + "-" + monthText + "-" + dayText
+                val text = "$year-$monthText-$dayText"
                 val format = SimpleDateFormat("yyyy-MM-dd")
                 plannerViewModel._date.postValue(format.parse(text))
             }
@@ -94,11 +98,39 @@ class MainActivity :BaseActivity(){
 
     fun setActionBar(view:View){
         setSupportActionBar(view.toolbar as Toolbar)
+        view.nav_view.setNavigationItemSelectedListener {
+            when(it.itemId){
+                R.id.achievement -> {
+                    val intent = Intent(MainActivity@this, ChallengeActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.send_email -> {
+                    val intent = Intent(Intent.ACTION_SEND)
+                    intent.setType("plain/text")
+                    val address = arrayOf(getString(R.string.developer_email_address))
+                    intent.putExtra(Intent.EXTRA_EMAIL, address)
+                    intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.mydays_report) + Build.MODEL + "/" + Build.VERSION.RELEASE)
+                    startActivity(intent)
+                }
+                R.id.setting -> {
 
+                }
+            }
+            true
+        }
     }
 
     fun openDrawer(){
         binding.root.drawer_layout.openDrawer(GravityCompat.START)
+    }
+
+    override fun onBackPressed() {
+        if(binding.root.drawer_layout.isDrawerOpen(GravityCompat.START)){
+            binding.root.drawer_layout.closeDrawer(GravityCompat.START)
+        }
+        else{
+            backPressedForFinish.onBackPressed()
+        }
     }
 
 }

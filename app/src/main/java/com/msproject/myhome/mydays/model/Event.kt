@@ -9,6 +9,5 @@ data class Event(
     var id:Long = 0,
     var cid:Long = 0,
     var date:Long = 0,
-    var time:Int = 0,
-    var content:String = ""
+    var time:Int = 0
 )

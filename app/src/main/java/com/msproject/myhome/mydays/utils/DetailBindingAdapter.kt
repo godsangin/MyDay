@@ -13,6 +13,7 @@ import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.msproject.myhome.mydays.main.dailygraph.adapter.DailyGraphRecyclerViewAdapter
 import com.msproject.myhome.mydays.main.fragment.adapter.DetailRecyclerViewAdapter
 import com.msproject.myhome.mydays.model.Category
@@ -27,7 +28,7 @@ object DetailBindingAdapter {
         if(items == null || day == null) return
 
         val entries: MutableList<Entry> = ArrayList()
-        for(i in 0..items.size-1){
+        for(i in items.indices){
             entries.add(Entry((i + day + 1).toFloat(), items[i].toFloat()))
         }
 
@@ -76,7 +77,7 @@ object DetailBindingAdapter {
     fun bindChartItem(chart:BarChart, items:List<Int>?, day:Int?){
         if(items == null || day == null) return
         val entries: MutableList<BarEntry> = ArrayList()
-        for(i in 0..items.size-1){
+        for(i in items.indices){
             entries.add(BarEntry((i + day + 1).toFloat(), items[i].toFloat()))
         }
 
@@ -85,7 +86,7 @@ object DetailBindingAdapter {
         BarDataSet.setDrawValues(false)
 
         val barData = BarData(BarDataSet)
-        chart.setData(barData)
+        chart.data = barData
         chart.axisLeft.axisMinimum = 0f
         chart.axisLeft.axisMaximum = 24f
 
@@ -94,21 +95,22 @@ object DetailBindingAdapter {
         xAxis.textColor = Color.BLACK
         xAxis.valueFormatter = MyDayValueFormatter()
         xAxis.enableGridDashedLine(8f, 24f, 0f)
+        xAxis.granularity = 1f
 
-        val yLAxis: YAxis = chart.getAxisLeft()
+        val yLAxis: YAxis = chart.axisLeft
         yLAxis.textColor = Color.BLACK
 
-        val yRAxis: YAxis = chart.getAxisRight()
+        val yRAxis: YAxis = chart.axisRight
         yRAxis.setDrawLabels(false)
         yRAxis.setDrawAxisLine(false)
         yRAxis.setDrawGridLines(false)
 
         val description = Description()
-        description.setText("")
+        description.text = ""
 
-        chart.setDoubleTapToZoomEnabled(false)
+        chart.isDoubleTapToZoomEnabled = false
         chart.setDrawGridBackground(false)
-        chart.setDescription(description)
+        chart.description = description
         chart.notifyDataSetChanged()
         chart.invalidate()
     }
@@ -152,6 +154,56 @@ object DetailBindingAdapter {
         chart.data = data
         chart.notifyDataSetChanged()
         chart.invalidate()
+    }
+
+    @BindingAdapter("bind_bar_chart_item")
+    @JvmStatic
+    fun bindBarChartItem(barChart: BarChart, items:List<Pair<Category, Int>>?){
+        if(items == null) return
+        val entries: MutableList<BarEntry> = ArrayList()
+        val sortItems = items.sortedBy {
+            -it.second
+        }
+        val colorArray = ArrayList<Int>()
+        val xAxisValueLabels = ArrayList<String>()
+        for(i in sortItems.indices){
+            entries.add(BarEntry(i.toFloat(), sortItems[i].second.toFloat()))
+            colorArray.add(Color.parseColor(sortItems[i].first.color ?: "#ffffff"))
+            xAxisValueLabels.add(sortItems[i].first.name)
+        }
+
+        val barDataSet = BarDataSet(entries, "plan")
+        barDataSet.setColors(colorArray.toIntArray(), 0xff)
+        barDataSet.setDrawValues(false)
+
+        val barData = BarData(barDataSet)
+        barChart.data = barData
+        barChart.axisLeft.axisMinimum = 0f
+//        barChart.xAxis.valueFormatter = IndexAxisValueFormatter()
+
+        val xAxis: XAxis = barChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.textColor = Color.BLACK
+        xAxis.valueFormatter = IndexAxisValueFormatter(xAxisValueLabels)
+        xAxis.enableGridDashedLine(8f, 24f, 0f)
+        xAxis.granularity = 1f
+
+        val yLAxis: YAxis = barChart.axisLeft
+        yLAxis.textColor = Color.BLACK
+
+        val yRAxis: YAxis = barChart.axisRight
+        yRAxis.setDrawLabels(false)
+        yRAxis.setDrawAxisLine(false)
+        yRAxis.setDrawGridLines(false)
+
+        val description = Description()
+        description.setText("")
+
+        barChart.isDoubleTapToZoomEnabled = false
+        barChart.setDrawGridBackground(false)
+        barChart.description = description
+        barChart.notifyDataSetChanged()
+        barChart.invalidate()
     }
 
     @BindingAdapter(value = ["bind_line_chart_item", "bind_pie_chart_item", "bind_activity", "bind_day"])

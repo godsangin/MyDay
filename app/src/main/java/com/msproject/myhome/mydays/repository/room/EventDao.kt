@@ -9,6 +9,8 @@ import com.msproject.myhome.mydays.model.Event
 interface EventDao: BaseDao<Event>{
     @Query("SELECT * FROM event")
     fun getEventList():LiveData<List<Event>>
+    @Query("SELECT COUNT(*) FROM event")
+    fun getEventListCount():LiveData<Int>
     @Query("SELECT * FROM event WHERE date IS :date ORDER BY time")
     fun getEventList(date:Long):LiveData<List<Event>>
     @Query("SELECT * FROM event WHERE date IS :date ORDER BY time")
@@ -17,6 +19,8 @@ interface EventDao: BaseDao<Event>{
     fun getEventList(startDate:Long, endDate:Long):LiveData<List<Event>>
     @Query("SELECT * FROM event WHERE date BETWEEN :startDate AND :endDate")
     fun getEventListSync(startDate:Long, endDate:Long):List<Event>
+    @Query("SELECT COUNT(*) FROM event WHERE date BETWEEN :startDate AND :endDate")
+    fun getEventListCount(startDate:Long, endDate:Long):LiveData<Int>
     @Query("SELECT * FROM event WHERE date IS :date AND time BETWEEN :startTime AND :endTime ORDER BY time")
     fun getEventList(date:Long, startTime:Int, endTime:Int):LiveData<List<Event>>
     @Query("SELECT * FROM event WHERE date IS :date AND time IS :time")

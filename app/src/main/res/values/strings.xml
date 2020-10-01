@@ -21,7 +21,11 @@
     <string name="text_register">일정 등록</string>
     <string name="text_detail">일정 상세</string>
     <string name="text_title_daily_graph">계획 시간</string>
+    <string name="text_title_challenge">달성률</string>
     <string name="text_title_classification_graph">카테고리별 분류</string>
+    <string name="toast_finish_app">\'뒤로\' 버튼을 한번 더 누르면 종료됩니다.</string>
+    <string name="developer_email_address">leein3293@gmail.com</string>
+    <string name="mydays_report">[MyDay Report]</string>
     <string-array name="category_dialog_options">
         <item>수정</item>
         <item>삭제</item>

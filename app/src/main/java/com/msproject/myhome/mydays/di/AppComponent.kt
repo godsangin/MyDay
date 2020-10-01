@@ -4,6 +4,7 @@ import android.content.Context
 import com.msproject.myhome.mydays.di.viewModel.ViewModelFactoryModule
 import com.msproject.myhome.mydays.di.viewModel.ViewModelModule
 import com.msproject.myhome.mydays.main.MainActivity
+import com.msproject.myhome.mydays.main.challenge.ChallengeActivity
 import com.msproject.myhome.mydays.main.dailygraph.DailyGraphActivity
 import com.msproject.myhome.mydays.main.event.EventActivity
 import com.msproject.myhome.mydays.main.fragment.DetailFragment
@@ -26,4 +27,5 @@ interface AppComponent {
     fun inject(fragment:PlannerFragment)
     fun inject(activity:DailyGraphActivity)
     fun inject(activity:StatisticActivity)
+    fun inject(activity:ChallengeActivity)
 }

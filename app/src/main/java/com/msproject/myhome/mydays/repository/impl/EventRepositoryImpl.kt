@@ -16,6 +16,10 @@ class EventRepositoryImpl @Inject constructor(private val appDatabase: AppDataba
     override fun getEventList():LiveData<List<Event>>{
         return getEventDao().getEventList()
     }
+
+    override fun getEventListCount(): LiveData<Int> {
+        return getEventDao().getEventListCount()
+    }
     override fun getEventList(date:Long):LiveData<List<Event>>{
         return getEventDao().getEventList(date)
     }
@@ -29,6 +33,10 @@ class EventRepositoryImpl @Inject constructor(private val appDatabase: AppDataba
 
     override fun getEventListSync(startDate: Long, endDate: Long): List<Event> {
         return getEventDao().getEventListSync(startDate, endDate)
+    }
+
+    override fun getEventListCount(startDate: Long, endDate: Long): LiveData<Int> {
+        return getEventDao().getEventListCount(startDate, endDate)
     }
     override fun getEventList(date: Long, startTime: Int, endTime: Int): LiveData<List<Event>> {
         return getEventDao().getEventList(date, startTime, endTime)

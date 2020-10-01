@@ -29,7 +29,7 @@ class EventRecyclerViewAdapter :RecyclerView.Adapter<EventRecyclerViewAdapter.Vi
             val view = it
             category?.let {
                 val eventItem = eventList[position].event
-                val event = Event(eventItem.id, it.id, eventItem.date, eventItem.time, "")
+                val event = Event(eventItem.id, it.id, eventItem.date, eventItem.time)
                 if(eventList[position].category == null){
                     eventList[position].category = category
                     eventList[position].event = event

@@ -1,6 +1,7 @@
 package com.msproject.myhome.mydays.di.viewModel
 
 import androidx.lifecycle.ViewModel
+import com.msproject.myhome.mydays.main.challenge.ChallengeViewModel
 import com.msproject.myhome.mydays.main.dailygraph.DailyGraphViewModel
 import com.msproject.myhome.mydays.main.fragment.PlannerViewModel
 import com.msproject.myhome.mydays.main.fragment.DetailViewModel
@@ -52,4 +53,8 @@ abstract class ViewModelModule {
     @ViewModelKey(StatisticViewModel::class)
     abstract fun statisticViewModel(viewModel:StatisticViewModel):ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(ChallengeViewModel::class)
+    abstract fun challengeViewModel(viewModel: ChallengeViewModel):ViewModel
 }

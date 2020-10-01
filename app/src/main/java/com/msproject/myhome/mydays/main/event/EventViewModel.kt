@@ -88,16 +88,25 @@ class EventViewModel @Inject constructor(private val eventRepository: EventRepos
         })
     }
 
-    fun submitEventList(){
-        contentDialogEvent.call()
-    }
-    fun postEventList(content:String){
+//    fun submitEventList(){
+//        var onlyRemove = true
+//        for(i in originList.indices){
+//            if(eventList.value?.get(i)?.category != null && eventList.value?.get(i)?.category?.id != originList[i].category?.id){
+//                onlyRemove = false
+//            }
+//        }
+//        if(onlyRemove){
+//            postEventList("")
+//            return
+//        }
+//        contentDialogEvent.call()
+//    }
+    fun postEventList(){
         CoroutineScope(Dispatchers.IO).launch {
             for(item in eventList.value ?: ArrayList()) {
                 val exist = eventRepository.exist(item.event.date, item.event.time)
                 if(exist == null){
                     if(item.category != null){
-                        item.event.content = content
                         item.event.cid = item.category?.id ?: 0
                         eventRepository.insertEvent(item.event)
                     }
@@ -107,8 +116,10 @@ class EventViewModel @Inject constructor(private val eventRepository: EventRepos
                         eventRepository.deleteEventById(item.event.id)
                     }
                     else if(item.category?.id != exist.cid){
-                        item.event.content = content
                         item.event.cid = item.category?.id ?: 0
+                        eventRepository.updateEvent(item.event)
+                    }
+                    else if(item.category?.id == exist.cid){
                         eventRepository.updateEvent(item.event)
                     }
                 }

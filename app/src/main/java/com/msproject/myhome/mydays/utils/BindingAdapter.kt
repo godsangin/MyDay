@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -15,6 +16,9 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.msproject.myhome.mydays.main.event.adapter.CategoryRecyclerViewAdapter
 import com.msproject.myhome.mydays.main.event.adapter.EventRecyclerViewAdapter
+import com.msproject.myhome.mydays.main.fragment.adapter.CalendarRecyclerViewAdapter
+import com.msproject.myhome.mydays.main.fragment.adapter.WeeklyCalendarRecyclerViewAdapter
+import com.msproject.myhome.mydays.model.CalendarItem
 import com.msproject.myhome.mydays.model.Category
 import com.msproject.myhome.mydays.model.ChartData
 import com.msproject.myhome.mydays.model.EventItem
@@ -55,7 +59,7 @@ object BindingAdapter {
         }
         val dataSet = PieDataSet(yValues, "plan")
         dataSet.setColors(colorArray.toIntArray(), 0xff)
-        dataSet.valueFormatter = MyIntValueFormatter()
+        dataSet.valueFormatter = MyTimeValueFormatter()
 
         val data = PieData(dataSet)
         data.setValueTextSize(10F)
@@ -154,5 +158,40 @@ object BindingAdapter {
     @JvmStatic
     fun bindColorSelect(imageView: ImageView, color:String){
 
+    }
+
+    @BindingAdapter(value = ["bind_weekly_category", "bind_date"])
+    @JvmStatic
+    fun bindWeeklyCategoryItems(recyclerView: RecyclerView, items:List<CalendarItem>?, date:Date?){
+        if(items == null || date == null) return
+        if(recyclerView.adapter == null){
+            recyclerView.adapter = WeeklyCalendarRecyclerViewAdapter()
+            recyclerView.layoutManager = GridLayoutManager(recyclerView.context, 7)
+        }
+        (recyclerView.adapter as WeeklyCalendarRecyclerViewAdapter).weeklyItemList = items
+        recyclerView.adapter?.notifyDataSetChanged()
+
+    }
+
+    @BindingAdapter("bind_category_linear")
+    @JvmStatic
+    fun bindCategoryLinear(recyclerView: RecyclerView, items:List<Category>?){
+        if(items == null) return
+        if(recyclerView.adapter == null){
+            recyclerView.adapter = CalendarRecyclerViewAdapter()
+            recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
+        }
+        for(item in items){
+            Log.d("category==", item.toString())
+        }
+        (recyclerView.adapter as CalendarRecyclerViewAdapter).categoryList = items
+        recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    @BindingAdapter("bind_background")
+    @JvmStatic
+    fun bindBackground(textView:TextView, color:String?){
+        if(color == null) return
+        textView.setBackgroundColor(Color.parseColor(color))
     }
 }
