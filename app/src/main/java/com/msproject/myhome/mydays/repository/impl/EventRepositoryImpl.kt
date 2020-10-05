@@ -16,9 +16,36 @@ class EventRepositoryImpl @Inject constructor(private val appDatabase: AppDataba
     override fun getEventList():LiveData<List<Event>>{
         return getEventDao().getEventList()
     }
-    override fun getEventList(startDate:Long, endDate:Long):LiveData<List<Event>>{
+
+    override fun getEventListCount(): LiveData<Int> {
+        return getEventDao().getEventListCount()
+    }
+    override fun getEventList(date:Long):LiveData<List<Event>>{
+        return getEventDao().getEventList(date)
+    }
+
+    override fun getEventListSync(date: Long): List<Event> {
+        return getEventDao().getEventListSync(date)
+    }
+    override fun getEventList(startDate: Long, endDate: Long): LiveData<List<Event>> {
         return getEventDao().getEventList(startDate, endDate)
     }
+
+    override fun getEventListSync(startDate: Long, endDate: Long): List<Event> {
+        return getEventDao().getEventListSync(startDate, endDate)
+    }
+
+    override fun getEventListCount(startDate: Long, endDate: Long): LiveData<Int> {
+        return getEventDao().getEventListCount(startDate, endDate)
+    }
+    override fun getEventList(date: Long, startTime: Int, endTime: Int): LiveData<List<Event>> {
+        return getEventDao().getEventList(date, startTime, endTime)
+    }
+
+    override fun exist(date: Long, time: Int): Event {
+        return getEventDao().getEvent(date, time)
+    }
+
     override fun insertEvent(event: Event){
         getEventDao().insert(event)
     }
@@ -28,5 +55,9 @@ class EventRepositoryImpl @Inject constructor(private val appDatabase: AppDataba
 
     override fun deleteEventById(id:Long){
         getEventDao().deleteEventById(id)
+    }
+
+    override fun deleteEventByCid(cid: Long) {
+        getEventDao().deleteEventByCid(cid)
     }
 }

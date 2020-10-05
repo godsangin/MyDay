@@ -4,7 +4,12 @@ import android.content.Context
 import com.msproject.myhome.mydays.di.viewModel.ViewModelFactoryModule
 import com.msproject.myhome.mydays.di.viewModel.ViewModelModule
 import com.msproject.myhome.mydays.main.MainActivity
+import com.msproject.myhome.mydays.main.challenge.ChallengeActivity
+import com.msproject.myhome.mydays.main.dailygraph.DailyGraphActivity
 import com.msproject.myhome.mydays.main.event.EventActivity
+import com.msproject.myhome.mydays.main.fragment.DetailFragment
+import com.msproject.myhome.mydays.main.fragment.PlannerFragment
+import com.msproject.myhome.mydays.main.statistic.StatisticActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -16,6 +21,11 @@ interface AppComponent {
     interface Factory{
         fun create(@BindsInstance context:Context):AppComponent
     }
-    fun inject(activity: MainActivity)
+    fun inject(activity:MainActivity)
     fun inject(activity:EventActivity)
+    fun inject(fragment:DetailFragment)
+    fun inject(fragment:PlannerFragment)
+    fun inject(activity:DailyGraphActivity)
+    fun inject(activity:StatisticActivity)
+    fun inject(activity:ChallengeActivity)
 }

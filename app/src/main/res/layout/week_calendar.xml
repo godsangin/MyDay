@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="model"
+            type="com.msproject.myhome.mydays.main.fragment.PlannerViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+        <include
+            android:id="@+id/sun"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/mon"
+            layout="@layout/item_calendar"
+            app:model="@{(model.weeklyCategoryList.size() == 7) ? model.weeklyCategoryList.get(0) : null}"
+            app:day="@{model.day}"
+            app:viewmodel="@{model}"
+            app:weekofday="@{0}"/>
+        <include
+            android:id="@+id/mon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/sun"
+            app:layout_constraintRight_toLeftOf="@id/tue"
+            layout="@layout/item_calendar"
+            app:model="@{(model.weeklyCategoryList.size() == 7) ? model.weeklyCategoryList.get(1) : null}"
+            app:day="@{model.day}"
+            app:viewmodel="@{model}"
+            app:weekofday="@{1}"/>
+        <include
+            android:id="@+id/tue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/mon"
+            app:layout_constraintRight_toLeftOf="@id/wen"
+            layout="@layout/item_calendar"
+            app:model="@{(model.weeklyCategoryList.size() == 7) ? model.weeklyCategoryList.get(2) : null}"
+            app:day="@{model.day}"
+            app:viewmodel="@{model}"
+            app:weekofday="@{2}"/>
+        <include
+            android:id="@+id/wen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/tue"
+            app:layout_constraintRight_toLeftOf="@id/thu"
+            layout="@layout/item_calendar"
+            app:model="@{(model.weeklyCategoryList.size() == 7) ? model.weeklyCategoryList.get(3) : null}"
+            app:day="@{model.day}"
+            app:viewmodel="@{model}"
+            app:weekofday="@{3}"/>
+        <include
+            android:id="@+id/thu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/wen"
+            app:layout_constraintRight_toLeftOf="@id/fri"
+            layout="@layout/item_calendar"
+            app:model="@{(model.weeklyCategoryList.size() == 7) ? model.weeklyCategoryList.get(4) : null}"
+            app:day="@{model.day}"
+            app:viewmodel="@{model}"
+            app:weekofday="@{4}"/>
+        <include
+            android:id="@+id/fri"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/thu"
+            app:layout_constraintRight_toLeftOf="@id/sat"
+            layout="@layout/item_calendar"
+            app:model="@{(model.weeklyCategoryList.size() == 7) ? model.weeklyCategoryList.get(5) : null}"
+            app:day="@{model.day}"
+            app:viewmodel="@{model}"
+            app:weekofday="@{5}"/>
+        <include
+            android:id="@+id/sat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/fri"
+            app:layout_constraintRight_toRightOf="parent"
+            layout="@layout/item_calendar"
+            app:model="@{(model.weeklyCategoryList.size() == 7) ? model.weeklyCategoryList.get(6) : null}"
+            app:day="@{model.day}"
+            app:viewmodel="@{model}"
+            app:weekofday="@{6}"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

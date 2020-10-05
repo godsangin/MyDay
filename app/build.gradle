@@ -7,13 +7,13 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.msproject.myhome.mydays"
-        minSdkVersion 15
+        minSdkVersion 23
         targetSdkVersion 29
-        versionCode 14
-        versionName "2.1.0"
+        versionCode 15
+        versionName "2.2.0"
         multiDexEnabled true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        vectorDrawables.useSupportLibrary = true;
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -58,6 +58,7 @@ dependencies {
     implementation 'com.jaredrummler:colorpicker:1.0.1'
     implementation 'joda-time:joda-time:2.9.9'
     implementation 'com.firebase:firebase-jobdispatcher:0.8.6'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     def room_version = "2.2.5"
     implementation "androidx.room:room-runtime:$room_version"
@@ -101,6 +102,13 @@ dependencies {
     def dagger_version = "2.27"
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
+
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    //google map
+    implementation 'com.google.android.libraries.places:places:2.2.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'

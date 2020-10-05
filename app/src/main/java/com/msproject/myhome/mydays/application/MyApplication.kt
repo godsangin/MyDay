@@ -1,12 +1,12 @@
 package com.msproject.myhome.mydays.application
 
-import androidx.multidex.MultiDexApplication
+import android.app.Application
 import android.util.Log
 import com.msproject.myhome.mydays.di.AppComponent
 import com.msproject.myhome.mydays.di.DaggerAppComponent
 import kotlin.system.exitProcess
 
-class MyApplication : MultiDexApplication() {
+class MyApplication : Application() {
 
     companion object {
         private val TAG = MyApplication::class.java.simpleName

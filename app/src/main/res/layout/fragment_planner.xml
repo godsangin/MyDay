@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="model"
+            type="com.msproject.myhome.mydays.main.fragment.PlannerViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@color/colorBackgroundWhite"
+        tools:context=".main.fragment.PlannerFragment">
+            <include
+                android:id="@+id/title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:model="@{model}"
+                layout="@layout/title_bar"/>
+        <include
+            android:id="@+id/week_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/week_calendar"
+            app:layout_constraintTop_toBottomOf="@id/title_bar"
+            app:model="@{model}"/>
+         <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="24dp"
+                android:background="#999"
+                app:layout_constraintTop_toBottomOf="@id/text_zero"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:id="@+id/text_zero"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0시"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/week_calendar" />
+
+            <TextView
+                android:id="@+id/text_twl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="12시"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/piechart"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/week_calendar"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:transitionName="pair_thumb"
+                bind_chart_item="@{model.eventList}"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

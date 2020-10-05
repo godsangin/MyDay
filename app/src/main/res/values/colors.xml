@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#50deb5</color>
-    <color name="colorPrimaryDark">#50deb5</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#32cd32</color>
+    <color name="colorPrimaryDark">#32cd32</color>
+    <color name="colorAccent">#6666cc</color>
     <!--<color name="colorTitleBar">#A9E2F3</color>-->
-    <color name="colorTitleBar">#50deb5 </color>
+    <color name="colorTitleBar">#fafafa </color>
     <color name="background">#fff</color>
     <color name="backBorder">#fff</color>
-    <color name="textColor">#fff </color>
+    <color name="textColor">#32cd32 </color>
+    <color name="colorGrey">#aaa</color>
+    <color name="colorWhite">#fff</color>
+    <color name="colorBlack">#000</color>
+    <color name="colorBackgroundWhite">#eee</color>
+    <color name="colorTextBlack">#090909</color>
     <color name="legendColor">#000</color>
     <!--<color name="textColor">#c6e6f5</color>-->
     <color name="piechartColor">#eee</color>
@@ -15,5 +20,17 @@
     <color name="borderColor">#61efc6 </color>
     <color name="stasticButtonTextColor">#000</color>
     <color name="memoColor">#888</color>
+    <color name="category_1">#ff0000</color>
+    <color name="category_2">#9370db</color>
+    <color name="category_3">#00bfff</color>
+    <color name="category_4">#32cd32</color>
+    <color name="category_5">#6495ed</color>
+    <color name="category_6">#f0e68c</color>
+    <color name="cateogry_7">#00ffff</color>
+    <color name="category_8">#ee82ee</color>
+    <color name="category_9">#ffff00</color>
+    <color name="category_10">#ff7f50</color>
+    <color name="category_11">#4169e1</color>
+    <color name="category_12">#d3d3d3</color>
 
 </resources>
