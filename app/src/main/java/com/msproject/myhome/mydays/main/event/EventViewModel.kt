@@ -88,19 +88,6 @@ class EventViewModel @Inject constructor(private val eventRepository: EventRepos
         })
     }
 
-//    fun submitEventList(){
-//        var onlyRemove = true
-//        for(i in originList.indices){
-//            if(eventList.value?.get(i)?.category != null && eventList.value?.get(i)?.category?.id != originList[i].category?.id){
-//                onlyRemove = false
-//            }
-//        }
-//        if(onlyRemove){
-//            postEventList("")
-//            return
-//        }
-//        contentDialogEvent.call()
-//    }
     fun postEventList(){
         CoroutineScope(Dispatchers.IO).launch {
             for(item in eventList.value ?: ArrayList()) {

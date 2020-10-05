@@ -2,6 +2,7 @@ package com.msproject.myhome.mydays.main
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
@@ -112,8 +113,10 @@ class MainActivity :BaseActivity(){
                     intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.mydays_report) + Build.MODEL + "/" + Build.VERSION.RELEASE)
                     startActivity(intent)
                 }
-                R.id.setting -> {
-
+                R.id.version -> {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse("market://details?id=$packageName")
+                    startActivity(intent)
                 }
             }
             true

@@ -181,9 +181,6 @@ object BindingAdapter {
             recyclerView.adapter = CalendarRecyclerViewAdapter()
             recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
         }
-        for(item in items){
-            Log.d("category==", item.toString())
-        }
         (recyclerView.adapter as CalendarRecyclerViewAdapter).categoryList = items
         recyclerView.adapter?.notifyDataSetChanged()
     }

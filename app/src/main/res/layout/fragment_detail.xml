@@ -19,6 +19,7 @@
             bind_line_chart_item="@{model.dailyTime}"
             bind_pie_chart_item="@{model.categoryChartItems}"
             bind_activity="@{model.activity}"
+            bind_fragment_manager="@{model.fragmentManager}"
             bind_day="@{model.toDay}"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,20 +19,19 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:model="@{model}"
                 layout="@layout/title_bar"/>
-        <androidx.recyclerview.widget.RecyclerView
+        <include
             android:id="@+id/week_calendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            layout="@layout/week_calendar"
             app:layout_constraintTop_toBottomOf="@id/title_bar"
-            bind_weekly_category="@{model.weeklyCategoryList}"
-            bind_date="@{model.date}"/>
+            app:model="@{model}"/>
          <LinearLayout
                 android:layout_width="1dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
                 android:background="#999"
-                app:layout_constraintTop_toBottomOf="@id/week_calendar"
+                app:layout_constraintTop_toBottomOf="@id/text_zero"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"/>
@@ -41,7 +40,6 @@
                 android:id="@+id/text_zero"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:text="0시"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -64,6 +62,7 @@
                 android:layout_gravity="center"
                 app:layout_constraintTop_toBottomOf="@id/week_calendar"
                 app:layout_constraintBottom_toBottomOf="parent"
+                android:transitionName="pair_thumb"
                 bind_chart_item="@{model.eventList}"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -8,11 +8,13 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.msproject.myhome.mydays.databinding.FragmentPlannerBinding
 import com.msproject.myhome.mydays.main.event.EventActivity
 import kotlinx.android.synthetic.main.fragment_planner.*
 import kotlinx.android.synthetic.main.fragment_planner.view.*
+import kotlinx.android.synthetic.main.item_plan_time.view.*
 import java.text.SimpleDateFormat
 import javax.inject.Inject
 
@@ -45,16 +47,16 @@ class PlannerFragment : Fragment() {
                 if (Math.pow((touchX - centerX).toDouble(), 2.0) + Math.pow((touchY - centerY).toDouble(), 2.0) <= Math.pow(r.toDouble(), 2.0)) {
                     if (centerX > touchX && centerY > touchY) {
                         //왼쪽 위
-                        addTime(18)
+                        addTime(view, 18)
                     } else if (centerX > touchX && centerY < touchY) {
                         //왼쪽 아래
-                        addTime(12)
+                        addTime(view, 12)
                     } else if (centerX < touchX && centerY > touchY) {
                         //오른쪽 위
-                        addTime(0)
+                        addTime(view, 0)
                     } else {
                         //오른쪽 아래
-                        addTime(6)
+                        addTime(view, 6)
                     }
                 }
             }
@@ -62,12 +64,14 @@ class PlannerFragment : Fragment() {
         }
     }
 
-    private fun addTime(index: Int) {
+    private fun addTime(view:View, index: Int) {
         val intent = Intent(context, EventActivity::class.java)
         val format = SimpleDateFormat("yyyy-MM-dd")
         intent.putExtra("type", index)
         intent.putExtra("date", format.format(plannerViewModel.date.value))
-        startActivityForResult(intent, 0)
+        val optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(activity!!, view, view.transitionName)
+        startActivity(intent, optionsCompat.toBundle())
+//        startActivityForResult(intent, 0)
     }
 
 

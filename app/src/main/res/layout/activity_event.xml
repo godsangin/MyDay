@@ -37,9 +37,9 @@
                     android:id="@+id/bt_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
                     android:text="@string/title_event"
                     android:textColor="@color/textColor"
+                    android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@id/back_bt" />
@@ -49,6 +49,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text_submit"
                     android:textColor="@color/textColor"
+                    android:textStyle="bold"
                     android:visibility="@{model.categoryAdapter.Companion.selectedCategory == null? View.GONE:View.VISIBLE}"
                     android:onClick="@{() -> model.postEventList()}"
                     app:layout_constraintRight_toRightOf="parent"
@@ -74,6 +75,7 @@
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:layout_margin="8dp"
+                    android:transitionName="pair_thumb"
                     app:model="@{model}"/>
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"

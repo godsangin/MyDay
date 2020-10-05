@@ -20,6 +20,7 @@ class DetailFragment : Fragment() {
         val owner = this
         detailViewModel.activity.postValue(activity!!)
         detailViewModel.initData(owner)
+        detailViewModel.fragmentManager.postValue(childFragmentManager)
         return binding.root
     }
 

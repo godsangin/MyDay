@@ -2,6 +2,7 @@ package com.msproject.myhome.mydays.main.fragment
 
 import android.app.Activity
 import android.util.Log
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import com.msproject.myhome.mydays.main.dailygraph.DailyGraphViewModel
@@ -23,6 +24,7 @@ class DetailViewModel @Inject constructor(private val eventRepository: EventRepo
     val _dailyTime = MutableLiveData<List<Int>>()
     val categoryChartItems = MutableLiveData<List<Pair<Category, Int>>>()
     val activity = MutableLiveData<Activity>()
+    val fragmentManager = MutableLiveData<FragmentManager>()
 
     val toDay = MutableLiveData<Int>()
     val dailyTime:LiveData<List<Int>> get() = _dailyTime

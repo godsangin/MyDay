@@ -23,7 +23,9 @@
     <string name="text_title_daily_graph">계획 시간</string>
     <string name="text_title_challenge">달성률</string>
     <string name="text_title_classification_graph">카테고리별 분류</string>
+    <string name="text_title_map">방문 장소</string>
     <string name="toast_finish_app">\'뒤로\' 버튼을 한번 더 누르면 종료됩니다.</string>
+    <string name="toast_update_required">업데이트 예정입니다.</string>
     <string name="developer_email_address">leein3293@gmail.com</string>
     <string name="mydays_report">[MyDay Report]</string>
     <string-array name="category_dialog_options">
@@ -31,18 +33,19 @@
         <item>삭제</item>
     </string-array>
 
-    <string name="category_1">#9370db</string>
-    <string name="category_2">#ff0000</string>
-    <string name="category_3">#ee82ee</string>
-    <string name="category_4">#4169e1</string>
+    <string name="category_1">#ff0000</string>
+    <string name="category_2">#9370db</string>
+    <string name="category_3">#00bfff</string>
+    <string name="category_4">#32cd32</string>
     <string name="category_5">#6495ed</string>
-    <string name="category_6">#00bfff</string>
+    <string name="category_6">#f0e68c</string>
     <string name="category_7">#00ffff</string>
-    <string name="category_8">#32cd32</string>
+    <string name="category_8">#ee82ee</string>
     <string name="category_9">#ffff00</string>
-    <string name="category_10">#f0e68c</string>
-    <string name="category_11">#ff7f50</string>
+    <string name="category_10">#ff7f50</string>
+    <string name="category_11">#4169e1</string>
     <string name="category_12">#d3d3d3</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

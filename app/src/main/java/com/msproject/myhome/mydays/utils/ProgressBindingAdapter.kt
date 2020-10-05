@@ -4,6 +4,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
 import com.msproject.myhome.mydays.R
 import com.msproject.myhome.mydays.model.ProgressItem
 
@@ -20,10 +21,10 @@ object ProgressBindingAdapter {
     fun bindProgressImage(imageView: ImageView, item:ProgressItem?){
         if(item == null) return
         if((item.value.toDouble() * 100 / item.total).toInt() >= 70){
-            imageView.setImageResource(R.drawable.gold)
+            Glide.with(imageView.context).load(R.drawable.gold).into(imageView)
         }
         else{
-            imageView.setImageResource(R.drawable.gold)
+            imageView.setImageResource(R.drawable.silver)
         }
     }
 

@@ -108,7 +108,6 @@
                         android:id="@+id/barchart"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:transitionName="pair_piechart"
                         bind_bar_chart_item="@{model.chartCategory}"/>
                 </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Color
 import android.util.Log
 import androidx.databinding.BindingAdapter
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.BarChart
@@ -206,10 +207,10 @@ object DetailBindingAdapter {
         barChart.invalidate()
     }
 
-    @BindingAdapter(value = ["bind_line_chart_item", "bind_pie_chart_item", "bind_activity", "bind_day"])
+    @BindingAdapter(value = ["bind_line_chart_item", "bind_pie_chart_item", "bind_activity", "bind_fragment_manager", "bind_day"])
     @JvmStatic
-    fun bindDetailItems(recyclerView:RecyclerView, items:List<Int>?, citems:List<Pair<Category, Int>>?, activity: Activity?, day:Int?){
-        if(items == null || citems == null || day == null || activity == null) return
+    fun bindDetailItems(recyclerView:RecyclerView, items:List<Int>?, citems:List<Pair<Category, Int>>?, activity: Activity?, fragmentManager:FragmentManager?, day:Int?){
+        if(items == null || citems == null || day == null || activity == null || fragmentManager == null) return
         if(recyclerView.adapter == null){
             recyclerView.adapter = DetailRecyclerViewAdapter()
             recyclerView.layoutManager = GridLayoutManager(recyclerView.context, 2)
@@ -218,9 +219,10 @@ object DetailBindingAdapter {
         val list = ArrayList<Pair<Int, List<Any>>>()
         list.add(Pair(0, items))
         list.add(Pair(1, citems))
-        list.add(Pair(0, items))
+        list.add(Pair(2, items))
         (recyclerView.adapter as DetailRecyclerViewAdapter).items = list
         (recyclerView.adapter as DetailRecyclerViewAdapter).activity = activity
+        (recyclerView.adapter as DetailRecyclerViewAdapter).fragmentManager = fragmentManager
         (recyclerView.adapter as DetailRecyclerViewAdapter).day = day
         recyclerView.adapter?.notifyDataSetChanged()
     }

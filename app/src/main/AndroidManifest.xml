@@ -29,15 +29,15 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3136625326865731~8346285691" /> <!-- <activity android:name=".MainActivity"> -->
-        <!-- <meta-data -->
-        <!-- android:name="com.google.android.gms.version" -->
-        <!-- android:value="@integer/google_play_services_version" /> -->
-        <!-- </activity> -->
+            android:value="ca-app-pub-3136625326865731~8346285691" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCxUjMMr9cs71VRveeH4Ih3-ep0qbSz-ig" />
         <activity android:name=".main.event.EventActivity" />
         <activity
             android:name=".main.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:configChanges="screenSize|orientation"/>
         <activity
             android:name=".SplashActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
